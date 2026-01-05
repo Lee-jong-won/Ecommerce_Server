@@ -30,12 +30,20 @@ public class Product {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public Product() {
+    //기본 생성자
+    private Product() {
     }
-    public Product(String productName, int productPrice, int stockQuantity){
+
+    // 새로운 상품 추가시 사용되는 생성자
+    private Product(String productName, int productPrice, int stockQuantity){
         this.productName = productName;
         this.productPrice = productPrice;
         this.stockQuantity = stockQuantity;
+    }
+
+    // 새로운 상품 생성은 항상 이 메소드를 통해서만
+    public static Product create(String productName, int productPrice, int stockQuantity){
+        return new Product(productName, productPrice, stockQuantity);
     }
 
     // 재고 추가

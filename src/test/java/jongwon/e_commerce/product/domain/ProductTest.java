@@ -9,7 +9,7 @@ class ProductTest {
     @Test
     public void 재고추가() {
         //Given
-        Product product = new Product("신발", 10000, 10);
+        Product product = Product.create("신발", 10000, 10);
 
         //When
         product.addStock(10);
@@ -21,7 +21,7 @@ class ProductTest {
     @Test
     public void 재고감소_정상(){
         //Given
-        Product product = new Product("신발", 10000, 10);
+        Product product = Product.create("신발", 10000, 10);
 
         //When
         product.removeStock(5);
@@ -33,7 +33,7 @@ class ProductTest {
     @Test
     public void 재고감소_예외(){
         //Given
-        Product product = new Product("신발", 10000, 10);
+        Product product = Product.create("신발", 10000, 10);
 
         //Then
         assertThrows(NotEnoughStockException.class ,() -> product.removeStock(20));
