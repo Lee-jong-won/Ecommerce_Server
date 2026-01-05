@@ -1,5 +1,6 @@
 package jongwon.e_commerce.product.domain;
 
+import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,6 @@ class ProductTest {
 
     @Test
     public void 가격_정보_수정(){
-
         //Given
         Product product = Product.create("신발", 10000, 10);
 
@@ -50,6 +50,15 @@ class ProductTest {
 
         //Then
         assertEquals(5000, product.getProductPrice());
+    }
+
+    @Test
+    public void 가격_정보_수정_예외(){
+        //Given
+        Product product = Product.create("신발", 10000, 10);
+
+        //Then
+        assertThrows(InvalidProductPriceException.class ,() -> product.updateProductPrice(0));
     }
 
 }

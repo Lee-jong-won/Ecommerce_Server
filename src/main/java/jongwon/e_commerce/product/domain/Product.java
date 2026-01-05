@@ -1,6 +1,7 @@
 package jongwon.e_commerce.product.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
 import lombok.Getter;
 
@@ -61,6 +62,8 @@ public class Product {
 
     // 가격 업데이트
     public void updateProductPrice(int price){
+        if(price <= 0)
+            throw new InvalidProductPriceException("price cannot be negative or zero");
         this.productPrice = price;
     }
 }
