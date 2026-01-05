@@ -58,4 +58,9 @@ public class Product {
             throw new NotEnoughStockException("need more stock");
         this.stockQuantity = restStock;
     }
+
+    // 가격 업데이트
+    public void updateProductPrice(int price){
+        this.productPrice = price;
+    }
 }
