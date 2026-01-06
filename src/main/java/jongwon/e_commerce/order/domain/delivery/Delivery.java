@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain.delivery;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.order.exception.InvalidDeliveryStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -63,5 +64,25 @@ public class Delivery {
         delivery.orderId = orderId;
         delivery.shipAddress = shipAddress;
         return delivery;
+    }
+
+    //비즈니스 로직
+    public void setDeliveryStatus(DeliveryStatus deliveryStatus){
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    public void startDelivery(String trackingNo) {
+        if (this.deliveryStatus != DeliveryStatus.READY) {
+            throw new InvalidDeliveryStateException("READY 상태에서만 배송을 시작할 수 있습니다.");
+        }
+        setDeliveryStatus(DeliveryStatus.SHIPPED);
+        this.trackingNo = trackingNo;
+    }
+
+    public void completeDelivery() {
+        if (this.deliveryStatus != DeliveryStatus.SHIPPED) {
+            throw new InvalidDeliveryStateException("배송 중인 경우에만 완료할 수 있습니다.");
+        }
+        setDeliveryStatus(DeliveryStatus.DELIVERED);
     }
 }
