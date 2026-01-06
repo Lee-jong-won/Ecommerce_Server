@@ -1,17 +1,13 @@
 package jongwon.e_commerce.member.domain;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "member",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uq_login_id", columnNames = "login_id"),
-                @UniqueConstraint(name = "uq_email", columnNames = "email")
-        }
-)
+@NoArgsConstructor
+@Table(name = "member")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

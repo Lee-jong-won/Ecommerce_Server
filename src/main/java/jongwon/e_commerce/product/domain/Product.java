@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "product")
 public class Product {
     @Id
@@ -30,10 +32,6 @@ public class Product {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    //기본 생성자
-    private Product() {
-    }
 
     // 새로운 상품 추가시 사용되는 생성자
     private Product(String productName, int productPrice, int stockQuantity){

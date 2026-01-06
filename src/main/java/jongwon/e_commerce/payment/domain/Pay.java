@@ -1,10 +1,12 @@
 package jongwon.e_commerce.payment.domain;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 @Table(name = "pay")
 public class Pay {
     @Id

@@ -1,10 +1,12 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 @Table(name = "order_item")
 public class OrderItem {
     @Id
@@ -32,4 +34,15 @@ public class OrderItem {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    private OrderItem(Long productId, String productName, int orderPrice, int orderQuantity){
+        this.productId = productId;
+        this.productName = productName;
+        this.orderPrice = orderPrice;
+        this.orderQuantity = orderQuantity;
+    }
+
+    public static OrderItem createOrderItem(Long productId, String productName, int orderPrice, int orderQuantity){
+        return new OrderItem(productId, productName, orderPrice, orderQuantity);
+    }
 }

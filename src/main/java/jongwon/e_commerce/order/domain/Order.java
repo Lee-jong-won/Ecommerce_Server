@@ -1,10 +1,13 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 @Table(name = "orders")
 public class Order {
     @Id
@@ -19,7 +22,8 @@ public class Order {
     private LocalDateTime orderedAt;
 
     @Column(name = "order_status", nullable = false, length = 20)
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(name = "total_amount", nullable = false)
     private int totalAmount;
