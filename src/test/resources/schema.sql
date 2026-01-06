@@ -50,7 +50,7 @@ CREATE TABLE orders
     order_id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
     ordered_at   DATETIME    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
-    order_status VARCHAR(20) NOT NULL DEFAULT 'ORDERED',                 -- 주문 상태
+    order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',                 -- 주문 상태
     total_amount INT         NOT NULL,                                   -- 총 주문 금액 (역정규화)
     created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
@@ -96,3 +96,4 @@ CREATE TABLE pay (
     PRIMARY KEY (pay_id),
     UNIQUE KEY uq_pay_order_id (fk_order_id) -- 주문 하나당 결제는 하나
 );
+

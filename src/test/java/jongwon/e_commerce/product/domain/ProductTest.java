@@ -10,19 +10,20 @@ class ProductTest {
     @Test
     public void 재고추가() {
         //Given
-        Product product = Product.create("신발", 10000, 10);
+        Product product = Product.create("신발", 10000);
 
         //When
         product.addStock(10);
 
         //Then
-        assertEquals(20, product.getStockQuantity());
+        assertEquals(10, product.getStockQuantity());
     }
 
     @Test
     public void 재고감소_정상(){
         //Given
-        Product product = Product.create("신발", 10000, 10);
+        Product product = Product.create("신발", 10000);
+        product.addStock(10);
 
         //When
         product.removeStock(5);
@@ -34,7 +35,7 @@ class ProductTest {
     @Test
     public void 재고감소_예외(){
         //Given
-        Product product = Product.create("신발", 10000, 10);
+        Product product = Product.create("신발", 10000);
 
         //Then
         assertThrows(NotEnoughStockException.class ,() -> product.removeStock(20));
@@ -43,7 +44,7 @@ class ProductTest {
     @Test
     public void 가격_정보_수정(){
         //Given
-        Product product = Product.create("신발", 10000, 10);
+        Product product = Product.create("신발", 10000);
 
         //When
         product.updateProductPrice(5000);
@@ -55,7 +56,7 @@ class ProductTest {
     @Test
     public void 가격_정보_수정_예외(){
         //Given
-        Product product = Product.create("신발", 10000, 10);
+        Product product = Product.create("신발", 10000);
 
         //Then
         assertThrows(InvalidProductPriceException.class ,() -> product.updateProductPrice(0));
