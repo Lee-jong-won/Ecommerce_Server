@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain.delivery;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.order.exception.InvalidDeliveryStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name = "delivery")
-public class Delivery {
+public class Delivery extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,20 +45,6 @@ public class Delivery {
             length = 255
     )
     private String shipAddress;
-
-    @Column(
-            name = "created_at",
-            nullable = false,
-            updatable = false
-    )
-    private LocalDateTime createdAt;
-
-    @Column(
-            name = "updated_at",
-            nullable = false,
-            updatable = false
-    )
-    private LocalDateTime updatedAt;
 
     public static Delivery createDelivery(Long orderId, String shipAddress){
         Delivery delivery = new Delivery();

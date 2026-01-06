@@ -20,13 +20,12 @@ CREATE TABLE member
     member_name VARCHAR(50)  NOT NULL,                -- 이름
     email       VARCHAR(100) NOT NULL,                -- 이메일
     addr        VARCHAR(255) NULL,                    -- 주소
-    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-        CURRENT_TIMESTAMP,
+    created_at  TIMESTAMP     NOT NULL,
+    updated_at  TIMESTAMP     NOT NULL,
 
     PRIMARY KEY (member_id),
-    UNIQUE KEY uq_login_id (login_id),
-    UNIQUE KEY uq_email (email)
+    CONSTRAINT uq_login_id UNIQUE (login_id),
+    CONSTRAINT uq_email UNIQUE (email)
 );
 
 -- 2. product 테이블
@@ -36,30 +35,36 @@ CREATE TABLE product
     product_name   VARCHAR(100) NOT NULL,                -- 상품명
     product_price  INT          NOT NULL,                -- 가격
     stock_quantity INT          NOT NULL DEFAULT 0,      -- 재고 수량
-    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-        CURRENT_TIMESTAMP,
+    created_at     TIMESTAMP     NOT NULL,
+    updated_at     TIMESTAMP     NOT NULL,
 
-    PRIMARY KEY (product_id),
-    INDEX          idx_product_name (product_name)       -- 상품명 검색용 인덱스
+    PRIMARY KEY (product_id)
 );
+
+CREATE INDEX idx_product_name
+    ON product (product_name);  -- 상품명 검색용 인덱스
 
 -- 3. orders 테이블
 CREATE TABLE orders
 (
     order_id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
-    ordered_at   DATETIME    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
+    ordered_at   TIMESTAMP    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
     order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',                 -- 주문 상태
     total_amount INT         NOT NULL,                                   -- 총 주문 금액 (역정규화)
-    created_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at   DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-        CURRENT_TIMESTAMP,
+    created_at   TIMESTAMP    NOT NULL,
+    updated_at   TIMESTAMP    NOT NULL,
 
-    PRIMARY KEY (order_id),
-    INDEX        idx_order_status_ordered_at (order_status, ordered_at), -- 관리자용 주문 조회 인덱스
-    INDEX        idx_fk_member_id (fk_member_id)                         -- 외래키 제약 조건 삭제 대신 인덱스 설정
+    PRIMARY KEY (order_id)
 );
+
+-- 회원별 주문 조회
+CREATE INDEX idx_orders_member_id
+    ON orders (fk_member_id);
+
+-- 관리자 주문 관리 (상태 + 기간)
+CREATE INDEX idx_orders_status_ordered_at
+    ON orders (order_status, ordered_at);
 
 -- 4. order_item 테이블
 CREATE TABLE order_item(
@@ -69,17 +74,19 @@ CREATE TABLE order_item(
     product_name   VARCHAR(100) NOT NULL,
     order_price    INT          NOT NULL,
     order_quantity INT          NOT NULL,                     -- 주문 당시 상품명 (역정규화)-- 주문 당시 가격-- 주문 수량
-    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-        CURRENT_TIMESTAMP,
+    created_at     TIMESTAMP     NOT NULL,
+    updated_at     TIMESTAMP     NOT NULL,
 
     PRIMARY KEY (order_item_id),
-    INDEX          idx_fk_order_item_order (fk_order_id),     -- 외래키 제약 조건 삭제 대신 인덱스 설정
-    INDEX          idx_fk_order_item_product (fk_product_id), -- 외래키 제약 조건 삭제 대신 인덱스 설정
-
     --주문 ID와 상품 ID에 대한 유니크 제약 조건
     CONSTRAINT uq_fk_order_id_fk_product_id UNIQUE (fk_order_id, fk_product_id)
 );
+
+CREATE INDEX idx_order_item_order
+    ON order_item (fk_order_id); -- 외래키 제약 조건 삭제 대신 인덱스 설정
+
+CREATE INDEX idx_order_item_product -- 외래키 제약 조건 삭제 대신 인덱스 설정
+    ON order_item (fk_product_id);
 
 -- 5. pay 테이블
 CREATE TABLE pay (
@@ -88,13 +95,12 @@ CREATE TABLE pay (
     pay_method VARCHAR(50) NOT NULL,    -- 결제 수단
     pay_amount INT NOT NULL,    -- 결제 금액
     pay_status  VARCHAR(20) NOT NULL,    -- 결제 상태
-    paid_at DATETIME NULL,     -- 결제 완료일
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-    CURRENT_TIMESTAMP,
+    paid_at TIMESTAMP NULL,     -- 결제 완료일
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
 
     PRIMARY KEY (pay_id),
-    UNIQUE KEY uq_pay_order_id (fk_order_id) -- 주문 하나당 결제는 하나
+    CONSTRAINT uq_pay_order_id UNIQUE (fk_order_id) -- 주문 하나당 결제는 하나
 );
 
 -- 6. delivery 테이블
@@ -105,11 +111,10 @@ CREATE TABLE delivery
     delivery_status VARCHAR(20)  NOT NULL DEFAULT 'READY',-- 배송 상태
     tracking_no     VARCHAR(50) NULL,                     -- 운송장 번호
     ship_addr       VARCHAR(255) NOT NULL,                -- 배송지
-    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
-    CURRENT_TIMESTAMP,
+    created_at      TIMESTAMP     NOT NULL,
+    updated_at      TIMESTAMP     NOT NULL,
 
     PRIMARY KEY (delivery_id),
-    UNIQUE KEY uq_delivery_order_id (fk_order_id)           -- 주문 하나당 배송은 하나
+    CONSTRAINT uq_delivery_order_id UNIQUE (fk_order_id)           -- 주문 하나당 배송은 하나
 );
 

@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name = "order_item")
-public class OrderItem {
+public class OrderItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
@@ -31,14 +32,9 @@ public class OrderItem {
     @Column(name = "order_quantity", nullable = false)
     private int orderQuantity;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    public static OrderItem createOrderItem(Long productId, String productName, int orderPrice, int orderQuantity){
+    public static OrderItem createOrderItem(Long orderId, Long productId, String productName, int orderPrice, int orderQuantity){
         OrderItem orderItem = new OrderItem();
+        orderItem.orderId = orderId;
         orderItem.productId = productId;
         orderItem.productName = productName;
         orderItem.orderPrice = orderPrice;

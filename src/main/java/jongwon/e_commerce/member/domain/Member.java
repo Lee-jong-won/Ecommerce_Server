@@ -1,14 +1,17 @@
 package jongwon.e_commerce.member.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -28,10 +31,4 @@ public class Member {
 
     @Column(length = 255)
     private String addr;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 }

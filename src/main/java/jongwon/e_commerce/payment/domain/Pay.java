@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @Table(name = "pay")
-public class Pay {
+public class Pay extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pay_id")
@@ -28,10 +29,4 @@ public class Pay {
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 }

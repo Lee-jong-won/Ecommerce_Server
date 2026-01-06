@@ -1,6 +1,7 @@
 package jongwon.e_commerce.product.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Table(name = "product")
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
@@ -26,12 +27,6 @@ public class Product {
 
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     // 새로운 상품 생성은 항상 이 메소드를 통해서만
     public static Product create(String productName, int productPrice) {

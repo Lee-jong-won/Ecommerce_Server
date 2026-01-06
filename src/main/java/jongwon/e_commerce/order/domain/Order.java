@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -29,12 +30,6 @@ public class Order {
 
     @Column(name = "total_amount", nullable = false)
     private int totalAmount;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     public static Order createOrder(Long memberId){
         Order order = new Order();

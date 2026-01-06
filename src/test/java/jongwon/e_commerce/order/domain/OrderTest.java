@@ -14,7 +14,7 @@ class OrderTest {
     public void 총_주문금액_계산(){
         List<OrderItem> orderItems = new ArrayList<>();
         for(int i = 1; i < 4; i++)
-            orderItems.add(OrderItem.createOrderItem(1L, "상품" + i, i * 1000, 10));
+            orderItems.add(OrderItem.createOrderItem(1L,1L, "상품" + i, i * 1000, 10));
 
         Order order = new Order();
         order.setTotalAmount(orderItems);
@@ -26,6 +26,7 @@ class OrderTest {
     public void 결제중으로_주문상태_변경(){
         //given
         Order order = Order.createOrder(1L);
+        order.setOrderStatus(OrderStatus.CREATED);
 
         //when
         order.markPaymentPending();
