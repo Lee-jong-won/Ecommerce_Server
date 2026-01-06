@@ -38,7 +38,6 @@ public class Order {
 
     public static Order createOrder(Long memberId){
         Order order = new Order();
-        order.orderStatus = OrderStatus.CREATED;
         order.memberId = memberId;
         order.orderedAt = LocalDateTime.now();
         return order;
