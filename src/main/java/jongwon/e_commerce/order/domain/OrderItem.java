@@ -35,14 +35,12 @@ public class OrderItem {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    private OrderItem(Long productId, String productName, int orderPrice, int orderQuantity){
-        this.productId = productId;
-        this.productName = productName;
-        this.orderPrice = orderPrice;
-        this.orderQuantity = orderQuantity;
-    }
-
     public static OrderItem createOrderItem(Long productId, String productName, int orderPrice, int orderQuantity){
-        return new OrderItem(productId, productName, orderPrice, orderQuantity);
+        OrderItem orderItem = new OrderItem();
+        orderItem.productId = productId;
+        orderItem.productName = productName;
+        orderItem.orderPrice = orderPrice;
+        orderItem.orderQuantity = orderQuantity;
+        return orderItem;
     }
 }

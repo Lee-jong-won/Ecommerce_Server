@@ -33,4 +33,11 @@ public class Order {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public static Order createOrder(Long memberId){
+        Order order = new Order();
+        order.orderStatus = OrderStatus.CREATED;
+        order.memberId = memberId;
+        return order;
+    }
 }
