@@ -97,3 +97,19 @@ CREATE TABLE pay (
     UNIQUE KEY uq_pay_order_id (fk_order_id) -- 주문 하나당 결제는 하나
 );
 
+-- 6. delivery 테이블
+CREATE TABLE delivery
+(
+    delivery_id     BIGINT       NOT NULL AUTO_INCREMENT, -- 배송 ID (PK)
+    fk_order_id        BIGINT       NOT NULL,                -- 주문 ID (FK, Unique)
+    delivery_status VARCHAR(20)  NOT NULL DEFAULT 'READY',-- 배송 상태
+    tracking_no     VARCHAR(50) NULL,                     -- 운송장 번호
+    ship_addr       VARCHAR(255) NOT NULL,                -- 배송지
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE
+    CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (delivery_id),
+    UNIQUE KEY uq_delivery_order_id (fk_order_id)           -- 주문 하나당 배송은 하나
+);
+
