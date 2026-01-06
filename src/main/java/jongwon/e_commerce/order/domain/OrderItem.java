@@ -1,11 +1,13 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
 @Table(name = "order_item")
 public class OrderItem {
