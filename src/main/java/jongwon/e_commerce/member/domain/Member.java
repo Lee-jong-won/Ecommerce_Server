@@ -31,4 +31,15 @@ public class Member extends BaseEntity {
 
     @Column(length = 255)
     private String addr;
+
+    public static Member create(String loginId, String password,
+                               String memberName, String email, String addr){
+        Member member = new Member();
+        member.loginId = loginId;
+        member.password = password;
+        member.memberName = memberName;
+        member.email = email;
+        member.addr = addr;
+        return member;
+    }
 }

@@ -49,6 +49,7 @@ public class Delivery extends BaseEntity {
     public static Delivery createDelivery(Long orderId, String shipAddress){
         Delivery delivery = new Delivery();
         delivery.orderId = orderId;
+        delivery.deliveryStatus = DeliveryStatus.READY;
         delivery.shipAddress = shipAddress;
         return delivery;
     }

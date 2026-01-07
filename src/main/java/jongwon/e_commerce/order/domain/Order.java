@@ -34,6 +34,7 @@ public class Order extends BaseEntity {
     public static Order createOrder(Long memberId){
         Order order = new Order();
         order.memberId = memberId;
+        order.orderStatus = OrderStatus.CREATED;
         order.orderedAt = LocalDateTime.now();
         return order;
     }
