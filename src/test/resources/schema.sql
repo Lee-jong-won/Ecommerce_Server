@@ -92,7 +92,9 @@ CREATE INDEX idx_order_item_product -- 외래키 제약 조건 삭제 대신 인
 CREATE TABLE pay (
     pay_id BIGINT  NOT NULL AUTO_INCREMENT, -- 결제 ID (PK)
     fk_order_id BIGINT  NOT NULL,    -- 주문 ID (FK, Unique)
-    pay_method VARCHAR(50) NOT NULL,    -- 결제 수단
+    order_id VARCHAR(255) NOT NULL, -- random으로 생성되는 주문 ID
+    payment_key VARCHAR(255) NOT NULL, -- TOSS에서 만들어주는 Payment 식별 ID
+    pay_method VARCHAR(50) NOT NULL, -- 결제 수단
     pay_amount INT NOT NULL,    -- 결제 금액
     pay_status  VARCHAR(20) NOT NULL,    -- 결제 상태
     paid_at TIMESTAMP NULL,     -- 결제 완료일

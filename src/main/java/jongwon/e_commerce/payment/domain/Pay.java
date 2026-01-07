@@ -16,16 +16,24 @@ public class Pay extends BaseEntity {
     private Long payId;
 
     @Column(name = "fk_order_id", nullable = false)
-    private Long orderId;
+    private Long fkOrderId;
+
+    @Column(name = "order_id", nullable = false)
+    private String orderId;
+
+    @Column(name = "payment_key", nullable = false)
+    private String paymentKey;
 
     @Column(name = "pay_method", nullable = false, length = 50)
-    private String payMethod;
+    @Enumerated(EnumType.STRING)
+    private PayMethod payMethod;
 
     @Column(name = "pay_amount", nullable = false)
     private int payAmount;
 
     @Column(name = "pay_status", nullable = false, length = 20)
-    private String payStatus;
+    @Enumerated(EnumType.STRING)
+    private PayStatus payStatus;
 
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
