@@ -1,5 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
+import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
+
 import java.util.Arrays;
 
 public enum PayMethodMapper {
@@ -27,7 +29,7 @@ public enum PayMethodMapper {
                 .filter(m -> m.tossValue.equals(tossValue))
                 .findFirst()
                 .orElseThrow(() ->
-                        new IllegalArgumentException("지원하지 않는 결제 수단: " + tossValue)
+                        new UnsupportedPayMethodException("지원하지 않는 결제 수단: " + tossValue)
                 )
                 .payMethod;
     }

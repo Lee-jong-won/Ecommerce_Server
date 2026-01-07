@@ -52,6 +52,7 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
+    //프론트가 결제 인증 후, 백앤드로 결제 승인을 요청 시
     public void markPaymentPending() {
         if (this.orderStatus != OrderStatus.CREATED) {
             throw new InvalidOrderStateException("CREATED 상태에서만 결제를 시작할 수 있습니다.");
@@ -59,33 +60,42 @@ public class Order extends BaseEntity {
         setOrderStatus(OrderStatus.PAYMENT_PENDING);
     }
 
+    //PG로부터 결제 승인 성공 응답을 받을 시
     public void markPaid() {
         if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
-            throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 완료 처리 가능합니다.");
+            throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 승인 완료 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.PAID);
     }
 
+    //PG로부터 결제 승인 실패 응답을 받을 시
     public void markFailed() {
         if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
-            throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 실패 처리 가능합니다.");
+            throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 승인 실패 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.FAILED);
     }
 
-    public void markCancel() {
-        if (this.orderStatus == OrderStatus.PAID) {
-            throw new InvalidOrderStateException("결제 완료된 주문은 취소할 수 없습니다.");
-        } else if(this.orderStatus == OrderStatus.CANCELLED){
-            throw new InvalidOrderStateException("이미 취소 처리가 완료된 주문입니다.");
-        } else if(this.orderStatus == OrderStatus.FAILED){
-            throw new InvalidOrderStateException("이미 실패한 결제입니다.");
+    //PG사 정책에 의해 결제가 만료되었을 시
+    public void markExpired() {
+        if (!isExpiredable()) {
+            throw new InvalidOrderStateException(
+                    "만료될 수 없는 주문 상태입니다. 현재 상태: " + orderStatus
+            );
+        }
+        setOrderStatus(OrderStatus.EXPIRED);
+    }
+
+    //고객에 의해 주문이 취소 되었을 시
+    public void markCancel(){
+        if(this.orderStatus != OrderStatus.PAID){
+            throw new InvalidOrderStateException("결제가 완료된 상태에서만 취소 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.CANCELLED);
     }
 
-    public boolean isPayable() {
-        return this.orderStatus == OrderStatus.CREATED;
+    private boolean isExpiredable() {
+        return orderStatus == OrderStatus.CREATED
+                || orderStatus == OrderStatus.PAYMENT_PENDING;
     }
-
 }
