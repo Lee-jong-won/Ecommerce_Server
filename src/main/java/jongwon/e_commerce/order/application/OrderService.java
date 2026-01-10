@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,32 +31,87 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
-    public Long order(Long memberId, List<OrderItemRequest> orderItemRequests){
-        //Order를 DB에 저장
-        Order order = Order.createOrder(memberId);
-        orderRepository.save(order);
+    public Long order(Long memberId, List<OrderItemRequest> requests){
+        Order order = createAndSaveOrder(memberId);
+        createAndSaveDelivery(order, memberId);
 
-        //OrderItem DB에 저장
-        for(OrderItemRequest orderItemRequest : orderItemRequests){
-            Product product = productRepository.findById(orderItemRequest.getProductId())
-                    .orElseThrow(() -> new ProductNotFoundException(orderItemRequest.getProductId()));
+        List<Product> products = findProducts(requests);
+        decreaseStocks(products, requests);
 
-            OrderItem orderItem = OrderItem.createOrderItem(order.getOrderId(), product.getProductId(), product.getProductName(),
-                    product.getProductPrice(), orderItemRequest.getStockQuantity());
-            
-            orderItemRepository.save(orderItem);
-        }
+        List<OrderItem> orderItems =
+                createAndSaveOrderItems(order, products, requests);
 
-        //주문 총액을 Order에 저장
-        
-
-        //Delivery를 DB에 저장
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException(memberId));
-        Delivery delivery = Delivery.createDelivery(order.getOrderId(), member.getAddr());
-        deliveryRepository.save(delivery);
+        order.setTotalAmount(orderItems);
 
         return order.getOrderId();
     }
 
+    private Order createAndSaveOrder(Long memberId) {
+        Order order = Order.createOrder(memberId); // 엔티티 책임
+        orderRepository.save(order);               // 영속화 책임
+        return order;
+    }
+
+    private void createAndSaveDelivery(Order order, Long memberId) {
+        Member member = findMember(memberId);
+
+        Delivery delivery = Delivery.createDelivery(
+                order.getOrderId(),
+                member.getAddr()
+        );
+        deliveryRepository.save(delivery);
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(memberId));
+    }
+
+    private List<Product> findProducts(List<OrderItemRequest> orderItemRequests) {
+        List<Product> products = new ArrayList<>();
+        for (OrderItemRequest request : orderItemRequests) {
+            Product product = productRepository.findById(request.getProductId())
+                    .orElseThrow(() -> new ProductNotFoundException(request.getProductId()));
+            products.add(product);
+        }
+        return products;
+    }
+
+    private void decreaseStocks(
+            List<Product> products,
+            List<OrderItemRequest> requests
+    ) {
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantity = requests.get(i).getStockQuantity();
+
+            product.removeStock(quantity);
+        }
+    }
+
+    private List<OrderItem> createAndSaveOrderItems(
+            Order order,
+            List<Product> products,
+            List<OrderItemRequest> requests
+    ) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            OrderItemRequest request = requests.get(i);
+
+            OrderItem orderItem = OrderItem.createOrderItem(
+                    order.getOrderId(),
+                    product.getProductId(),
+                    product.getProductName(),
+                    product.getProductPrice(),
+                    request.getStockQuantity()
+            );
+
+            orderItemRepository.save(orderItem);
+            orderItems.add(orderItem);
+        }
+
+        return orderItems;
+    }
 }

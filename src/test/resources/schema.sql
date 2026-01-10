@@ -34,6 +34,7 @@ CREATE TABLE product
     product_id     BIGINT       NOT NULL AUTO_INCREMENT, -- 상품 ID (PK)
     product_name   VARCHAR(100) NOT NULL,                -- 상품명
     product_price  INT          NOT NULL,                -- 가격
+    product_status    VARCHAR(10)  NOT NULL,
     stock_quantity INT          NOT NULL DEFAULT 0,      -- 재고 수량
     created_at     TIMESTAMP     NOT NULL,
     updated_at     TIMESTAMP     NOT NULL,
