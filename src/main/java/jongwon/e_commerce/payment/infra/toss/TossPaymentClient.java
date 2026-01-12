@@ -27,7 +27,7 @@ public class TossPaymentClient {
                         HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON_VALUE
                 )
-                .requestFactory(new HttpComponentsClientHttpRequestFactory())
+                .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient))
                 .build();
     }
 
