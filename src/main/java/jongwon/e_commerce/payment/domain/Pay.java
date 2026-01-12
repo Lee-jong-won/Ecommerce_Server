@@ -41,8 +41,11 @@ public class Pay extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PayStatus payStatus;
 
-    @Column(name = "paid_at")
-    private LocalDateTime paidAt;
+    @Column(name = "requested_at")
+    private LocalDateTime requestedAt;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //

@@ -99,9 +99,10 @@ CREATE TABLE pay (
     pay_method VARCHAR(50) NOT NULL, -- 결제 수단
     pay_amount INT NOT NULL,    -- 결제 금액
     pay_status  VARCHAR(20) NOT NULL,    -- 결제 상태
-    paid_at TIMESTAMP NULL,     -- 결제 완료일
-    created_at TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP NOT NULL,
+    requested_at TIMESTAMP NULL,     -- 결제가 일어난 시각
+    approved_at TIMESTAMP NULL, -- 결제가 승인된 시각
+    created_at TIMESTAMP NOT NULL, -- 레코드가 만들어진 시각
+    updated_at TIMESTAMP NOT NULL, -- 레코드가 업데이트 된 시각
 
     PRIMARY KEY (pay_id),
     CONSTRAINT uq_pay_order_id UNIQUE (fk_order_id) -- 주문 하나당 결제는 하나
