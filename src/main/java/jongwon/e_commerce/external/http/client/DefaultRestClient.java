@@ -1,6 +1,6 @@
 package jongwon.e_commerce.external.http.client;
 
-import jongwon.e_commerce.external.payment.toss.TossPaymentProperties;
+import jongwon.e_commerce.payment.infra.toss.TossPaymentProperties;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
