@@ -33,4 +33,5 @@ public class TossPaymentClient {
         return basicAuthPrefix + " " + Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
     }
+
 }
