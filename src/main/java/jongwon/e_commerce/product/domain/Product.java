@@ -24,7 +24,7 @@ public class Product extends BaseEntity {
     @Column(name = "product_price", nullable = false)
     private int productPrice;
 
-    @Column(name = "sale_status", nullable = false, length = 10)
+    @Column(name = "product_status", nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
 

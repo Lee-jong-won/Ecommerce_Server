@@ -37,8 +37,10 @@ public class paymentService {
                 paymentApproveRequest.getPaymentKey(),
                 paymentApproveRequest.getAmount()
         );
+        paymentRepository.save(payment);
 
         //외부 api 호출
+
 
         //결제 승인 성공
 
