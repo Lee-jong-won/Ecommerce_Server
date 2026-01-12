@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.infra.toss;
+package jongwon.e_commerce.external.payment.toss;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,10 +1,13 @@
 package jongwon.e_commerce.external.http.policy;
 
-public record HttpClientPolicy(RetryPolicy retryPolicy,
-                               ConnectionPoolPolicy connectionPoolPolicy,
-                               TimeoutPolicy timeoutPolicy) {
+import lombok.Builder;
+import lombok.Getter;
 
-    public static HttpClientPolicy empty(){
-        return new HttpClientPolicy(null, null, null);
-    }
+@Getter
+@Builder
+public class HttpClientPolicy {
+    private RetryPolicy retryPolicy;
+    private ConnectionPolicy connectionPoolPolicy;
+    private TimeoutPolicy timeoutPolicy;
+
 }

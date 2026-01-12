@@ -1,5 +1,12 @@
 package jongwon.e_commerce.payment.infra.toss;
 
+import jongwon.e_commerce.external.http.client.HttpClientFactory;
+import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
+import jongwon.e_commerce.external.http.policy.RetryPolicy;
+import jongwon.e_commerce.external.http.policy.TimeoutPolicy;
+import jongwon.e_commerce.external.payment.toss.TossPaymentProperties;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -15,21 +22,51 @@ import java.util.Map;
 @Component
 public class TossPaymentClient {
     private final RestClient restClient;
+    public TossPaymentClient(
+            HttpClientFactory factory,
+            TossPaymentProperties properties
+    ) {
+        this.restClient = createRestClient(factory, properties);
+    }
 
-    public TossPaymentClient(TossPaymentProperties properties, @Qualifier("paymentHttpClient")HttpClient httpClient){
-        this.restClient = RestClient.builder()
+    private RestClient createRestClient(
+            HttpClientFactory factory,
+            TossPaymentProperties properties
+    ) {
+        HttpClientPolicy policy = HttpClientPolicy.builder()
+                .timeoutPolicy(
+                        TimeoutPolicy.builder()
+                                .responseTimeoutSeconds(30)
+                                .build()
+                )
+                .retryPolicy(
+                        RetryPolicy.builder()
+                                .disableAutomaticRetries(true)
+                                .build()
+                )
+                .build();
+
+        return RestClient.builder()
                 .baseUrl(properties.getApiUrl())
                 .defaultHeader(
                         HttpHeaders.AUTHORIZATION,
-                        buildBasicAuthHeader(properties.getSecretKey(), properties.getBasicAuthPrefix())
+                        buildBasicAuthHeader(
+                                properties.getSecretKey(),
+                                properties.getBasicAuthPrefix()
+                        )
                 )
                 .defaultHeader(
                         HttpHeaders.CONTENT_TYPE,
                         MediaType.APPLICATION_JSON_VALUE
                 )
-                .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient))
+                .requestFactory(
+                        new HttpComponentsClientHttpRequestFactory(
+                                factory.create(policy)
+                        )
+                )
                 .build();
     }
+
 
     private String buildBasicAuthHeader(String secretKey, String basicAuthPrefix){
         return basicAuthPrefix + " " + Base64.getEncoder()
