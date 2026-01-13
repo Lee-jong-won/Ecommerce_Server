@@ -6,6 +6,7 @@ import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.infra.PaymentRepository;
+import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
 import jongwon.e_commerce.payment.presentation.dto.PaymentApproveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class paymentService {
-
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final TossPaymentClient tossPaymentClient;
 
-    public void paymentApprove(PaymentApproveRequest paymentApproveRequest){
+    public void validatePaymentInfo(PaymentApproveRequest paymentApproveRequest){
 
         Optional<Order> optionalOrder = findOrderById(paymentApproveRequest.getOrderId());
         if(!optionalOrder.isPresent())
@@ -38,17 +39,7 @@ public class paymentService {
                 paymentApproveRequest.getAmount()
         );
         paymentRepository.save(payment);
-
-        //외부 api 호출
-
-
-        //결제 승인 성공
-
-        //결제 승인 실패
-
-        //타임 아웃
     }
-
 
     public boolean validateAmount(int orderAmount, int payAmount){
         return orderAmount == payAmount;
