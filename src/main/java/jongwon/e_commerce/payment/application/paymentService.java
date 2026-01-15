@@ -23,7 +23,6 @@ public class paymentService {
     private final TossPaymentClient tossPaymentClient;
 
     public void validatePaymentInfo(PaymentApproveRequest paymentApproveRequest){
-
         Optional<Order> optionalOrder = findOrderById(paymentApproveRequest.getOrderId());
         if(!optionalOrder.isPresent())
             throw new OrderNotExistException("결제 정보에 대응되는 주문 정보가 존재하지 않습니다.");

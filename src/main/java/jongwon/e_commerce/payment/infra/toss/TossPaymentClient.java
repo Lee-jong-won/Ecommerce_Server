@@ -4,8 +4,12 @@ import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
 import jongwon.e_commerce.external.http.policy.TimeoutPolicy;
+import jongwon.e_commerce.payment.exception.TossApiNetworkException;
+import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
+import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
@@ -71,11 +75,9 @@ public class TossPaymentClient {
                 .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));
     }
 
-    public TossPaymentApproveResponse approvePayment(String paymentKey,
-                                                     String orderId,
-                                                     Long amount){
-     try {
-         return restClient.post()
+    public TossPaymentApproveResponse approvePayment(String paymentKey, String orderId, Long amount){
+        try {
+            return restClient.post()
                  .uri("/confirm")
                  .body(Map.of(
                          "paymentKey", paymentKey,
@@ -84,18 +86,20 @@ public class TossPaymentClient {
                  ))
                  .retrieve()
                  .body(TossPaymentApproveResponse.class);
-     } catch ( RestClientResponseException e){
-         log.warn("[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}",
+        } catch ( RestClientResponseException e){
+
+            if(e.getStatusCode() == HttpStatus.BAD_REQUEST)
+                throw new TossPaymentApprovalClientFailException();
+
+            log.error("[TOSS_PAYMENT_API_ERROR] orderId={}, paymentKey={}, status={}",
+                    orderId, paymentKey, e.getStatusCode(), e);
+            throw new TossPaymentApprovalPGFailException();
+        } catch ( ResourceAccessException e){
+            log.error("[TOSS_PAYMENT_NETWORK_ERROR] orderId={}, paymentKey={}",
                  orderId,
                  paymentKey,
                  e);
-         throw e;
-     } catch ( ResourceAccessException e){
-         log.error("[TOSS_PAYMENT_NE] orderId={}, paymentKey={}",
-                 orderId,
-                 paymentKey,
-                 e);
-         throw e;
-     }
+            throw new TossApiNetworkException();
+        }
     }
 }
