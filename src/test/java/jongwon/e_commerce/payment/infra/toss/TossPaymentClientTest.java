@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.infra.toss;
 import jongwon.e_commerce.payment.exception.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
+import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

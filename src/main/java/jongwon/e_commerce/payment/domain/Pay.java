@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Getter
@@ -35,22 +36,22 @@ public class Pay extends BaseEntity {
     private PayMethod payMethod;
 
     @Column(name = "pay_amount", nullable = false)
-    private int payAmount;
+    private long payAmount;
 
     @Column(name = "pay_status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private PayStatus payStatus;
 
     @Column(name = "requested_at")
-    private LocalDateTime requestedAt;
+    private OffsetDateTime requestedAt;
 
     @Column(name = "approved_at")
-    private LocalDateTime approvedAt;
+    private OffsetDateTime approvedAt;
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //
     public static Pay create(Long fkOrderId, String orderId,
-                             String orderName, String paymentKey, int payAmount){
+                             String orderName, String paymentKey, long payAmount){
         Pay pay = new Pay();
         pay.fkOrderId = fkOrderId;
         pay.orderId = orderId;
@@ -64,6 +65,18 @@ public class Pay extends BaseEntity {
     //비즈니스 로직
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
+    }
+
+    public void setApprovedAt(OffsetDateTime approvedAt){
+        this.approvedAt = approvedAt;
+    }
+
+    public void setRequestedAt(OffsetDateTime requestedAt){
+        this.requestedAt = requestedAt;
+    }
+
+    public void setPayMethod(PayMethod payMethod){
+        this.payMethod = payMethod;
     }
 
     // PG 승인 성공 응답 수신

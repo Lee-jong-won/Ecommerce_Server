@@ -5,16 +5,16 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PaymentApproveRequest {
+public class TossPaymentApproveRequest {
 
     private Long orderId;
     private String orderName;
     private String payOrderId;
     private String paymentKey;
-    private int amount;
+    private long amount;
 
-    public PaymentApproveRequest(Long orderId, String payOrderId, String paymentKey,
-                                 String orderName, int amount){
+    public TossPaymentApproveRequest(Long orderId, String payOrderId, String paymentKey,
+                                     String orderName, long amount){
         this.orderId = orderId;
         this.payOrderId = payOrderId;
         this.paymentKey = paymentKey;

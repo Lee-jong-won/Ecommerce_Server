@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.infra.toss;
 import jongwon.e_commerce.payment.exception.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
+import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,6 @@ public class TossPaymentClient {
                  .retrieve()
                  .body(TossPaymentApproveResponse.class);
         } catch ( RestClientResponseException e){
-
             if(e.getStatusCode() == HttpStatus.BAD_REQUEST)
                 throw new TossPaymentApprovalClientFailException();
 

@@ -36,7 +36,6 @@ public class OrderService {
         createAndSaveDelivery(order, memberId);
 
         List<Product> products = findProducts(requests);
-        decreaseStocks(products, requests);
 
         List<OrderItem> orderItems =
                 createAndSaveOrderItems(order, products, requests);
@@ -75,18 +74,6 @@ public class OrderService {
             products.add(product);
         }
         return products;
-    }
-
-    private void decreaseStocks(
-            List<Product> products,
-            List<OrderItemRequest> requests
-    ) {
-        for (int i = 0; i < products.size(); i++) {
-            Product product = products.get(i);
-            int quantity = requests.get(i).getStockQuantity();
-
-            product.removeStock(quantity);
-        }
     }
 
     private List<OrderItem> createAndSaveOrderItems(
