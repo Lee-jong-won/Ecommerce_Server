@@ -1,5 +1,7 @@
 package jongwon.e_commerce.payment.infra.toss;
 
+import jongwon.e_commerce.common.exception.InfrastructureException;
+import jongwon.e_commerce.payment.exception.PGTooManyRequestException;
 import jongwon.e_commerce.payment.exception.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
 import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
@@ -36,8 +38,12 @@ public class TossPaymentClient {
                  .retrieve()
                  .body(TossPaymentApproveResponse.class);
         } catch ( RestClientResponseException e){
+
             if(e.getStatusCode() == HttpStatus.BAD_REQUEST)
                 throw new TossPaymentApprovalClientFailException();
+
+            if(e.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS)
+                throw new PGTooManyRequestException();
 
             log.error("[TOSS_PAYMENT_API_ERROR] orderId={}, paymentKey={}, status={}",
                     orderId, paymentKey, e.getStatusCode(), e);

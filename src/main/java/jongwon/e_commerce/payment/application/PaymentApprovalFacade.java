@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class PaymentApprovalFacade {
+
     private final PaymentPrepareService paymentPrepareService;
     private final PaymentResultService paymentResultService;
     private final TossPaymentClient tossPaymentClient;
@@ -33,7 +34,7 @@ public class PaymentApprovalFacade {
                     "applySuccess",
                     request.getPaymentKey(),
                     null,
-                    () -> paymentResultService.applySuccess(request.getPaymentKey(), response)
+                    () -> paymentResultService.applySuccess(request.getPaymentKey(), request.getOrderId(), response)
             );
         } catch( TossPaymentApprovalClientFailException e){
             // 클라이언트 오류 → 결제 실패 처리
@@ -41,7 +42,8 @@ public class PaymentApprovalFacade {
                     "applyFail",
                     request.getPaymentKey(),
                     e,
-                    () -> paymentResultService.applyFail(request.getPaymentKey())
+                    () -> paymentResultService.applyFail(request.getPaymentKey(),
+                            request.getOrderId())
             );
             throw e;
 
@@ -51,7 +53,8 @@ public class PaymentApprovalFacade {
                     "applyFail",
                     request.getPaymentKey(),
                     e,
-                    () -> paymentResultService.applyFail(request.getPaymentKey())
+                    () -> paymentResultService.applyFail(request.getPaymentKey(),
+                            request.getOrderId())
             );
             throw e;
 
