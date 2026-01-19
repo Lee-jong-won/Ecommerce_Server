@@ -41,7 +41,7 @@ public class TossPaymentClient {
 
             log.error("[TOSS_PAYMENT_API_ERROR] orderId={}, paymentKey={}, status={}",
                     orderId, paymentKey, e.getStatusCode(), e);
-            throw new TossPaymentApprovalPGFailException();
+            throw new TossPaymentApprovalPGFailException("PG사에서 결제중 오류가 발생했습니다. 다시 한번 시도해주세요!");
         } catch ( ResourceAccessException e){
             log.error("[TOSS_PAYMENT_NETWORK_ERROR] orderId={}, paymentKey={}",
                  orderId,
