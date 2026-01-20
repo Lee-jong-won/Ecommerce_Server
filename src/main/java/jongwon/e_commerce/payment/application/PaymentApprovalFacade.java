@@ -31,7 +31,6 @@ public class PaymentApprovalFacade {
     }
 
     public TossPaymentApproveResponse approvePayment(TossPaymentApproveRequest request){
-        //1.준비 단계
         paymentPrepareService.preparePayment(request);
         try {
             TossPaymentApproveResponse response = callApproveApi(request);
@@ -80,7 +79,6 @@ public class PaymentApprovalFacade {
 
     private void handleRetryableFault(TossPaymentApproveRequest request,
                                       TossPaymentRetryableException e) {
-
         if (e instanceof TossApiTimeoutException) {
             safeExecute(
                     "applyTimeout",

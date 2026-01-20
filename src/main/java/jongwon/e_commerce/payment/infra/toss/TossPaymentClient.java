@@ -37,40 +37,86 @@ public class TossPaymentClient {
 
     public TossPaymentApproveResponse approvePayment(String paymentKey, String orderId, Long amount){
         try {
-            return restClient.post()
-                 .uri("/confirm")
-                 .body(Map.of(
-                         "paymentKey", paymentKey,
-                         "orderId", orderId,
-                         "amount", amount
-                 ))
-                 .retrieve()
-                 .body(TossPaymentApproveResponse.class);
-        } catch ( RestClientResponseException e){
-            TossErrorResponse error = parseError(e);
-            if ("INVALID_API_KEY".equals(error.getCode())
-                    || "UNAUTHORIZED_KEY".equals(error.getCode())) {
-                log.error("[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}, code={}, message={}",
-                        orderId,
-                        paymentKey,
-                        error.getCode(),
-                        error.getMessage()
-                );
-            }
-            throw tossPaymentErrorMapper.map(error.getCode());
-        } catch ( ResourceAccessException e){
-            if(e.getCause() instanceof SocketTimeoutException)
-                throw new TossApiTimeoutException(ErrorCode.TOSS_API_TIMEOUT_ERROR);
-            else{
-                log.error("[TOSS_PAYMENT_NETWORK_ERROR] orderId={}, paymentKey={}",
-                        orderId,
-                        paymentKey,
-                        e);
-                throw new TossApiNetworkException(ErrorCode.TOSS_API_NETWORK_ERROR);
-            }
+            return doRequest(paymentKey, orderId, amount);
+        } catch (RestClientResponseException e) {
+            throw handleApiError(e, orderId, paymentKey);
+        } catch (ResourceAccessException e) {
+            throw handleNetworkError(e, orderId, paymentKey);
         }
     }
 
+    private TossPaymentApproveResponse doRequest(
+            String paymentKey,
+            String orderId,
+            Long amount
+    ) {
+        return restClient.post()
+                .uri("/confirm")
+                .body(createRequestBody(paymentKey, orderId, amount))
+                .retrieve()
+                .body(TossPaymentApproveResponse.class);
+    }
+
+    private Map<String, Object> createRequestBody(
+            String paymentKey,
+            String orderId,
+            Long amount
+    ) {
+        return Map.of(
+                "paymentKey", paymentKey,
+                "orderId", orderId,
+                "amount", amount
+        );
+    }
+
+    private RuntimeException handleApiError(
+            RestClientResponseException e,
+            String orderId,
+            String paymentKey
+    ) {
+        TossErrorResponse error = parseError(e);
+
+        if (isAuthError(error.getCode())) {
+            log.error(
+                    "[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}, code={}, message={}",
+                    orderId,
+                    paymentKey,
+                    error.getCode(),
+                    error.getMessage()
+            );
+        }
+
+        throw tossPaymentErrorMapper.map(error.getCode());
+    }
+
+    private boolean isAuthError(String code) {
+        return "INVALID_API_KEY".equals(code)
+                || "UNAUTHORIZED_KEY".equals(code);
+    }
+
+    private RuntimeException handleNetworkError(
+            ResourceAccessException e,
+            String orderId,
+            String paymentKey
+    ) {
+        if (isTimeout(e)) {
+            throw new TossApiTimeoutException(ErrorCode.TOSS_API_TIMEOUT_ERROR);
+        }
+
+        log.error(
+                "[TOSS_PAYMENT_NETWORK_ERROR] orderId={}, paymentKey={}",
+                orderId,
+                paymentKey,
+                e
+        );
+
+        throw new TossApiNetworkException(ErrorCode.TOSS_API_NETWORK_ERROR);
+    }
+
+    private boolean isTimeout(ResourceAccessException e) {
+        return e.getCause() instanceof SocketTimeoutException;
+    }
+    
     private TossErrorResponse parseError(RestClientResponseException e) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -94,4 +140,5 @@ public class TossPaymentClient {
             );
         }
     }
+
 }
