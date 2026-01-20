@@ -47,7 +47,6 @@ public class TossPaymentClient {
                  .retrieve()
                  .body(TossPaymentApproveResponse.class);
         } catch ( RestClientResponseException e){
-
             TossErrorResponse error = parseError(e);
             if ("INVALID_API_KEY".equals(error.getCode())
                     || "UNAUTHORIZED_KEY".equals(error.getCode())) {
@@ -58,7 +57,6 @@ public class TossPaymentClient {
                         error.getMessage()
                 );
             }
-
             throw tossPaymentErrorMapper.map(error.getCode());
         } catch ( ResourceAccessException e){
             if(e.getCause() instanceof SocketTimeoutException)
