@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.application;
 
-import jongwon.e_commerce.payment.exception.TossApiNetworkException;
-import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
-import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
 import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
@@ -36,7 +36,7 @@ public class PaymentApprovalFacade {
                     null,
                     () -> paymentResultService.applySuccess(request.getPaymentKey(), request.getOrderId(), response)
             );
-        } catch( TossPaymentApprovalClientFailException e){
+        } catch( TossPaymentUserFaultException e){
             // 클라이언트 오류 → 결제 실패 처리
             safeExecute(
                     "applyFail",
@@ -47,26 +47,15 @@ public class PaymentApprovalFacade {
             );
             throw e;
 
-        } catch( TossPaymentApprovalPGFailException e){
+        } catch( TossPaymentRetryableException e){
             // PG 서버 오류 → 재시도 가능 영역
-            safeExecute(
-                    "applyFail",
-                    request.getPaymentKey(),
-                    e,
-                    () -> paymentResultService.applyFail(request.getPaymentKey(),
-                            request.getOrderId())
-            );
-            throw e;
-
-        } catch( TossApiNetworkException e ){
-            // 타임 아웃 -> 재시도 가능 영역
-            safeExecute(
-                    "applyTimeout",
-                    request.getPaymentKey(),
-                    e,
-                    () -> paymentResultService.applyTimeout(request.getPaymentKey())
-            );
-            throw e;
+            if(e instanceof TossApiTimeoutException)
+                safeExecute(
+                        "applyTimeout",
+                        request.getPaymentKey(),
+                        e,
+                        () -> paymentResultService.applyTimeout(request.getPaymentKey())
+                );
         }
     }
 

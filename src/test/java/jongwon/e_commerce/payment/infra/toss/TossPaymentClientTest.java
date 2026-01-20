@@ -1,8 +1,6 @@
 package jongwon.e_commerce.payment.infra.toss;
 
-import jongwon.e_commerce.payment.exception.TossApiNetworkException;
-import jongwon.e_commerce.payment.exception.TossPaymentApprovalClientFailException;
-import jongwon.e_commerce.payment.exception.TossPaymentApprovalPGFailException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +108,7 @@ class TossPaymentClientTest {
         // when & then
         assertThatThrownBy(() ->
                 tossPaymentClient.approvePayment(PAYMENT_KEY, ORDER_ID, AMOUNT))
-                .isInstanceOf(TossPaymentApprovalPGFailException.class);
+                .isInstanceOf(TossTemporaryFailureException.class);
     }
 
     @Test
