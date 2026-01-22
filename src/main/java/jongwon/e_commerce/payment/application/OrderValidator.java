@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderValidator {
     private final OrderRepository orderRepository;
-
     public OrderValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }

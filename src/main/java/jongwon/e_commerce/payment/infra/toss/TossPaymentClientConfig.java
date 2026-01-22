@@ -16,7 +16,6 @@ import java.util.Base64;
 
 @Configuration
 public class TossPaymentClientConfig {
-
     @Bean(name = "tossRestClient")
     public RestClient createRestClient(
             HttpClientFactory factory,

@@ -1,7 +1,8 @@
 package jongwon.e_commerce.payment.infra.toss;
 
-import jongwon.e_commerce.common.exception.ErrorCode;
 import jongwon.e_commerce.payment.exception.TossPaymentErrorMapper;
+import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
+import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.presentation.dto.TossErrorResponse;
@@ -69,13 +70,12 @@ public class TossPaymentClient {
         );
     }
 
-    private RuntimeException handleApiError(
+    private TossPaymentException handleApiError(
             RestClientResponseException e,
             String orderId,
             String paymentKey
     ) {
         TossErrorResponse error = parseError(e);
-
         if (isAuthError(error.getCode())) {
             log.error(
                     "[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}, code={}, message={}",
@@ -85,7 +85,6 @@ public class TossPaymentClient {
                     error.getMessage()
             );
         }
-
         throw tossPaymentErrorMapper.map(error.getCode());
     }
 
@@ -94,13 +93,13 @@ public class TossPaymentClient {
                 || "UNAUTHORIZED_KEY".equals(code);
     }
 
-    private RuntimeException handleNetworkError(
+    private TossPaymentException handleNetworkError(
             ResourceAccessException e,
             String orderId,
             String paymentKey
     ) {
         if (isTimeout(e)) {
-            throw new TossApiTimeoutException(ErrorCode.TOSS_API_TIMEOUT_ERROR);
+            throw new TossApiTimeoutException(PaymentErrorCode.TOSS_API_TIMEOUT_ERROR);
         }
 
         log.error(
@@ -110,13 +109,13 @@ public class TossPaymentClient {
                 e
         );
 
-        throw new TossApiNetworkException(ErrorCode.TOSS_API_NETWORK_ERROR);
+        throw new TossApiNetworkException(PaymentErrorCode.TOSS_API_NETWORK_ERROR);
     }
 
     private boolean isTimeout(ResourceAccessException e) {
         return e.getCause() instanceof SocketTimeoutException;
     }
-    
+
     private TossErrorResponse parseError(RestClientResponseException e) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
