@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application;
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.infra.OrderItemRepository;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.infra.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +28,8 @@ public class StockService {
     private void decreaseSingleProductStock(OrderItem orderItem) {
         Product product = productRepository.findById(orderItem.getProductId())
                 .orElseThrow(() ->
-                        new IllegalStateException("상품 정보가 존재하지 않습니다.")
+                        new ProductNotFoundException(orderItem.getProductId())
                 );
-
         product.removeStock(orderItem.getOrderQuantity());
     }
 
