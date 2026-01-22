@@ -193,6 +193,11 @@ public enum PaymentErrorCode {
             "TOSS_API_NETWORK_ERROR",
                     ErrorCategory.RETRYABLE
     ),
+    TOO_MANY_REQUESTS(
+            HttpStatus.TOO_MANY_REQUESTS.value(),
+            "TOO_MANY_REQUESTS",
+            ErrorCategory.RETRYABLE
+    ),
 
     /* =========================
      * UNKNOWN

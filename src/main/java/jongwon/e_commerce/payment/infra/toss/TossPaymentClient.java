@@ -5,6 +5,7 @@ import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.presentation.dto.TossErrorResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -76,7 +77,8 @@ public class TossPaymentClient {
             String paymentKey
     ) {
         TossErrorResponse error = parseError(e);
-        if (isAuthError(error.getCode())) {
+        TossPaymentException ex = tossPaymentErrorMapper.map(error.getCode());
+        if (ex instanceof TossPaymentSystemException) {
             log.error(
                     "[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}, code={}, message={}",
                     orderId,
@@ -85,7 +87,7 @@ public class TossPaymentClient {
                     error.getMessage()
             );
         }
-        throw tossPaymentErrorMapper.map(error.getCode());
+        throw ex;
     }
 
     private boolean isAuthError(String code) {
@@ -108,7 +110,6 @@ public class TossPaymentClient {
                 paymentKey,
                 e
         );
-
         throw new TossApiNetworkException(PaymentErrorCode.TOSS_API_NETWORK_ERROR);
     }
 

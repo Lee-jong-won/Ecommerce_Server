@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class TossPaymentErrorMapper {
     public TossPaymentException map(String code) {
-
         PaymentErrorCode paymentErrorCode = parse(code);
         return switch (paymentErrorCode.category()) {
             case USER_FAULT, REJECT ->
