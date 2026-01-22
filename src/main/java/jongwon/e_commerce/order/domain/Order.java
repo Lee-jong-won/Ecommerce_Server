@@ -29,7 +29,7 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
 
     @Column(name = "total_amount", nullable = false)
-    private int totalAmount;
+    private long totalAmount;
 
     public static Order createOrder(Long memberId){
         Order order = new Order();
