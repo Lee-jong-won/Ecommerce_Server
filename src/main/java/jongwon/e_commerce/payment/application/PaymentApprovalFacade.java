@@ -7,6 +7,7 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultExcepti
 import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -45,17 +46,21 @@ public class PaymentApprovalFacade {
 
     private TossPaymentApproveResponse callApproveApi(TossPaymentApproveRequest request) {
         return tossRetryTemplate.execute(context ->
-                tossPaymentClient.approvePayment(
-                        request.getPaymentKey(),
-                        request.getPayOrderId(),
-                        request.getAmount()
-                )
+                tossPaymentClient.approve(request)
         );
+    }
+
+    private void callCancelApi(TossPaymentCancelRequest request){
+        tossRetryTemplate.execute(context -> {
+            tossPaymentClient.cancel(request);
+            return null;
+        });
     }
 
     private void handleSuccess(TossPaymentApproveRequest request,
                                TossPaymentApproveResponse response) {
-        safeExecute(
+
+        boolean dbSuccessApplied = safeExecute(
                 "applySuccess",
                 request.getPaymentKey(),
                 () -> paymentResultService.applySuccess(
@@ -64,6 +69,10 @@ public class PaymentApprovalFacade {
                         response
                 )
         );
+
+        if(!dbSuccessApplied){
+            callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(), "DB 반영 실패로 인한 결제 취소"));
+        }
     }
 
     private void handleFailure(TossPaymentApproveRequest request, TossPaymentException e) {
@@ -101,13 +110,14 @@ public class PaymentApprovalFacade {
         );
     }
 
-    private void safeExecute(
+    private boolean safeExecute(
             String actionName,
             String paymentKey,
             Runnable action
     ){
         try {
             action.run();
+            return true;
         } catch (DataAccessException dataAccessException) {
             log.error(
                     "[CRITICAL] 결제 상태 반영 실패 - action: {}, paymentKey: {}, originalException: {}, dbException: {}",
@@ -115,6 +125,7 @@ public class PaymentApprovalFacade {
                     paymentKey,
                     dataAccessException.getMessage()
             );
+            return false;
         }
     }
 

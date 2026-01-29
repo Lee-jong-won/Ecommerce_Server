@@ -7,7 +7,9 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableExcepti
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.presentation.dto.TossErrorResponse;
+import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -37,108 +39,117 @@ public class TossPaymentClient {
         this.tossPaymentErrorMapper = tossPaymentErrorMapper;
     }
 
-    public TossPaymentApproveResponse approvePayment(String paymentKey, String orderId, Long amount){
-        try {
-            return doRequest(paymentKey, orderId, amount);
-        } catch (RestClientResponseException e) {
-            throw handleApiError(e, orderId, paymentKey);
-        } catch (ResourceAccessException e) {
-            throw handleNetworkError(e, orderId, paymentKey);
-        }
-    }
 
-    private TossPaymentApproveResponse doRequest(
-            String paymentKey,
-            String orderId,
-            Long amount
-    ) {
-        return restClient.post()
-                .uri("/confirm")
-                .body(createRequestBody(paymentKey, orderId, amount))
-                .retrieve()
-                .body(TossPaymentApproveResponse.class);
-    }
-
-    private Map<String, Object> createRequestBody(
-            String paymentKey,
-            String orderId,
-            Long amount
-    ) {
-        return Map.of(
-                "paymentKey", paymentKey,
-                "orderId", orderId,
-                "amount", amount
+    /* ======================
+       결제 승인
+       ====================== */
+    public TossPaymentApproveResponse approve(TossPaymentApproveRequest request) {
+        return execute(
+                "/confirm",
+                request,
+                TossPaymentApproveResponse.class
         );
     }
 
-    private TossPaymentException handleApiError(
-            RestClientResponseException e,
-            String orderId,
-            String paymentKey
+    /* ======================
+       결제 취소
+       ====================== */
+    public void cancel(TossPaymentCancelRequest request) {
+        execute(
+                "/{paymentKey}/cancel",
+                request.getPaymentKey(),
+                Map.of("cancelReason", request.getCancelReason()),
+                Void.class
+        );
+    }
+
+    /* ======================
+       공통 execute
+       ====================== */
+    private <T> T execute(
+            String uri,
+            Object body,
+            Class<T> responseType
     ) {
+        try {
+            return restClient.post()
+                    .uri(uri)
+                    .body(body)
+                    .retrieve()
+                    .body(responseType);
+
+        } catch (RestClientResponseException e) {
+            throw handleApiError(e);
+
+        } catch (ResourceAccessException e) {
+            throw handleNetworkError(e);
+        }
+    }
+
+    private <T> T execute(
+            String uri,
+            String paymentKey,
+            Object body,
+            Class<T> responseType
+    ) {
+        try {
+            return restClient.post()
+                    .uri(uri, paymentKey)
+                    .body(body)
+                    .retrieve()
+                    .body(responseType);
+
+        } catch (RestClientResponseException e) {
+            throw handleApiError(e);
+
+        } catch (ResourceAccessException e) {
+            throw handleNetworkError(e);
+        }
+    }
+
+    /* ======================
+     에러 처리
+     ====================== */
+    private TossPaymentException handleApiError(RestClientResponseException e) {
         TossErrorResponse error = parseError(e);
         TossPaymentException ex = tossPaymentErrorMapper.map(error.getCode());
+
         if (ex instanceof TossPaymentSystemException) {
             log.error(
-                    "[TOSS_PAYMENT_ERROR] orderId={}, paymentKey={}, code={}, message={}",
-                    orderId,
-                    paymentKey,
+                    "[TOSS_API_ERROR] code={}, message={}",
                     error.getCode(),
                     error.getMessage()
             );
         }
-        throw ex;
+        return ex;
     }
 
-    private boolean isAuthError(String code) {
-        return "INVALID_API_KEY".equals(code)
-                || "UNAUTHORIZED_KEY".equals(code);
-    }
-
-    private TossPaymentException handleNetworkError(
-            ResourceAccessException e,
-            String orderId,
-            String paymentKey
-    ) {
-        if (isTimeout(e)) {
-            throw new TossApiTimeoutException(PaymentErrorCode.TOSS_API_TIMEOUT_ERROR);
+    private TossPaymentException handleNetworkError(ResourceAccessException e) {
+        if (e.getCause() instanceof SocketTimeoutException) {
+            return new TossApiTimeoutException(PaymentErrorCode.TOSS_API_TIMEOUT_ERROR);
         }
 
-        log.error(
-                "[TOSS_PAYMENT_NETWORK_ERROR] orderId={}, paymentKey={}",
-                orderId,
-                paymentKey,
-                e
-        );
-        throw new TossApiNetworkException(PaymentErrorCode.TOSS_API_NETWORK_ERROR);
-    }
-
-    private boolean isTimeout(ResourceAccessException e) {
-        return e.getCause() instanceof SocketTimeoutException;
+        log.error("[TOSS_API_NETWORK_ERROR]", e);
+        return new TossApiNetworkException(PaymentErrorCode.TOSS_API_NETWORK_ERROR);
     }
 
     private TossErrorResponse parseError(RestClientResponseException e) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-
             return objectMapper.readValue(
                     e.getResponseBodyAsString(),
                     TossErrorResponse.class
             );
-
         } catch (JacksonException parseException) {
-            log.error("[TOSS_ERROR_PARSE_FAIL] status={}, body={}",
+            log.error(
+                    "[TOSS_ERROR_PARSE_FAIL] status={}, body={}",
                     e.getStatusCode(),
                     e.getResponseBodyAsString(),
                     parseException
             );
-
-            // 파싱 실패 시 fallback
             return new TossErrorResponse(
                     "UNKNOWN_ERROR",
                     "결제 처리 중 알 수 없는 오류가 발생했습니다."
             );
         }
     }
-
 }
