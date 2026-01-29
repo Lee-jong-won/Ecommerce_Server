@@ -5,6 +5,14 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum PaymentErrorCode {
+
+    /* =========================
+     *
+     * 결제 승인 관련 오류코드
+     *
+     * ========================= */
+
+
     /* =========================
      * Already processed
      * ========================= */
@@ -14,19 +22,6 @@ public enum PaymentErrorCode {
             ErrorCategory.ALREADY_PROCESSED
     ),
 
-    /* =========================
-     * Security / Authorization
-     * ========================= */
-    INVALID_API_KEY(
-            HttpStatus.BAD_REQUEST.value(),
-            "INVALID_API_KEY",
-            ErrorCategory.SECURITY
-    ),
-    UNAUTHORIZED_KEY(
-            HttpStatus.UNAUTHORIZED.value(),
-            "UNAUTHORIZED_KEY",
-            ErrorCategory.SECURITY
-    ),
 
     /* =========================
      * User fault (입력/비즈니스)
@@ -120,11 +115,6 @@ public enum PaymentErrorCode {
             "REJECT_CARD_COMPANY",
             ErrorCategory.REJECT
     ),
-    FORBIDDEN_REQUEST(
-            HttpStatus.FORBIDDEN.value(),
-            "FORBIDDEN_REQUEST",
-            ErrorCategory.REJECT
-    ),
     EXCEED_MAX_AUTH_COUNT(
             HttpStatus.FORBIDDEN.value(),
             "EXCEED_MAX_AUTH_COUNT",
@@ -149,11 +139,6 @@ public enum PaymentErrorCode {
     /* =========================
      * Not found
      * ========================= */
-    NOT_FOUND_PAYMENT(
-            HttpStatus.NOT_FOUND.value(),
-            "NOT_FOUND_PAYMENT",
-            ErrorCategory.NOT_FOUND
-    ),
     NOT_FOUND_PAYMENT_SESSION(
             HttpStatus.NOT_FOUND.value(),
             "NOT_FOUND_PAYMENT_SESSION",
@@ -168,6 +153,89 @@ public enum PaymentErrorCode {
             "PROVIDER_ERROR",
             ErrorCategory.RETRYABLE
     ),
+    UNKNOWN_PAYMENT_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "UNKNOWN_PAYMENT_ERROR",
+            ErrorCategory.RETRYABLE
+    ),
+
+
+    /* =========================
+     *
+     * 결제 취소 관련 오류 코드
+     *
+     * ========================= */
+
+    /* =========================
+     * Already processed
+     * ========================= */
+    ALREADY_CANCELED_PAYMENT(
+            HttpStatus.BAD_REQUEST.value(),
+            "ALREADY_CANCELED_PAYMENT",
+            ErrorCategory.ALREADY_PROCESSED
+    ),
+
+    /* =========================
+     * User fault (입력/비즈니스)
+     * ========================= */
+    NOT_CANCELABLE_PAYMENT(
+            HttpStatus.BAD_REQUEST.value(),
+            "NOT_CANCELABLE_PAYMENT",
+            ErrorCategory.USER_FAULT
+    ),
+
+
+    /* =========================
+     * Retryable / Internal error
+     * ========================= */
+    FAILED_REFUND_PROCESS(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "FAILED_REFUND_PROCESS",
+            ErrorCategory.RETRYABLE
+    ),
+    FAILED_METHOD_HANDLING_CANCEL(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "FAILED_METHOD_HANDLING_CANCEL",
+            ErrorCategory.RETRYABLE
+    ),
+
+
+
+    /* =========================
+     *
+     * 공통 오류코드
+     *
+     * ========================= */
+
+
+    /* =========================
+     * Security / Authorization
+     * ========================= */
+    INVALID_API_KEY(
+            HttpStatus.BAD_REQUEST.value(),
+            "INVALID_API_KEY",
+            ErrorCategory.SECURITY
+    ),
+    UNAUTHORIZED_KEY(
+            HttpStatus.UNAUTHORIZED.value(),
+            "UNAUTHORIZED_KEY",
+            ErrorCategory.SECURITY
+    ),
+    FORBIDDEN_REQUEST(
+            HttpStatus.FORBIDDEN.value(),
+            "FORBIDDEN_REQUEST",
+            ErrorCategory.SECURITY
+    ),
+
+
+    /* =========================
+     * Retryable / Internal error
+     * ========================= */
+    UNKNOWN_ERROR(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "UNKNOWN_ERROR",
+            ErrorCategory.UNKNOWN
+    ),
     FAILED_INTERNAL_SYSTEM_PROCESSING(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "FAILED_INTERNAL_SYSTEM_PROCESSING",
@@ -178,34 +246,39 @@ public enum PaymentErrorCode {
             "FAILED_PAYMENT_INTERNAL_SYSTEM_PROCESSING",
             ErrorCategory.RETRYABLE
     ),
-    UNKNOWN_PAYMENT_ERROR(
+    COMMON_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "UNKNOWN_PAYMENT_ERROR",
+            "COMMON_ERROR",
             ErrorCategory.RETRYABLE
     ),
+    
+    /* =========================
+     * Not found
+     * ========================= */
+    NOT_FOUND_PAYMENT(
+            HttpStatus.NOT_FOUND.value(),
+            "NOT_FOUND_PAYMENT",
+            ErrorCategory.NOT_FOUND
+    ),
+
+    /* =========================
+     * NETWORK
+     * ========================= */
     TOSS_API_TIMEOUT_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "TOSS_API_NETWORK_ERROR",
-                   ErrorCategory.RETRYABLE
+    ErrorCategory.RETRYABLE
     ),
     TOSS_API_NETWORK_ERROR(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "TOSS_API_NETWORK_ERROR",
-                    ErrorCategory.RETRYABLE
+    ErrorCategory.RETRYABLE
     ),
+
     TOO_MANY_REQUESTS(
             HttpStatus.TOO_MANY_REQUESTS.value(),
             "TOO_MANY_REQUESTS",
-            ErrorCategory.RETRYABLE
-    ),
-
-    /* =========================
-     * UNKNOWN
-     * ========================= */
-    UNKNOWN_ERROR(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            "UNKNOWN_ERROR",
-            ErrorCategory.UNKNOWN
+    ErrorCategory.RETRYABLE
     );
 
     private final int status;
