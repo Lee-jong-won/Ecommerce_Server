@@ -36,7 +36,6 @@ public class PaymentApprovalFacade {
             TossPaymentApproveResponse response = callApproveApi(request);
             handleSuccess(request, response);
             return response;
-
         } catch (TossPaymentException e) {
             handleFailure(request, e);
             throw e;

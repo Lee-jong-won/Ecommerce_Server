@@ -51,11 +51,11 @@ CREATE TABLE orders
     order_id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
     ordered_at   TIMESTAMP    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
-    order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',                 -- 주문 상태
+    order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',  -- 주문 상태
+    order_name   VARCHAR(20) NOT NULL
     total_amount INT         NOT NULL,                                   -- 총 주문 금액 (역정규화)
     created_at   TIMESTAMP    NOT NULL,
     updated_at   TIMESTAMP    NOT NULL,
-
     PRIMARY KEY (order_id)
 );
 

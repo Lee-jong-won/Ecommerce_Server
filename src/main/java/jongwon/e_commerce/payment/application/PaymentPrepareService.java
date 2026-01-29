@@ -30,7 +30,6 @@ public class PaymentPrepareService {
                 request.getPaymentKey(),
                 request.getAmount()
         );
-
         paymentRepository.save(payment);
 
         // 3. 재고 차감

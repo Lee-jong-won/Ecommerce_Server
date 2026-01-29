@@ -18,12 +18,13 @@ public class PaymentResultService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-
+    private final StockService stockService;
     @Transactional
     public void applySuccess(String paymentKey, Long orderId,
                              TossPaymentApproveResponse response) {
         Pay payment = getPayByPaymentKey(paymentKey);
         Order order = getByOrderId(orderId);
+        stockService.decreaseStock(order.getOrderId());
 
         order.markPaid();
         payment.markSuccess();
