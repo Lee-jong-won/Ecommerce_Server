@@ -9,6 +9,7 @@ import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
@@ -57,7 +58,6 @@ public class PaymentApprovalFacade {
         safeExecute(
                 "applySuccess",
                 request.getPaymentKey(),
-                null,
                 () -> paymentResultService.applySuccess(
                         request.getPaymentKey(),
                         request.getOrderId(),
@@ -82,7 +82,6 @@ public class PaymentApprovalFacade {
             safeExecute(
                     "applyTimeout",
                     request.getPaymentKey(),
-                    e,
                     () -> paymentResultService.applyTimeout(
                             request.getPaymentKey()
                     )
@@ -95,7 +94,6 @@ public class PaymentApprovalFacade {
         safeExecute(
                 "applyFail",
                 request.getPaymentKey(),
-                e,
                 () -> paymentResultService.applyFail(
                         request.getPaymentKey(),
                         request.getOrderId()
@@ -106,19 +104,16 @@ public class PaymentApprovalFacade {
     private void safeExecute(
             String actionName,
             String paymentKey,
-            Exception originalException,
             Runnable action
     ){
         try {
             action.run();
-        } catch (Exception dbException) {
+        } catch (DataAccessException dataAccessException) {
             log.error(
                     "[CRITICAL] 결제 상태 반영 실패 - action: {}, paymentKey: {}, originalException: {}, dbException: {}",
                     actionName,
                     paymentKey,
-                    originalException.getClass().getSimpleName(),
-                    dbException.getMessage(),
-                    dbException
+                    dataAccessException.getMessage()
             );
         }
     }
