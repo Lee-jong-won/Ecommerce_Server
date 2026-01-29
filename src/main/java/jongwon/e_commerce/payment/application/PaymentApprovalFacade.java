@@ -14,6 +14,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @Slf4j
 public class PaymentApprovalFacade {
@@ -71,7 +73,8 @@ public class PaymentApprovalFacade {
         );
 
         if(!dbSuccessApplied){
-            callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(), "DB 반영 실패로 인한 결제 취소"));
+            callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(),
+                    "DB 반영 실패로 인한 결제 취소", UUID.randomUUID().toString()));
         }
     }
 

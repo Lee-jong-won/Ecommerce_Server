@@ -8,9 +8,11 @@ import lombok.Setter;
 public class TossPaymentCancelRequest {
     public String paymentKey;
     public String cancelReason;
+    public String idempotencyKey;
 
-    public TossPaymentCancelRequest(String paymentKey, String cancelReason){
+    public TossPaymentCancelRequest(String paymentKey, String cancelReason, String idempotencyKey){
         this.paymentKey = paymentKey;
         this.cancelReason = cancelReason;
+        this.idempotencyKey = idempotencyKey;
     }
 }

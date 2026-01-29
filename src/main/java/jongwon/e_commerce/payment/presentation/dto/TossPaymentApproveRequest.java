@@ -11,14 +11,16 @@ public class TossPaymentApproveRequest {
     private String orderName;
     private String payOrderId;
     private String paymentKey;
+    private String idempotencyKey;
     private long amount;
 
     public TossPaymentApproveRequest(Long orderId, String payOrderId, String paymentKey,
-                                     String orderName, long amount){
+                                     String orderName, String idempotencyKey, long amount){
         this.orderId = orderId;
         this.payOrderId = payOrderId;
         this.paymentKey = paymentKey;
         this.orderName = orderName;
+        this.idempotencyKey = idempotencyKey;
         this.amount = amount;
     }
 }

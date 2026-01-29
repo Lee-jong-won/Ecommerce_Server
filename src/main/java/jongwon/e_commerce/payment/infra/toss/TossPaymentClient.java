@@ -12,6 +12,7 @@ import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -21,6 +22,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.net.SocketTimeoutException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -45,9 +47,13 @@ public class TossPaymentClient {
        ====================== */
     public TossPaymentApproveResponse approve(TossPaymentApproveRequest request) {
         return execute(
-                "/confirm",
+                "/payments/confirm",
                 request,
-                TossPaymentApproveResponse.class
+                TossPaymentApproveResponse.class,
+                headers -> headers.add(
+                        "Idempotency-Key",
+                        request.getIdempotencyKey()
+                )
         );
     }
 
@@ -59,7 +65,10 @@ public class TossPaymentClient {
                 "/{paymentKey}/cancel",
                 request.getPaymentKey(),
                 Map.of("cancelReason", request.getCancelReason()),
-                Void.class
+                Void.class,
+                headers -> headers.add(
+                        "Idempotency-Key",
+                        request.getIdempotencyKey())
         );
     }
 
@@ -95,6 +104,51 @@ public class TossPaymentClient {
         try {
             return restClient.post()
                     .uri(uri, paymentKey)
+                    .body(body)
+                    .retrieve()
+                    .body(responseType);
+
+        } catch (RestClientResponseException e) {
+            throw handleApiError(e);
+
+        } catch (ResourceAccessException e) {
+            throw handleNetworkError(e);
+        }
+    }
+
+    private <T> T execute(
+            String uri,
+            Object body,
+            Class<T> responseType,
+            Consumer<HttpHeaders> headerConsumer
+    ) {
+        try {
+            return restClient.post()
+                    .uri(uri)
+                    .headers(headerConsumer)
+                    .body(body)
+                    .retrieve()
+                    .body(responseType);
+
+        } catch (RestClientResponseException e) {
+            throw handleApiError(e);
+
+        } catch (ResourceAccessException e) {
+            throw handleNetworkError(e);
+        }
+    }
+
+    private <T> T execute(
+            String uri,
+            String paymentKey,
+            Object body,
+            Class<T> responseType,
+            Consumer<HttpHeaders> headerConsumer
+    ) {
+        try {
+            return restClient.post()
+                    .uri(uri, paymentKey)
+                    .headers(headerConsumer)
                     .body(body)
                     .retrieve()
                     .body(responseType);
