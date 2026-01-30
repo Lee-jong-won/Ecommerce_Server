@@ -4,6 +4,7 @@ import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.presentation.dto.TossErrorResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
@@ -22,6 +23,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.net.SocketTimeoutException;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Slf4j
 @Component
@@ -77,13 +79,16 @@ public class TossPaymentClient {
     private <T> T execute(
             String uri,
             Object body,
-            Class<T> responseType
+            Class<T> responseType,
+            Consumer<HttpHeaders> headerConsumer
     ) {
-        return restClient.post()
-                .uri(uri)
-                .body(body)
-                .retrieve()
-                .body(responseType);
+        return executeWithNetworkHandling(() ->
+                restClient.post()
+                        .uri(uri)
+                        .body(body)
+                        .retrieve()
+                        .body(responseType)
+        );
     }
 
     private <T> T execute(
@@ -92,25 +97,13 @@ public class TossPaymentClient {
             Object body,
             Class<T> responseType
     ) {
-        return restClient.post()
-                .uri(uri, paymentKey)
-                .body(body)
-                .retrieve()
-                .body(responseType);
-    }
-
-    private <T> T execute(
-            String uri,
-            Object body,
-            Class<T> responseType,
-            Consumer<HttpHeaders> headerConsumer
-    ) {
-        return restClient.post()
-                .uri(uri)
-                .headers(headerConsumer)
-                .body(body)
-                .retrieve()
-                .body(responseType);
+        return executeWithNetworkHandling(() ->
+                restClient.post()
+                        .uri(uri, paymentKey)
+                        .body(body)
+                        .retrieve()
+                        .body(responseType)
+        );
     }
 
     private <T> T execute(
@@ -120,11 +113,48 @@ public class TossPaymentClient {
             Class<T> responseType,
             Consumer<HttpHeaders> headerConsumer
     ) {
-        return restClient.post()
-                .uri(uri, paymentKey)
-                .headers(headerConsumer)
-                .body(body)
-                .retrieve()
-                .body(responseType);
+        return executeWithNetworkHandling(() ->
+                restClient.post()
+                        .uri(uri)
+                        .headers(headerConsumer)
+                        .body(body)
+                        .retrieve()
+                        .body(responseType)
+        );
+    }
+
+    private <T> T executeWithNetworkHandling(Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (ResourceAccessException e) {
+            throw translateNetworkException(e);
+        }
+    }
+
+    private TossPaymentRetryableException translateNetworkException(ResourceAccessException e) {
+        Throwable cause = e.getCause();
+
+        if (isReadTimeout(cause)) {
+            log.error("[TOSS_API_READ_TIMEOUT]", e);
+            return new TossApiTimeoutException(
+                    PaymentErrorCode.TOSS_API_TIMEOUT_ERROR
+            );
+        }
+
+        log.error("[TOSS_API_NETWORK_ERROR]", e);
+        return new TossApiNetworkException(
+                PaymentErrorCode.TOSS_API_NETWORK_ERROR
+        );
+    }
+
+
+    private boolean isReadTimeout(Throwable cause) {
+        while (cause != null) {
+            if (cause instanceof SocketTimeoutException) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 }

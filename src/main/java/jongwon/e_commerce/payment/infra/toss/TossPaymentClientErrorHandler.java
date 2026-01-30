@@ -2,11 +2,13 @@ package jongwon.e_commerce.payment.infra.toss;
 
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.presentation.dto.TossErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -31,6 +33,10 @@ public class TossPaymentClientErrorHandler implements RestClient
             HttpRequest request,
             ClientHttpResponse response
     ) throws IOException {
+
+        if(response.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS)
+            throw new TossPaymentRetryableException(PaymentErrorCode.TOO_MANY_REQUESTS);
+
         String body;
         try {
             body = StreamUtils.copyToString(

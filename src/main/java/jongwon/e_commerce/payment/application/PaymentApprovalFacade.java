@@ -89,6 +89,7 @@ public class PaymentApprovalFacade {
 
     private void handleRetryableFault(TossPaymentApproveRequest request,
                                       TossPaymentRetryableException e) {
+
         if (e instanceof TossApiTimeoutException) {
             safeExecute(
                     "applyTimeout",
