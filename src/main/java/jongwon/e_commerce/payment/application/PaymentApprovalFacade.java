@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
@@ -89,13 +90,21 @@ public class PaymentApprovalFacade {
 
     private void handleRetryableFault(TossPaymentApproveRequest request,
                                       TossPaymentRetryableException e) {
-
         if (e instanceof TossApiTimeoutException) {
             safeExecute(
                     "applyTimeout",
                     request.getPaymentKey(),
                     () -> paymentResultService.applyTimeout(
                             request.getPaymentKey()
+                    )
+            );
+        } else {
+            safeExecute(
+                    "applyFailure",
+                    request.getPaymentKey(),
+                    () -> paymentResultService.applyFail(
+                            request.getPaymentKey(),
+                            request.getOrderId()
                     )
             );
         }
