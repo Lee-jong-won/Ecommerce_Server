@@ -1,6 +1,5 @@
 package jongwon.e_commerce.payment.infra.toss;
 
-import jongwon.e_commerce.payment.exception.TossPaymentErrorMapper;
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
@@ -80,19 +79,11 @@ public class TossPaymentClient {
             Object body,
             Class<T> responseType
     ) {
-        try {
-            return restClient.post()
-                    .uri(uri)
-                    .body(body)
-                    .retrieve()
-                    .body(responseType);
-
-        } catch (RestClientResponseException e) {
-            throw handleApiError(e);
-
-        } catch (ResourceAccessException e) {
-            throw handleNetworkError(e);
-        }
+        return restClient.post()
+                .uri(uri)
+                .body(body)
+                .retrieve()
+                .body(responseType);
     }
 
     private <T> T execute(
@@ -101,19 +92,11 @@ public class TossPaymentClient {
             Object body,
             Class<T> responseType
     ) {
-        try {
-            return restClient.post()
-                    .uri(uri, paymentKey)
-                    .body(body)
-                    .retrieve()
-                    .body(responseType);
-
-        } catch (RestClientResponseException e) {
-            throw handleApiError(e);
-
-        } catch (ResourceAccessException e) {
-            throw handleNetworkError(e);
-        }
+        return restClient.post()
+                .uri(uri, paymentKey)
+                .body(body)
+                .retrieve()
+                .body(responseType);
     }
 
     private <T> T execute(
@@ -122,20 +105,12 @@ public class TossPaymentClient {
             Class<T> responseType,
             Consumer<HttpHeaders> headerConsumer
     ) {
-        try {
-            return restClient.post()
-                    .uri(uri)
-                    .headers(headerConsumer)
-                    .body(body)
-                    .retrieve()
-                    .body(responseType);
-
-        } catch (RestClientResponseException e) {
-            throw handleApiError(e);
-
-        } catch (ResourceAccessException e) {
-            throw handleNetworkError(e);
-        }
+        return restClient.post()
+                .uri(uri)
+                .headers(headerConsumer)
+                .body(body)
+                .retrieve()
+                .body(responseType);
     }
 
     private <T> T execute(
@@ -145,65 +120,11 @@ public class TossPaymentClient {
             Class<T> responseType,
             Consumer<HttpHeaders> headerConsumer
     ) {
-        try {
-            return restClient.post()
-                    .uri(uri, paymentKey)
-                    .headers(headerConsumer)
-                    .body(body)
-                    .retrieve()
-                    .body(responseType);
-
-        } catch (RestClientResponseException e) {
-            throw handleApiError(e);
-
-        } catch (ResourceAccessException e) {
-            throw handleNetworkError(e);
-        }
-    }
-
-    /* ======================
-     에러 처리
-     ====================== */
-    private TossPaymentException handleApiError(RestClientResponseException e) {
-        TossErrorResponse error = parseError(e);
-        TossPaymentException ex = tossPaymentErrorMapper.map(error.getCode());
-
-        if (ex instanceof TossPaymentSystemException) {
-            log.error(
-                    "[TOSS_API_ERROR] code={}, message={}",
-                    error.getCode(),
-                    error.getMessage()
-            );
-        }
-        return ex;
-    }
-
-    private TossPaymentException handleNetworkError(ResourceAccessException e) {
-        if (e.getCause() instanceof SocketTimeoutException) {
-            return new TossApiTimeoutException(PaymentErrorCode.TOSS_API_TIMEOUT_ERROR);
-        }
-
-        log.error("[TOSS_API_NETWORK_ERROR]", e);
-        return new TossApiNetworkException(PaymentErrorCode.TOSS_API_NETWORK_ERROR);
-    }
-
-    private TossErrorResponse parseError(RestClientResponseException e) {
-        try {
-            return objectMapper.readValue(
-                    e.getResponseBodyAsString(),
-                    TossErrorResponse.class
-            );
-        } catch (JacksonException parseException) {
-            log.error(
-                    "[TOSS_ERROR_PARSE_FAIL] status={}, body={}",
-                    e.getStatusCode(),
-                    e.getResponseBodyAsString(),
-                    parseException
-            );
-            return new TossErrorResponse(
-                    "UNKNOWN_ERROR",
-                    "결제 처리 중 알 수 없는 오류가 발생했습니다."
-            );
-        }
+        return restClient.post()
+                .uri(uri, paymentKey)
+                .headers(headerConsumer)
+                .body(body)
+                .retrieve()
+                .body(responseType);
     }
 }

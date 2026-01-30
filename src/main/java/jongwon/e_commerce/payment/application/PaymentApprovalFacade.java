@@ -82,7 +82,6 @@ public class PaymentApprovalFacade {
 
         if (e instanceof TossPaymentUserFaultException) {
             handleUserFault(request, (TossPaymentUserFaultException) e);
-
         } else if (e instanceof TossPaymentRetryableException) {
             handleRetryableFault(request, (TossPaymentRetryableException) e);
         }

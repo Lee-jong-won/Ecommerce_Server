@@ -149,7 +149,7 @@ public enum PaymentErrorCode {
      * Retryable / Internal error
      * ========================= */
     PROVIDER_ERROR(
-            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "PROVIDER_ERROR",
             ErrorCategory.RETRYABLE
     ),
@@ -265,7 +265,7 @@ public enum PaymentErrorCode {
      * NETWORK
      * ========================= */
     TOSS_API_TIMEOUT_ERROR(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            HttpStatus.GATEWAY_TIMEOUT.value(),
             "TOSS_API_NETWORK_ERROR",
     ErrorCategory.RETRYABLE
     ),
@@ -274,7 +274,6 @@ public enum PaymentErrorCode {
             "TOSS_API_NETWORK_ERROR",
     ErrorCategory.RETRYABLE
     ),
-
     TOO_MANY_REQUESTS(
             HttpStatus.TOO_MANY_REQUESTS.value(),
             "TOO_MANY_REQUESTS",

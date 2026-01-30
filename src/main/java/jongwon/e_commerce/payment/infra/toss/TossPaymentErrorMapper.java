@@ -1,5 +1,6 @@
-package jongwon.e_commerce.payment.exception;
+package jongwon.e_commerce.payment.infra.toss;
 
+import jongwon.e_commerce.payment.exception.TossPaymentNotFoundException;
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentAlreadyProcessedException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;

@@ -34,7 +34,7 @@ public class Order extends BaseEntity {
     public static Order createOrder(Long memberId){
         Order order = new Order();
         order.memberId = memberId;
-        order.orderStatus = OrderStatus.CREATED;
+        order.orderStatus = OrderStatus.PENDING;
         order.orderedAt = LocalDateTime.now();
         return order;
     }
@@ -50,14 +50,6 @@ public class Order extends BaseEntity {
 
     public void setOrderStatus(OrderStatus orderStatus){
         this.orderStatus = orderStatus;
-    }
-
-    //프론트가 결제 인증 후, 백앤드로 결제 승인을 요청 시
-    public void markPaymentPending() {
-        if (this.orderStatus != OrderStatus.CREATED) {
-            throw new InvalidOrderStateException("CREATED 상태에서만 결제를 시작할 수 있습니다.");
-        }
-        setOrderStatus(OrderStatus.PAYMENT_PENDING);
     }
 
     //PG로부터 결제 승인 성공 응답을 받을 시
