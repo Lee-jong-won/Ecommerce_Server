@@ -20,25 +20,33 @@ public class PaymentResultService {
     private final OrderRepository orderRepository;
     private final StockService stockService;
     @Transactional
-    public void applySuccess(String paymentKey, Long orderId,
+    public void applySuccess(String paymentKey, String payOrderId,
                              TossPaymentApproveResponse response) {
         Pay payment = getPayByPaymentKey(paymentKey);
-        Order order = getByOrderId(orderId);
-        stockService.decreaseStock(order.getOrderId());
+        Order order = getByPayOrderId(payOrderId);
 
+        //order 상태 변경
         order.markPaid();
+
+        //payment 상태 변경
         payment.markSuccess();
         payment.setPayMethod(PayMethod.valueOf(response.getMethod()));
         payment.setApprovedAt(response.getApprovedAt());
         payment.setRequestedAt(response.getRequestedAt());
+
+        //재고 감소
+        stockService.decreaseStock(order.getOrderId());
     }
 
     @Transactional
-    public void applyFail(String paymentKey, Long orderId) {
+    public void applyFail(String paymentKey, String payOrderId) {
         Pay payment = getPayByPaymentKey(paymentKey);
-        Order order = getByOrderId(orderId);
+        Order order = getByPayOrderId(payOrderId);
 
+        //payment 상태 변경
         payment.markFailed();
+
+        //order 상태 변경
         order.markFailed();
     }
 
@@ -54,7 +62,7 @@ public class PaymentResultService {
         return payment;
     }
 
-    private Order getByOrderId(Long orderId){
-        return orderRepository.findById(orderId).orElseThrow(() -> new OrderNotExistException("주문 정보가 존재하지 않습니다!"));
+    private Order getByPayOrderId(String payOrderId){
+        return orderRepository.findByPayOrderId(payOrderId).orElseThrow(() -> new OrderNotExistException("주문 정보가 존재하지 않습니다!"));
     }
 }

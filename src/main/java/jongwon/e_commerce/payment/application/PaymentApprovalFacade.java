@@ -1,7 +1,6 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
@@ -68,7 +67,7 @@ public class PaymentApprovalFacade {
                 request.getPaymentKey(),
                 () -> paymentResultService.applySuccess(
                         request.getPaymentKey(),
-                        request.getOrderId(),
+                        request.getPayOrderId(),
                         response
                 )
         );
@@ -104,7 +103,7 @@ public class PaymentApprovalFacade {
                     request.getPaymentKey(),
                     () -> paymentResultService.applyFail(
                             request.getPaymentKey(),
-                            request.getOrderId()
+                            request.getPayOrderId()
                     )
             );
         }
@@ -117,7 +116,7 @@ public class PaymentApprovalFacade {
                 request.getPaymentKey(),
                 () -> paymentResultService.applyFail(
                         request.getPaymentKey(),
-                        request.getOrderId()
+                        request.getPayOrderId()
                 )
         );
     }

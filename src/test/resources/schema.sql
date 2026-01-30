@@ -50,6 +50,7 @@ CREATE TABLE orders
 (
     order_id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
+    pay_order_id VARCHAR(64) NOT NULL,                                   -- PG사 결제에 사용되는 orderId
     ordered_at   TIMESTAMP    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
     order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',  -- 주문 상태
     order_name   VARCHAR(20) NOT NULL

@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentPrepareService {
 
     private final OrderValidator orderValidator;
-    private final StockService stockService;
     private final PaymentRepository paymentRepository;
 
     @Transactional
@@ -31,8 +30,5 @@ public class PaymentPrepareService {
                 request.getAmount()
         );
         paymentRepository.save(payment);
-
-        // 3. 재고 차감
-        stockService.decreaseStock(order.getOrderId());
     }
 }

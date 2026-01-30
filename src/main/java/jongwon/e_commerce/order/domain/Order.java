@@ -18,6 +18,9 @@ public class Order extends BaseEntity {
     @Column(name = "order_id")
     private Long orderId;
 
+    @Column(name = "pay_order_id")
+    private String payOrderId;
+
     @Column(name = "fk_member_id", nullable = false)
     private Long memberId;
 
@@ -34,6 +37,7 @@ public class Order extends BaseEntity {
     public static Order createOrder(Long memberId){
         Order order = new Order();
         order.memberId = memberId;
+        order.payOrderId = OrderIdGenerator.generate();
         order.orderStatus = OrderStatus.PENDING;
         order.orderedAt = LocalDateTime.now();
         return order;
@@ -54,7 +58,7 @@ public class Order extends BaseEntity {
 
     //PG로부터 결제 승인 성공 응답을 받을 시
     public void markPaid() {
-        if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
+        if (this.orderStatus != OrderStatus.PENDING) {
             throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 승인 완료 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.PAID);
@@ -62,8 +66,8 @@ public class Order extends BaseEntity {
 
     //PG로부터 결제 승인 실패 응답을 받을 시
     public void markFailed() {
-        if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
-            throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 승인 실패 처리 가능합니다.");
+        if (this.orderStatus != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException("PAYMENT_PENDING 상태 에서만 결제 승인 실패 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.FAILED);
     }
@@ -81,13 +85,12 @@ public class Order extends BaseEntity {
     //고객에 의해 주문이 취소 되었을 시
     public void markCancel(){
         if(this.orderStatus != OrderStatus.PAID){
-            throw new InvalidOrderStateException("결제가 완료된 상태에서만 취소 처리 가능합니다.");
+            throw new InvalidOrderStateException("결제가 완료된 상태 에서만 취소 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.CANCELLED);
     }
 
     private boolean isExpiredable() {
-        return orderStatus == OrderStatus.CREATED
-                || orderStatus == OrderStatus.PAYMENT_PENDING;
+        return orderStatus == OrderStatus.PENDING;
     }
 }

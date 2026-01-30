@@ -15,7 +15,7 @@ public class OrderValidator {
     }
 
     public Order validateOrder(TossPaymentApproveRequest request) {
-        Order order = orderRepository.findById(request.getOrderId())
+        Order order = orderRepository.findByPayOrderId(request.getPayOrderId())
                 .orElseThrow(() ->
                         new OrderNotExistException("결제 정보에 대응되는 주문 정보가 존재하지 않습니다.")
                 );
