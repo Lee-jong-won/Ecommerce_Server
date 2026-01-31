@@ -3,8 +3,9 @@ package jongwon.e_commerce.external.http.client;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
-import jongwon.e_commerce.external.http.policy.TimeoutPolicy;
+import jongwon.e_commerce.external.http.policy.RequestConfigPolicy;
 import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -16,41 +17,39 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
 public class HttpClientFactory {
-    public HttpClient create(HttpClientPolicy policy) {
+    public static HttpClient create(HttpClientPolicy policy) {
         HttpClientBuilder builder = HttpClients.custom();
-
         if (policy == null) {
             return builder.build(); // 완전 기본 설정
         }
 
-        applyTimeout(builder, policy.getTimeoutPolicy());
-        applyRetry(builder, policy.getRetryPolicy());
-        applyConnectionPool(builder, policy.getConnectionPoolPolicy());
+        applyRequestConfig(builder, policy.getRequestConfigPolicy());
+        applyRetryStrategy(builder, policy.getRetryPolicy());
+        applyConnectionManager(builder, policy.getConnectionPoolPolicy());
 
         return builder.build();
     }
 
-    private void applyTimeout(HttpClientBuilder custom, TimeoutPolicy policy) {
+    private static void applyRequestConfig(HttpClientBuilder custom, RequestConfigPolicy policy) {
         if (policy == null) return;
 
         RequestConfig.Builder builder = RequestConfig.custom();
 
         Optional.ofNullable(policy.getResponseTimeoutSeconds())
                 .ifPresent(v ->
-                        builder.setResponseTimeout(Timeout.ofSeconds(v))
+                        builder.setResponseTimeout(policy.getResponseTimeoutSeconds())
                 );
 
         Optional.ofNullable(policy.getConnectionRequestTimeoutSeconds())
                 .ifPresent(v ->
-                        builder.setConnectionRequestTimeout(Timeout.ofSeconds(v))
+                        builder.setConnectionRequestTimeout(policy.getConnectionRequestTimeoutSeconds())
                 );
 
         custom.setDefaultRequestConfig(builder.build());
     }
 
-    private void applyRetry(HttpClientBuilder custom, RetryPolicy policy) {
+    private static void applyRetryStrategy(HttpClientBuilder custom, RetryPolicy policy) {
         if (policy == null) return;
 
         if(policy.isDisableAutomaticRetries()) {
@@ -62,13 +61,12 @@ public class HttpClientFactory {
             custom.setRetryStrategy(
                     new DefaultHttpRequestRetryStrategy(
                             policy.getMaxRetries(),
-                            TimeValue.ofSeconds(policy.getRetryIntervalSeconds())
-                    )
-            );
+                            policy.getRetryIntervalSeconds())
+                    );
         }
     }
 
-    private void applyConnectionPool(HttpClientBuilder custom, ConnectionPolicy policy) {
+    private static void applyConnectionManager(HttpClientBuilder custom, ConnectionPolicy policy) {
         if (policy == null) return;
 
         PoolingHttpClientConnectionManager manager =
@@ -80,6 +78,29 @@ public class HttpClientFactory {
         Optional.ofNullable(policy.getMaxConnectionsPerRoute())
                 .ifPresent(manager::setDefaultMaxPerRoute);
 
+        ConnectionConfig connectionConfig = buildConnectionConfig(policy);
+        if (connectionConfig != null) {
+            manager.setDefaultConnectionConfig(connectionConfig);
+        }
         custom.setConnectionManager(manager);
+    }
+
+
+    private static ConnectionConfig buildConnectionConfig(ConnectionPolicy policy) {
+        ConnectionConfig.Builder builder = ConnectionConfig.custom();
+        boolean configured = false;
+
+        if (policy.getConnectTimeout() != null) {
+            builder.setConnectTimeout(policy.getConnectTimeout());
+            configured = true;
+        }
+
+        if (policy.getSocketTimeout() != null) {
+            builder.setSocketTimeout(policy.getSocketTimeout());
+            configured = true;
+        }
+
+        // 아무 값도 안 들어왔다면 굳이 setDefaultConnectionConfig 안 함
+        return configured ? builder.build() : null;
     }
 }

@@ -11,18 +11,14 @@ public class DefaultRestClient {
     private final RestClient restClient;
 
     public DefaultRestClient(
-            HttpClientFactory factory,
             TossPaymentProperties properties
     ) {
-        this.restClient = createRestClient(factory, properties);
+        this.restClient = createRestClient();
     }
 
     private RestClient createRestClient(
-            HttpClientFactory factory,
-            TossPaymentProperties properties
     ){
-        HttpClient httpClient = factory.create(null);
-
+        HttpClient httpClient = HttpClientFactory.create(null);
         return RestClient.builder()
                 .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient))
                 .build();

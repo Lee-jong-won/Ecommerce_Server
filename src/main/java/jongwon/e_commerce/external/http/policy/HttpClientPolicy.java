@@ -8,6 +8,5 @@ import lombok.Getter;
 public class HttpClientPolicy {
     private RetryPolicy retryPolicy;
     private ConnectionPolicy connectionPoolPolicy;
-    private TimeoutPolicy timeoutPolicy;
-
+    private RequestConfigPolicy requestConfigPolicy;
 }

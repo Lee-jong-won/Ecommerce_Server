@@ -1,9 +1,10 @@
 package jongwon.e_commerce.payment.infra.toss;
 
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
+import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
-import jongwon.e_commerce.external.http.policy.TimeoutPolicy;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -19,15 +20,13 @@ import java.util.Base64;
 public class TossPaymentClientConfig {
     @Bean(name = "tossRestClient")
     public RestClient createRestClient(
-            HttpClientFactory factory,
             TossPaymentProperties properties,
             TossPaymentClientErrorHandler tossPaymentClientErrorHandler
     ) {
         HttpClientPolicy policy = HttpClientPolicy.builder()
-                .timeoutPolicy(
-                        TimeoutPolicy.builder()
-                                .responseTimeoutSeconds(30)
-                                .build()
+                .connectionPoolPolicy(ConnectionPolicy.builder()
+                        .socketTimeout(Timeout.ofSeconds(30))
+                        .build()
                 )
                 .retryPolicy(
                         RetryPolicy.builder()
@@ -52,7 +51,7 @@ public class TossPaymentClientConfig {
                 )
                 .requestFactory(
                         new HttpComponentsClientHttpRequestFactory(
-                                factory.create(policy)
+                                HttpClientFactory.create(policy)
                         )
                 )
                 .build();
