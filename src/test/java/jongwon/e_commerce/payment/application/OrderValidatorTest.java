@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,17 +27,17 @@ class OrderValidatorTest {
     @Test
     void 주문이_존재하고_금액이_일치하면_Order를_반환한다() {
         // given
-        Long orderId = 1L;
+        String payOrderId = "abcd";
         Long amount = 10000L;
 
         TossPaymentApproveRequest request = mock(TossPaymentApproveRequest.class);
         Order order = mock(Order.class);
 
-        when(request.getOrderId()).thenReturn(orderId);
+        when(request.getPayOrderId()).thenReturn(payOrderId);
         when(request.getAmount()).thenReturn(amount);
         when(order.getTotalAmount()).thenReturn(amount);
-        when(order.getOrderId()).thenReturn(orderId);
-        when(orderRepository.findById(orderId))
+        when(order.getPayOrderId()).thenReturn(payOrderId);
+        when(orderRepository.findByPayOrderId(payOrderId))
                 .thenReturn(Optional.of(order));
 
         // when
@@ -46,18 +45,18 @@ class OrderValidatorTest {
 
         // then
         assertEquals(10000, result.getTotalAmount());
-        assertEquals(1L, result.getOrderId());
+        assertEquals("abcd", result.getPayOrderId());
     }
 
     @Test
     void 주문이_없으면_OrderNotExistException이_발생한다() {
         // given
-        Long orderId = 1L;
+        String payOrderId = "abcd";
 
         TossPaymentApproveRequest request = mock(TossPaymentApproveRequest.class);
-        when(request.getOrderId()).thenReturn(orderId);
+        when(request.getPayOrderId()).thenReturn(payOrderId);
 
-        when(orderRepository.findById(orderId))
+        when(orderRepository.findByPayOrderId(payOrderId))
                 .thenReturn(Optional.empty());
 
         // when & then
@@ -70,16 +69,16 @@ class OrderValidatorTest {
     @Test
     void 주문금액과_결제금액이_다르면_InvalidAmountException이_발생한다() {
         // given
-        Long orderId = 1L;
+        String payOrderId = "abcd";
 
         TossPaymentApproveRequest request = mock(TossPaymentApproveRequest.class);
         Order order = mock(Order.class);
 
-        when(request.getOrderId()).thenReturn(orderId);
+        when(request.getPayOrderId()).thenReturn(payOrderId);
         when(request.getAmount()).thenReturn(10_000L);
         when(order.getTotalAmount()).thenReturn(9_000L);
 
-        when(orderRepository.findById(orderId))
+        when(orderRepository.findByPayOrderId(payOrderId))
                 .thenReturn(Optional.of(order));
 
         // when & then

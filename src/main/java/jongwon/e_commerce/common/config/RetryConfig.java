@@ -17,6 +17,7 @@ public class RetryConfig {
 
     @Bean(name = "tossRetryTemplate")
     public RetryTemplate paymentApproveRetryTemplate() {
+
         RetryTemplate template = new RetryTemplate();
 
         // 재시도 정책: 최대 3회

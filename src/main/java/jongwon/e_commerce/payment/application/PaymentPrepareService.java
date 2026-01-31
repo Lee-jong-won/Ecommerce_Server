@@ -23,7 +23,7 @@ public class PaymentPrepareService {
 
         // 2. Payment 생성
         Pay payment = Pay.create(
-                request.getOrderId(),
+                order.getOrderId(),
                 request.getPayOrderId(),
                 request.getOrderName(),
                 request.getPaymentKey(),

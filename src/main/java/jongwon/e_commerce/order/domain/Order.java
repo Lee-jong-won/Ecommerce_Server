@@ -38,7 +38,7 @@ public class Order extends BaseEntity {
         Order order = new Order();
         order.memberId = memberId;
         order.payOrderId = OrderIdGenerator.generate();
-        order.orderStatus = OrderStatus.PENDING;
+        order.orderStatus = OrderStatus.CREATED;
         order.orderedAt = LocalDateTime.now();
         return order;
     }
@@ -56,9 +56,17 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
+    public void markPaymentPending(){
+        if(this.orderStatus != OrderStatus.CREATED) {
+            throw new InvalidOrderStateException("CREATED 상태에서만 결제중으로 변경 가능합니다.");
+        }
+        setOrderStatus(OrderStatus.PAYMENT_PENDING);
+    }
+
+
     //PG로부터 결제 승인 성공 응답을 받을 시
     public void markPaid() {
-        if (this.orderStatus != OrderStatus.PENDING) {
+        if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
             throw new InvalidOrderStateException("PAYMENT_PENDING 상태에서만 결제 승인 완료 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.PAID);
@@ -66,7 +74,7 @@ public class Order extends BaseEntity {
 
     //PG로부터 결제 승인 실패 응답을 받을 시
     public void markFailed() {
-        if (this.orderStatus != OrderStatus.PENDING) {
+        if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
             throw new InvalidOrderStateException("PAYMENT_PENDING 상태 에서만 결제 승인 실패 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.FAILED);
@@ -91,6 +99,6 @@ public class Order extends BaseEntity {
     }
 
     private boolean isExpiredable() {
-        return orderStatus == OrderStatus.PENDING;
+        return orderStatus == OrderStatus.PAYMENT_PENDING;
     }
 }

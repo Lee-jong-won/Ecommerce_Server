@@ -1,7 +1,8 @@
 package jongwon.e_commerce.order.domain;
 
 public enum OrderStatus {
-    PENDING,
+    CREATED,
+    PAYMENT_PENDING,
     PAID,
     SHIPPED,
     FAILED,

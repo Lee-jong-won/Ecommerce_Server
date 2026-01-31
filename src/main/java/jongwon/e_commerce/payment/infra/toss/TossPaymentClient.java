@@ -127,7 +127,6 @@ public class TossPaymentClient {
 
     private TossPaymentRetryableException translateNetworkException(ResourceAccessException e) {
         Throwable cause = e.getCause();
-
         if (isReadTimeout(cause)) {
             log.error("[TOSS_API_READ_TIMEOUT]", e);
             return new TossApiTimeoutException(
