@@ -7,9 +7,11 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class TossPaymentErrorMapper {
     public TossPaymentException map(String code) {
         PaymentErrorCode paymentErrorCode = parse(code);
@@ -32,7 +34,11 @@ public class TossPaymentErrorMapper {
     private PaymentErrorCode parse(String code) {
         try {
             return PaymentErrorCode.valueOf(code);
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
+            log.error("[TOSS_API_SPEC_CHANGE]", e);
+            return PaymentErrorCode.UNKNOWN_ERROR;
+        } catch(IllegalArgumentException e){
+            log.error("[TOSS_UNKNOWN_ERROR_CODE]", e);
             return PaymentErrorCode.UNKNOWN_ERROR;
         }
     }

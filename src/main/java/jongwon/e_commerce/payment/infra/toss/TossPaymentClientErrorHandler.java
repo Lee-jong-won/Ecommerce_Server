@@ -13,6 +13,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestClient;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -33,7 +34,6 @@ public class TossPaymentClientErrorHandler implements RestClient
             HttpRequest request,
             ClientHttpResponse response
     ) throws IOException {
-
         if(response.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS)
             throw new TossPaymentRetryableException(PaymentErrorCode.TOO_MANY_REQUESTS);
 
@@ -53,7 +53,7 @@ public class TossPaymentClientErrorHandler implements RestClient
         TossErrorResponse error;
         try {
             error = parse(body);
-        } catch (Exception e) {
+        } catch (JacksonException e) {
             log.error("[TOSS_ERROR_HANDLER_PARSE_FAIL] body={}", body, e);
             throw new TossPaymentSystemException(
                     PaymentErrorCode.UNKNOWN_ERROR
@@ -72,13 +72,6 @@ public class TossPaymentClientErrorHandler implements RestClient
     }
 
     private TossErrorResponse parse(String body) {
-        try {
-            return objectMapper.readValue(body, TossErrorResponse.class);
-        } catch (Exception e) {
-            return new TossErrorResponse(
-                    "UNKNOWN_ERROR",
-                    "결제 처리 중 알 수 없는 오류가 발생했습니다."
-            );
-        }
+        return objectMapper.readValue(body, TossErrorResponse.class);
     }
 }

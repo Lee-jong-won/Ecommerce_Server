@@ -24,17 +24,14 @@ import java.util.function.Supplier;
 @Component
 public class TossPaymentClient {
     private final RestClient restClient;
-    private final TossPaymentErrorMapper tossPaymentErrorMapper;
     private final ObjectMapper objectMapper;
 
     public TossPaymentClient(
             @Qualifier("tossRestClient") RestClient restClient,
-            ObjectMapper objectMapper,
-            TossPaymentErrorMapper tossPaymentErrorMapper
+            ObjectMapper objectMapper
     ) {
         this.restClient = restClient;
         this.objectMapper = objectMapper;
-        this.tossPaymentErrorMapper = tossPaymentErrorMapper;
     }
 
     /* ======================
