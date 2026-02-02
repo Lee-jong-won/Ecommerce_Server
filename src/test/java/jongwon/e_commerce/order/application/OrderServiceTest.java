@@ -3,8 +3,6 @@ package jongwon.e_commerce.order.application;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.infra.MemberRepository;
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.infra.DeliveryRepository;
-import jongwon.e_commerce.order.infra.OrderItemRepository;
 import jongwon.e_commerce.order.infra.OrderRepository;
 import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
 import jongwon.e_commerce.product.domain.Product;
@@ -28,20 +26,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
-
     @InjectMocks
     private OrderService orderService;
-
     @Mock
     private OrderRepository orderRepository;
     @Mock
     private ProductRepository productRepository;
     @Mock
     private MemberRepository memberRepository;
-    @Mock
-    private DeliveryRepository deliveryRepository;
-    @Mock
-    private OrderItemRepository orderItemRepository;
 
     @Test
     @DisplayName("주문 중 존재하지 않는 상품이 있으면 예외가 발생한다")

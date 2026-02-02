@@ -106,21 +106,8 @@ CREATE TABLE pay (
     updated_at TIMESTAMP NOT NULL, -- 레코드가 업데이트 된 시각
 
     PRIMARY KEY (pay_id),
-    CONSTRAINT uq_pay_order_id UNIQUE (fk_order_id) -- 주문 하나당 결제는 하나
+    CONSTRAINT uq_fk_order_id UNIQUE (fk_order_id) -- 주문 하나당 결제는 하나
+    CONSTRAINT uq_payment_key UNIQUE (payment_key)
 );
 
--- 6. delivery 테이블
-CREATE TABLE delivery
-(
-    delivery_id     BIGINT       NOT NULL AUTO_INCREMENT, -- 배송 ID (PK)
-    fk_order_id        BIGINT       NOT NULL,                -- 주문 ID (FK, Unique)
-    delivery_status VARCHAR(20)  NOT NULL DEFAULT 'READY',-- 배송 상태
-    tracking_no     VARCHAR(50) NULL,                     -- 운송장 번호
-    ship_addr       VARCHAR(255) NOT NULL,                -- 배송지
-    created_at      TIMESTAMP     NOT NULL,
-    updated_at      TIMESTAMP     NOT NULL,
-
-    PRIMARY KEY (delivery_id),
-    CONSTRAINT uq_delivery_order_id UNIQUE (fk_order_id)           -- 주문 하나당 배송은 하나
-);
 

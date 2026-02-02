@@ -21,7 +21,6 @@ class ProductTest {
         assertEquals(10, product.getStockQuantity());
     }
 
-
     @Test
     @DisplayName("판매대기 상태에서 재고가 있으면 판매를 시작한다")
     void startSelling_success() {

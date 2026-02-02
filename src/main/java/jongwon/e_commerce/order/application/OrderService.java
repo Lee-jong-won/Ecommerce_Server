@@ -5,10 +5,8 @@ import jongwon.e_commerce.member.exception.MemberNotFoundException;
 import jongwon.e_commerce.member.infra.MemberRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.domain.delivery.Delivery;
 import jongwon.e_commerce.order.infra.OrderItemRepository;
 import jongwon.e_commerce.order.infra.OrderRepository;
-import jongwon.e_commerce.order.infra.DeliveryRepository;
 import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
@@ -26,14 +24,12 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final DeliveryRepository deliveryRepository;
     private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
     public Long order(Long memberId, List<OrderItemRequest> requests){
         Order order = createAndSaveOrder(memberId);
-        createAndSaveDelivery(order, memberId);
 
         List<Product> products = findProducts(requests);
 
@@ -49,16 +45,6 @@ public class OrderService {
         Order order = Order.createOrder(memberId); // 엔티티 책임
         orderRepository.save(order);               // 영속화 책임
         return order;
-    }
-
-    private void createAndSaveDelivery(Order order, Long memberId) {
-        Member member = findMember(memberId);
-
-        Delivery delivery = Delivery.createDelivery(
-                order.getOrderId(),
-                member.getAddr()
-        );
-        deliveryRepository.save(delivery);
     }
 
     private Member findMember(Long memberId) {
