@@ -1,5 +1,7 @@
-package jongwon.e_commerce.payment.domain;
+package jongwon.e_commerce.UnitTest.payment.domain;
 
+import jongwon.e_commerce.payment.domain.Pay;
+import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

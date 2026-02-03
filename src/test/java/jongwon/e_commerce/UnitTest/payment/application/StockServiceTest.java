@@ -1,7 +1,8 @@
-package jongwon.e_commerce.payment.application;
+package jongwon.e_commerce.UnitTest.payment.application;
 
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.infra.OrderItemRepository;
+import jongwon.e_commerce.payment.application.StockService;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.infra.ProductRepository;

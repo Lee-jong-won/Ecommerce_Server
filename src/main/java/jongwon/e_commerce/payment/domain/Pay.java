@@ -1,19 +1,17 @@
 package jongwon.e_commerce.payment.domain;
 
 import jakarta.persistence.*;
-import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "pay")
-public class Pay extends BaseEntity {
+public class Pay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pay_id")

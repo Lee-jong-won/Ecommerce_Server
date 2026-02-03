@@ -1,5 +1,8 @@
-package jongwon.e_commerce.order.domain;
+package jongwon.e_commerce.UnitTest.order.domain;
 
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.domain.OrderStatus;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +28,7 @@ class OrderTest {
     @Test
     public void 결제중으로_주문상태_변경(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L ,"order1");
         order.setOrderStatus(OrderStatus.CREATED);
 
         //when
@@ -38,7 +41,7 @@ class OrderTest {
     @Test
     public void 결제중으로_주문상태_변경_예외(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
 
         //then
         order.setOrderStatus(OrderStatus.FAILED);
@@ -50,7 +53,7 @@ class OrderTest {
     @Test
     public void 결제완료로_주문상태_변경(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
         order.setOrderStatus(OrderStatus.PAYMENT_PENDING);
 
         //when
@@ -63,7 +66,7 @@ class OrderTest {
     @Test
     public void 결제완료로_주문상태_변경_예외(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
 
         //when
         order.setOrderStatus(OrderStatus.CANCELLED);
@@ -75,7 +78,7 @@ class OrderTest {
     @Test
     public void 결제실패로_주문상태_변경(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
         order.setOrderStatus(OrderStatus.PAYMENT_PENDING);
 
         //when
@@ -88,7 +91,7 @@ class OrderTest {
     @Test
     public void 결제실패로_주문상태_변경_예외(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
 
         //when
         order.setOrderStatus(OrderStatus.CANCELLED);
@@ -100,7 +103,7 @@ class OrderTest {
     @Test
     public void 주문취소로_주문상태_변경(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
         order.setOrderStatus(OrderStatus.PAYMENT_PENDING);
 
         //when
@@ -113,7 +116,7 @@ class OrderTest {
     @Test
     public void 주문취소로_주문상태_변경_예외(){
         //given
-        Order order = Order.createOrder(1L);
+        Order order = Order.createOrder(1L, "order1");
 
         //when
         order.setOrderStatus(OrderStatus.CANCELLED);

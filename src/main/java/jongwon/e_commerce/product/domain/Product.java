@@ -1,7 +1,6 @@
 package jongwon.e_commerce.product.domain;
 
 import jakarta.persistence.*;
-import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "product")
-public class Product extends BaseEntity {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")

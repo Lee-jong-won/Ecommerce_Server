@@ -1,7 +1,8 @@
-package jongwon.e_commerce.payment.application;
+package jongwon.e_commerce.UnitTest.payment.application;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.infra.OrderRepository;
+import jongwon.e_commerce.payment.application.OrderValidator;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;

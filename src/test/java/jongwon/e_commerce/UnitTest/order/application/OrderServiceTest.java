@@ -1,7 +1,8 @@
-package jongwon.e_commerce.order.application;
+package jongwon.e_commerce.UnitTest.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.infra.MemberRepository;
+import jongwon.e_commerce.order.application.OrderService;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.infra.OrderRepository;
 import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
@@ -49,7 +50,7 @@ class OrderServiceTest {
 
         Member member = Member.create("wwwl7749", "1234",
                 "회원", "dlwhddnjs951@naver.com","서울");
-        Order order = Order.createOrder(memberId);
+        Order order = Order.createOrder(memberId, "order1");
 
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(member));
@@ -63,7 +64,7 @@ class OrderServiceTest {
         // when & then
         assertThrows(
                 ProductNotFoundException.class,
-                () -> orderService.order(memberId, requests)
+                () -> orderService.order(memberId, "order1", requests)
         );
     }
 
@@ -81,7 +82,7 @@ class OrderServiceTest {
 
         Member member = Member.create("wwwl7749", "1234",
                 "회원", "dlwhddnjs951@naver.com","서울");
-        Order order = Order.createOrder(memberId);
+        Order order = Order.createOrder(memberId, "order1");
 
         Product product = Product.create("신발", 10000);
         product.changeStock(5);
@@ -99,7 +100,7 @@ class OrderServiceTest {
         // when & then
         assertThrows(
                 NotEnoughStockException.class,
-                () -> orderService.order(memberId, requests)
+                () -> orderService.order(memberId, "order1", requests)
         );
     }
 }

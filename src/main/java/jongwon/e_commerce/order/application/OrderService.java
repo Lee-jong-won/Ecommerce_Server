@@ -28,8 +28,8 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
-    public Long order(Long memberId, List<OrderItemRequest> requests){
-        Order order = createAndSaveOrder(memberId);
+    public Long order(Long memberId, String orderName, List<OrderItemRequest> requests){
+        Order order = createAndSaveOrder(memberId, orderName);
 
         List<Product> products = findProducts(requests);
 
@@ -38,11 +38,12 @@ public class OrderService {
 
         order.setTotalAmount(orderItems);
 
+
         return order.getOrderId();
     }
 
-    private Order createAndSaveOrder(Long memberId) {
-        Order order = Order.createOrder(memberId); // 엔티티 책임
+    private Order createAndSaveOrder(Long memberId, String orderName) {
+        Order order = Order.createOrder(memberId, orderName); // 엔티티 책임
         orderRepository.save(order);               // 영속화 책임
         return order;
     }

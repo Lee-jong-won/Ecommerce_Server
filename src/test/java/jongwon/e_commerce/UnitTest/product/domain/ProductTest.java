@@ -1,8 +1,11 @@
-package jongwon.e_commerce.product.domain;
+package jongwon.e_commerce.UnitTest.product.domain;
 
+import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +35,7 @@ class ProductTest {
         product.startSelling();
 
         // Then
-        assertEquals(ProductStatus.SELLING, product.getProductStatus());
+        Assertions.assertEquals(ProductStatus.SELLING, product.getProductStatus());
     }
 
     @Test

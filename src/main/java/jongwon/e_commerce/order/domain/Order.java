@@ -1,7 +1,6 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
-import jongwon.e_commerce.common.domain.BaseEntity;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name = "orders")
-public class Order extends BaseEntity {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -24,6 +23,9 @@ public class Order extends BaseEntity {
     @Column(name = "fk_member_id", nullable = false)
     private Long memberId;
 
+    @Column(name = "orderName", nullable = false)
+    private String orderName;
+
     @Column(name = "ordered_at", nullable = false)
     private LocalDateTime orderedAt;
 
@@ -34,12 +36,13 @@ public class Order extends BaseEntity {
     @Column(name = "total_amount", nullable = false)
     private long totalAmount;
 
-    public static Order createOrder(Long memberId){
+    public static Order createOrder(Long memberId, String orderName){
         Order order = new Order();
         order.memberId = memberId;
         order.payOrderId = OrderIdGenerator.generate();
         order.orderStatus = OrderStatus.CREATED;
         order.orderedAt = LocalDateTime.now();
+        order.orderName = orderName;
         return order;
     }
 
@@ -47,7 +50,7 @@ public class Order extends BaseEntity {
     public void setTotalAmount(List<OrderItem> orderItems){
         int sum = 0;
         for(OrderItem orderItem : orderItems){
-            sum += orderItem.getOrderPrice();
+            sum += (orderItem.getOrderPrice() * orderItem.getOrderQuantity());
         }
         this.totalAmount = sum;
     }

@@ -1,17 +1,14 @@
 package jongwon.e_commerce.member.domain;
 
 import jakarta.persistence.*;
-import jongwon.e_commerce.common.domain.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @Table(name = "member")
-public class Member extends BaseEntity {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
