@@ -131,7 +131,6 @@ class TossPaymentClientTest {
                 new TossPaymentApproveRequest(
                         "abcd",
                         "paykey1234",
-                        "축구화외 1건",
                         "idem-key",
                         5000
                 );

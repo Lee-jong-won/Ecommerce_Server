@@ -23,9 +23,6 @@ public class Pay {
     @Column(name = "order_id", nullable = false)
     private String orderId;
 
-    @Column(name = "order_name", nullable = false)
-    private String orderName;
-
     @Column(name = "payment_key", nullable = false)
     private String paymentKey;
 
@@ -48,12 +45,10 @@ public class Pay {
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //
-    public static Pay create(Long fkOrderId, String orderId,
-                             String orderName, String paymentKey, long payAmount){
+    public static Pay create(Long fkOrderId, String orderId, String paymentKey, long payAmount){
         Pay pay = new Pay();
         pay.fkOrderId = fkOrderId;
         pay.orderId = orderId;
-        pay.orderName = orderName;
         pay.paymentKey = paymentKey;
         pay.payStatus = PayStatus.PENDING;
         pay.payAmount = payAmount;

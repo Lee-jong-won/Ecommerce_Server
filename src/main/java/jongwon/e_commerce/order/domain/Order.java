@@ -23,7 +23,7 @@ public class Order {
     @Column(name = "fk_member_id", nullable = false)
     private Long memberId;
 
-    @Column(name = "orderName", nullable = false)
+    @Column(name = "order_name", nullable = false)
     private String orderName;
 
     @Column(name = "ordered_at", nullable = false)

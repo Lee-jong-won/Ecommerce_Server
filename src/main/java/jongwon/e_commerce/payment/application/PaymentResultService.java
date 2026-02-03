@@ -22,6 +22,7 @@ public class PaymentResultService {
     @Transactional
     public void applySuccess(String paymentKey, String payOrderId,
                              TossPaymentApproveResponse response) {
+
         Pay payment = getPayByPaymentKey(paymentKey);
         Order order = getByPayOrderId(payOrderId);
 

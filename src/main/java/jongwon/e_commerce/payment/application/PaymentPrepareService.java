@@ -25,7 +25,6 @@ public class PaymentPrepareService {
         Pay payment = Pay.create(
                 order.getOrderId(),
                 request.getPayOrderId(),
-                request.getOrderName(),
                 request.getPaymentKey(),
                 request.getAmount()
         );
