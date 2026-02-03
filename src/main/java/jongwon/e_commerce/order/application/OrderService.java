@@ -38,7 +38,6 @@ public class OrderService {
 
         order.setTotalAmount(orderItems);
 
-
         return order.getOrderId();
     }
 

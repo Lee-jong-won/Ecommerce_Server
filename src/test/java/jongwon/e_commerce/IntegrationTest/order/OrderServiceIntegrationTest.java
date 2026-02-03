@@ -10,24 +10,25 @@ import jongwon.e_commerce.order.infra.OrderItemRepository;
 import jongwon.e_commerce.order.infra.OrderRepository;
 import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.infra.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @SpringBootTest
 @Import(TestContainerConfig.class)
 @ActiveProfiles("test")
-@Transactional
 class OrderServiceIntegrationTest {
 
     @Autowired
@@ -45,6 +46,9 @@ class OrderServiceIntegrationTest {
     @Autowired
     OrderItemRepository orderItemRepository;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     Member member;
     Product product1;
     Product product2;
@@ -57,9 +61,23 @@ class OrderServiceIntegrationTest {
         product2 = productRepository.save(Product.create("크림빵", 3000));
     }
 
+    @AfterEach
+    void cleanUp(){
+        jdbcTemplate.queryForList(
+                """
+                SELECT TABLE_NAME
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_TYPE = 'BASE TABLE'
+                """,
+                String.class
+        ).forEach(table ->
+                jdbcTemplate.execute("TRUNCATE TABLE " + table)
+        );
+    }
+
     @Test
-    @DisplayName("주문 생성 시 Order와 OrderItem이 정상적으로 저장되고 총 금액이 계산된다")
-    void order_success() {
+    void 주문_성공() {
         // given
         List<OrderItemRequest> requests = List.of(
                 new OrderItemRequest(product1.getProductId(), 2),
@@ -79,6 +97,26 @@ class OrderServiceIntegrationTest {
         assertThat(orderItems)
                 .extracting(OrderItem::getProductName)
                 .containsExactlyInAnyOrder("단팥빵", "크림빵");
+    }
+
+    @Test
+    void 주문_중_상품이_없으면_전체_롤백된다() {
+        List<OrderItemRequest> requests = List.of(
+                new OrderItemRequest(9999L, 1) // 존재하지 않는 상품
+        );
+
+        // when
+        assertThatThrownBy(() ->
+                orderService.order(
+                        member.getMemberId(),
+                        "실패 주문",
+                        requests
+                )
+        ).isInstanceOf(ProductNotFoundException.class);
+
+        // then
+        assertThat(orderRepository.count()).isZero();
+        assertThat(orderItemRepository.count()).isZero();
     }
 
 

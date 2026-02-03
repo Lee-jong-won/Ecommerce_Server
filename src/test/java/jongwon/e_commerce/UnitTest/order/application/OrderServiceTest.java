@@ -69,7 +69,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문 수량이 재고보다 많으면 예외가 발생한다")
+    @DisplayName("주문 수량이 재고 보다 많으면 예외가 발생한다")
     void order_notEnoughStock_throwException() {
         // given
         Long memberId = 1L;
