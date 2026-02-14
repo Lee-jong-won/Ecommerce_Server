@@ -1,12 +1,9 @@
 package jongwon.e_commerce.external.http.policy;
 
-import lombok.Builder;
-import lombok.Getter;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 
-@Getter
-@Builder
-public class HttpClientPolicy {
-    private RetryPolicy retryPolicy;
-    private ConnectionPolicy connectionPoolPolicy;
-    private RequestConfigPolicy requestConfigPolicy;
+public interface HttpClientPolicy {
+
+    void apply(HttpClientBuilder builder);
+
 }

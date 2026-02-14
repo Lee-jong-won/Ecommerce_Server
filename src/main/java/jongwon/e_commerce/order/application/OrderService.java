@@ -24,7 +24,6 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     public Order order(Long memberId, String orderName, List<OrderItemRequest> requests){
-
         //주문 저장
         Order order = orderRepository.save(memberId, orderName);
 

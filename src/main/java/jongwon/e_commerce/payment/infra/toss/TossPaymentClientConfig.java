@@ -2,7 +2,6 @@ package jongwon.e_commerce.payment.infra.toss;
 
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
-import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.context.annotation.Bean;
