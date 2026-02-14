@@ -32,8 +32,6 @@ public class RetryConfig {
 
         // 고정 간격 1초 대기
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(1000);
-
         template.setBackOffPolicy(backOffPolicy);
 
         return template;

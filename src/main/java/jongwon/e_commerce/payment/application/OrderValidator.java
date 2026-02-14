@@ -1,7 +1,7 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.infra.OrderRepository;
+import jongwon.e_commerce.order.infra.OrderJpaRepository;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
-    private final OrderRepository orderRepository;
-    public OrderValidator(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderJpaRepository orderJpaRepository;
+    public OrderValidator(OrderJpaRepository orderJpaRepository) {
+        this.orderJpaRepository = orderJpaRepository;
     }
 
     public Order validateOrder(TossPaymentApproveRequest request) {
-        Order order = orderRepository.findByPayOrderId(request.getPayOrderId())
+        Order order = orderJpaRepository.findByPayOrderId(request.getPayOrderId())
                 .orElseThrow(() ->
                         new OrderNotExistException("결제 정보에 대응되는 주문 정보가 존재하지 않습니다.")
                 );

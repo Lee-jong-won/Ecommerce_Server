@@ -1,7 +1,7 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.infra.OrderRepository;
+import jongwon.e_commerce.order.infra.OrderJpaRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentResultService {
 
     private final PaymentRepository paymentRepository;
-    private final OrderRepository orderRepository;
+    private final OrderJpaRepository orderJpaRepository;
     private final StockService stockService;
     @Transactional
     public void applySuccess(String paymentKey, String payOrderId,
@@ -64,6 +64,6 @@ public class PaymentResultService {
     }
 
     private Order getByPayOrderId(String payOrderId){
-        return orderRepository.findByPayOrderId(payOrderId).orElseThrow(() -> new OrderNotExistException("주문 정보가 존재하지 않습니다!"));
+        return orderJpaRepository.findByPayOrderId(payOrderId).orElseThrow(() -> new OrderNotExistException("주문 정보가 존재하지 않습니다!"));
     }
 }

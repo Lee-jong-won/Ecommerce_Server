@@ -10,6 +10,7 @@ import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -25,19 +26,35 @@ import java.util.function.Supplier;
 public class TossPaymentClient {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private final RetryTemplate tossRetryTemplate;
 
     public TossPaymentClient(
             @Qualifier("tossRestClient") RestClient restClient,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            @Qualifier("tossRetryTemplate")RetryTemplate tossRetryTemplate
     ) {
         this.restClient = restClient;
         this.objectMapper = objectMapper;
+        this.tossRetryTemplate = tossRetryTemplate;
     }
 
     /* ======================
        결제 승인
        ====================== */
-    public TossPaymentApproveResponse approve(TossPaymentApproveRequest request) {
+    public TossPaymentApproveResponse callApproveApi(TossPaymentApproveRequest request) {
+        return tossRetryTemplate.execute(context ->
+                approve(request)
+        );
+    }
+
+    public void callCancelApi(TossPaymentCancelRequest request){
+        tossRetryTemplate.execute(context -> {
+            cancel(request);
+            return null;
+        });
+    }
+
+    private TossPaymentApproveResponse approve(TossPaymentApproveRequest request) {
         return execute(
                 "/payments/confirm",
                 request,
@@ -52,7 +69,7 @@ public class TossPaymentClient {
     /* ======================
        결제 취소
        ====================== */
-    public void cancel(TossPaymentCancelRequest request) {
+    private void cancel(TossPaymentCancelRequest request) {
         execute(
                 "/{paymentKey}/cancel",
                 request.getPaymentKey(),

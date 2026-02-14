@@ -1,14 +1,14 @@
 -- 데이터베이스 초기화
-DROP DATABASE IF EXISTS ecommerce_testdb;
+/*DROP DATABASE IF EXISTS ecommerce_testdb;
 CREATE DATABASE ecommerce_testdb;
-USE ecommerce_testdb;
+USE ecommerce_testdb;*/
 
--- 테이블 초기화
+/*-- 테이블 초기화
 DROP TABLE IF EXISTS pay;
 DROP TABLE IF EXISTS order_item;
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS product;
-DROP TABLE IF EXISTS member;
+DROP TABLE IF EXISTS member;*/
 
 -- 1. member 테이블
 CREATE TABLE member

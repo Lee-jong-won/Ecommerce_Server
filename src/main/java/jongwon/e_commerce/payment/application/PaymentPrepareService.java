@@ -15,7 +15,6 @@ public class PaymentPrepareService {
 
     private final OrderValidator orderValidator;
     private final PaymentRepository paymentRepository;
-
     @Transactional
     public void preparePayment(TossPaymentApproveRequest request){
         // 1. 주문 검증
@@ -30,4 +29,6 @@ public class PaymentPrepareService {
         );
         paymentRepository.save(payment);
     }
+
+
 }

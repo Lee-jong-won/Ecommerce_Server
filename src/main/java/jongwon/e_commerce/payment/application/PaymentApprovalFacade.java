@@ -22,41 +22,26 @@ public class PaymentApprovalFacade {
     private final PaymentPrepareService paymentPrepareService;
     private final PaymentResultService paymentResultService;
     private final TossPaymentClient tossPaymentClient;
-    private final RetryTemplate tossRetryTemplate;
 
     public PaymentApprovalFacade(PaymentPrepareService paymentPrepareService,
                                  PaymentResultService paymentResultService,
-                                 TossPaymentClient tossPaymentClient,
-                                 @Qualifier("tossRetryTemplate")RetryTemplate tossRetryTemplate){
+                                 TossPaymentClient tossPaymentClient
+                                 ){
         this.paymentPrepareService = paymentPrepareService;
         this.paymentResultService = paymentResultService;
         this.tossPaymentClient = tossPaymentClient;
-        this.tossRetryTemplate = tossRetryTemplate;
     }
 
     public TossPaymentApproveResponse approvePayment(TossPaymentApproveRequest request){
         paymentPrepareService.preparePayment(request);
         try {
-            TossPaymentApproveResponse response = callApproveApi(request);
+            TossPaymentApproveResponse response = tossPaymentClient.callApproveApi(request);
             handleSuccess(request, response);
             return response;
         } catch (TossPaymentException e) {
             handleFailure(request, e);
             throw e;
         }
-    }
-
-    private TossPaymentApproveResponse callApproveApi(TossPaymentApproveRequest request) {
-        return tossRetryTemplate.execute(context ->
-                tossPaymentClient.approve(request)
-        );
-    }
-
-    private void callCancelApi(TossPaymentCancelRequest request){
-        tossRetryTemplate.execute(context -> {
-            tossPaymentClient.cancel(request);
-            return null;
-        });
     }
 
     private void handleSuccess(TossPaymentApproveRequest request,
@@ -73,7 +58,7 @@ public class PaymentApprovalFacade {
         );
 
         if(!dbSuccessApplied){
-            callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(),
+            tossPaymentClient.callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(),
                     "DB 반영 실패로 인한 결제 취소", UUID.randomUUID().toString()));
         }
     }
