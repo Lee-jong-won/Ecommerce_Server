@@ -1,9 +1,12 @@
 package jongwon.e_commerce.order.repository;
 
+import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.infra.OrderJpaRepository;
-import jongwon.e_commerce.order.infra.OrderJpaRepositoryAdapter;
-import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.order.domain.OrderStatus;
+import jongwon.e_commerce.order.repository.adapter.OrderJpaRepositoryAdapter;
+import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
+import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -20,34 +23,53 @@ class OrderRepositoryTest {
     @Autowired
     OrderJpaRepository orderJpaRepository;
 
+    @Autowired
+    MemberJpaRepository memberJpaRepository;
+
     @Test
     void 주문이_정상적으로_저장된다_JPA(){
         // given
-        Long memberId = 1L;
-        String orderName = "목도리 외 1건";
         OrderRepository orderRepository = new OrderJpaRepositoryAdapter(orderJpaRepository);
 
+        Member member = Member.create("1234", "1234", "이종원",
+                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
+        memberJpaRepository.save(member);
+
         // when
-        Order order = orderRepository.save(memberId, orderName);
+        Order orderEntity = orderRepository.save(member.getMemberId(), "주문1");
+        Order findOrderEntity = orderJpaRepository.findById(orderEntity.getOrderId()).orElseThrow();
 
         // then
-        assertEquals(memberId, order.getMemberId());
-        assertEquals(orderName, order.getOrderName());
+        assertEquals("주문1", findOrderEntity.getOrderName());
+        assertEquals(OrderStatus.CREATED, findOrderEntity.getOrderStatus());
+        assertEquals(member.getMemberId(), findOrderEntity.getMemberId());
     }
 
     @Test
     void 주문이_정상적으로_조회된다_JPA(){
         // given
-        Long memberId = 1L;
-        String orderName = "목도리 외 1건";
         OrderRepository orderRepository = new OrderJpaRepositoryAdapter(orderJpaRepository);
 
+        Member member = memberJpaRepository.save(Member.create("1234", "1234", "이종원",
+                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구"));
+
+        memberJpaRepository.save(member);
+        Order order = Order.createOrder(member.getMemberId(), "주문1");
+
         // when
-        Order saveOrder = orderRepository.save(memberId, orderName);
-        Order findOrder = orderRepository.findById(saveOrder.getOrderId());
+         orderJpaRepository.save(order);
 
         // then
-        assertEquals(saveOrder.getOrderId(), findOrder.getOrderId());
+        assertDoesNotThrow(() -> orderRepository.findById(order.getOrderId()));
+    }
+
+    @Test
+    void 존재하지_않는_주문_조회시_예외_throw_JPA(){
+        //given
+        OrderRepository orderRepository = new OrderJpaRepositoryAdapter(orderJpaRepository);
+
+        //when && then
+        assertThrows(OrderNotExistException.class, () -> orderRepository.findById(1L));
     }
 
 

@@ -1,4 +1,4 @@
-package jongwon.e_commerce.order.infra;
+package jongwon.e_commerce.order.repository.jpa;
 
 import jongwon.e_commerce.order.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

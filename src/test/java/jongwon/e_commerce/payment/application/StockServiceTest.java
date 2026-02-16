@@ -1,10 +1,10 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.infra.OrderItemJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
-import jongwon.e_commerce.product.infra.ProductJpaRepository;
+import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

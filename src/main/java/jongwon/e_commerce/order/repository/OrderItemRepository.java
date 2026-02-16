@@ -4,6 +4,7 @@ import jongwon.e_commerce.order.domain.OrderItem;
 import java.util.Optional;
 
 public interface OrderItemRepository {
-    OrderItem save(Long orderId, Long productId, String productName, int productPrice, int stockQuantity);
+    OrderItem save(Long orderId, Long productId,
+                   String productName, int orderPrice, int orderQuantity);
 
 }

@@ -1,13 +1,10 @@
 package jongwon.e_commerce.payment.application;
 
-import jongwon.e_commerce.payment.application.PaymentApprovalFacade;
-import jongwon.e_commerce.payment.application.PaymentPrepareService;
-import jongwon.e_commerce.payment.application.PaymentResultService;
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
+import jongwon.e_commerce.external.toss.TossPaymentClient;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;

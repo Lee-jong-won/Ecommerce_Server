@@ -1,6 +1,5 @@
-package jongwon.e_commerce.common.config;
+package jongwon.e_commerce.external.toss;
 
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +12,7 @@ import java.util.Map;
 
 @Configuration
 @EnableRetry
-public class RetryConfig {
-
+public class TossPaymentRetryConfig {
     @Bean(name = "tossRetryTemplate")
     public RetryTemplate paymentApproveRetryTemplate() {
 
@@ -36,5 +34,4 @@ public class RetryConfig {
 
         return template;
     }
-
 }

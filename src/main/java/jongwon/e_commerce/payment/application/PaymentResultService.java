@@ -1,12 +1,12 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.infra.OrderJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.exception.PaymentNotFoundException;
-import jongwon.e_commerce.payment.infra.PaymentRepository;
+import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

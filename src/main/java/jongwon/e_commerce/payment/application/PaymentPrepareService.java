@@ -2,7 +2,7 @@ package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.infra.PaymentRepository;
+import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

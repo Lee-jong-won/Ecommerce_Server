@@ -1,9 +1,11 @@
-package jongwon.e_commerce.payment.infra.toss;
+package jongwon.e_commerce.external.toss;
 
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.util.Timeout;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,25 +16,28 @@ import org.springframework.web.client.RestClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 @Configuration
-public class TossPaymentClientConfig {
+public class TossPaymentHttpClientConfig {
+    @Bean(name = "tossHttpClient")
+    public HttpClient tossHttpClient(){
+        return HttpClientFactory.create(
+                List.of(
+                        RetryPolicy.builder().disableAutomaticRetries(true)
+                                .build(),
+                        ConnectionPolicy.builder().socketTimeout(Timeout.ofSeconds(30))
+                                .build()
+                )
+        );
+    }
+
     @Bean(name = "tossRestClient")
-    public RestClient createRestClient(
+    public RestClient createTossRestClient(
+            @Qualifier("tossHttpClient") HttpClient tossHttpClient,
             TossPaymentProperties properties,
             TossPaymentClientErrorHandler tossPaymentClientErrorHandler
     ) {
-        HttpClientPolicy policy = HttpClientPolicy.builder()
-                .connectionPoolPolicy(ConnectionPolicy.builder()
-                        .socketTimeout(Timeout.ofSeconds(30))
-                        .build()
-                )
-                .retryPolicy(
-                        RetryPolicy.builder()
-                                .disableAutomaticRetries(true)
-                                .build()
-                )
-                .build();
 
         return RestClient.builder()
                 .baseUrl(properties.getApiUrl())
@@ -50,7 +55,7 @@ public class TossPaymentClientConfig {
                 )
                 .requestFactory(
                         new HttpComponentsClientHttpRequestFactory(
-                                HttpClientFactory.create(policy)
+                                tossHttpClient
                         )
                 )
                 .build();

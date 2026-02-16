@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.infra.toss;
+package jongwon.e_commerce.external.toss;
 
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
@@ -7,6 +7,7 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableExcepti
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -23,20 +24,11 @@ import java.util.function.Supplier;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TossPaymentClient {
-    private final RestClient restClient;
-    private final ObjectMapper objectMapper;
-    private final RetryTemplate tossRetryTemplate;
 
-    public TossPaymentClient(
-            @Qualifier("tossRestClient") RestClient restClient,
-            ObjectMapper objectMapper,
-            @Qualifier("tossRetryTemplate")RetryTemplate tossRetryTemplate
-    ) {
-        this.restClient = restClient;
-        this.objectMapper = objectMapper;
-        this.tossRetryTemplate = tossRetryTemplate;
-    }
+    private final @Qualifier("tossRestClient") RestClient restClient;
+    private final @Qualifier("tossRetryTemplate")RetryTemplate tossRetryTemplate;
 
     /* ======================
        결제 승인

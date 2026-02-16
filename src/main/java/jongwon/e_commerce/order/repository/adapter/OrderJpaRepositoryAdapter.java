@@ -1,14 +1,13 @@
-package jongwon.e_commerce.order.infra;
+package jongwon.e_commerce.order.repository.adapter;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Primary

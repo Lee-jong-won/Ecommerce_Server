@@ -1,8 +1,9 @@
-package jongwon.e_commerce.product.repository;
+package jongwon.e_commerce.product.repository.adapter;
 
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
-import jongwon.e_commerce.product.infra.ProductJpaRepository;
+import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
+import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Primary
 @RequiredArgsConstructor
-public class ProductJpaRepositoryAdapter implements ProductRepository{
+public class ProductJpaRepositoryAdapter implements ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
 

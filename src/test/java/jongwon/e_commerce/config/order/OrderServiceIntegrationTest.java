@@ -2,16 +2,14 @@ package jongwon.e_commerce.config.order;
 
 import jongwon.e_commerce.config.TestContainerConfig;
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.infra.MemberRepository;
+import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.application.OrderService;
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.infra.OrderItemJpaRepository;
-import jongwon.e_commerce.order.infra.OrderJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
-import jongwon.e_commerce.product.infra.ProductJpaRepository;
+import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +33,7 @@ class OrderServiceIntegrationTest {
     OrderService orderService;
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberJpaRepository memberJpaRepository;
 
     @Autowired
     ProductJpaRepository productJpaRepository;
@@ -55,7 +53,7 @@ class OrderServiceIntegrationTest {
 
     @BeforeEach
     void setUp(){
-        member = memberRepository.save(Member.create("user", "1234",
+        member = memberJpaRepository.save(Member.create("user", "1234",
                 "Jongwon", "user@gmail.com", "경기도 고양시 덕양구"));
         product1 = productJpaRepository.save(Product.create("단팥빵", 2000));
         product2 = productJpaRepository.save(Product.create("크림빵", 3000));

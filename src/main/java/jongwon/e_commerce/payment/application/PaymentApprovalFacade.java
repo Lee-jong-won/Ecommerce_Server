@@ -4,14 +4,12 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
+import jongwon.e_commerce.external.toss.TossPaymentClient;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

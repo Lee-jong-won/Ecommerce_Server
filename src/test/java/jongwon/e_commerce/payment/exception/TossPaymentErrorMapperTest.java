@@ -1,13 +1,12 @@
 package jongwon.e_commerce.payment.exception;
 
-import jongwon.e_commerce.payment.exception.TossPaymentNotFoundException;
 import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentAlreadyProcessedException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.payment.infra.toss.TossPaymentErrorMapper;
+import jongwon.e_commerce.external.toss.TossPaymentErrorMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

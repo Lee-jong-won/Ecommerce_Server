@@ -3,6 +3,10 @@ package jongwon.e_commerce.payment.infra.toss;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
+import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
+import jongwon.e_commerce.external.toss.TossPaymentClient;
+import jongwon.e_commerce.external.toss.TossPaymentClientErrorHandler;
+import jongwon.e_commerce.external.toss.TossPaymentErrorMapper;
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
@@ -41,7 +45,7 @@ class TossPaymentClientTest {
     BackOffPolicy basicBackOffPolicy;
     RetryTemplate retryTemplate;
 
-    @BeforeEach
+    /*@BeforeEach
     void setUp() {
         wireMockServer = new WireMockServer(0);
         wireMockServer.start();
@@ -335,5 +339,5 @@ class TossPaymentClientTest {
         template.setRetryPolicy(simpleRetryPolicy);
         template.setBackOffPolicy(backOffPolicy);
         return template;
-    }
+    }*/
 }

@@ -3,17 +3,17 @@ package jongwon.e_commerce.payment.application;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TestContainerConfig;
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.infra.MemberRepository;
+import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.infra.OrderItemJpaRepository;
-import jongwon.e_commerce.order.infra.OrderJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
+import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.infra.PaymentRepository;
-import jongwon.e_commerce.payment.infra.toss.TossPaymentClient;
-import jongwon.e_commerce.payment.infra.toss.TossPaymentClientErrorHandler;
+import jongwon.e_commerce.payment.repository.PaymentRepository;
+import jongwon.e_commerce.external.toss.TossPaymentClient;
+import jongwon.e_commerce.external.toss.TossPaymentClientErrorHandler;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.infra.ProductJpaRepository;
+import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ class PaymentApprovalFacadeIntegrationTest {
     TossPaymentClient tossPaymentClient;
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberJpaRepository memberJpaRepository;
 
     @Autowired
     ProductJpaRepository productJpaRepository;
@@ -66,7 +66,7 @@ class PaymentApprovalFacadeIntegrationTest {
         wireMockServer = new WireMockServer(0);
         wireMockServer.start();
 
-        member = memberRepository.save(Member.create("user", "1234",
+        member = memberJpaRepository.save(Member.create("user", "1234",
                 "Jongwon", "user@gmail.com", "경기도 고양시 덕양구"));
 
         product = productJpaRepository.save(Product.create("단팥빵", 2000));

@@ -23,7 +23,7 @@ public class Pay {
     @Column(name = "order_id", nullable = false)
     private String orderId;
 
-    @Column(name = "payment_key", nullable = false)
+    @Column(name = "payment_id", nullable = false)
     private String paymentKey;
 
     @Column(name = "pay_method", nullable = false, length = 50)
