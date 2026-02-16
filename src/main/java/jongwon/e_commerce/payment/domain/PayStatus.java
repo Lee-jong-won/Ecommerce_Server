@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
 public enum PayStatus {
+    CREATED,           // 초기 상태
     PENDING,           // 승인 요청 시작
     SUCCESS,           // 승인 완료
     FAILED,            // 명확한 승인 실패

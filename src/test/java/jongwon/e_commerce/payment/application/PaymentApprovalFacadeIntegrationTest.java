@@ -9,9 +9,8 @@ import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.external.toss.TossPaymentClient;
-import jongwon.e_commerce.external.toss.TossPaymentClientErrorHandler;
+import jongwon.e_commerce.payment.repository.jpa.PaymentJpaRepository;
+import jongwon.e_commerce.payment.toss.TossPaymentClientErrorHandler;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -46,7 +45,7 @@ class PaymentApprovalFacadeIntegrationTest {
     OrderItemJpaRepository orderItemJpaRepository;
 
     @Autowired
-    PaymentRepository paymentRepository;
+    PaymentJpaRepository paymentJpaRepository;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -81,7 +80,7 @@ class PaymentApprovalFacadeIntegrationTest {
         orderItem = orderItemJpaRepository.save(OrderItem.createOrderItem(order.getOrderId(), product.getProductId(), product.getProductName(),
                 product.getProductPrice(), 1));
 
-        payment = paymentRepository.save(Pay.create(order.getOrderId(), order.getPayOrderId(),
+        payment = paymentJpaRepository.save(Pay.create(order.getOrderId(), order.getPayOrderId(),
                 "paykey", 2000));
     }
 

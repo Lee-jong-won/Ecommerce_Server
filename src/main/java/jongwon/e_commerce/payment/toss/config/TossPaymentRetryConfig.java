@@ -1,6 +1,6 @@
-package jongwon.e_commerce.external.toss;
+package jongwon.e_commerce.payment.toss.config;
 
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
+import jongwon.e_commerce.payment.exception.external.TossPaymentTimeoutException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.annotation.EnableRetry;
@@ -22,7 +22,7 @@ public class TossPaymentRetryConfig {
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(
                 3,
                 Map.of(
-                        TossPaymentRetryableException.class, true
+                        TossPaymentTimeoutException.class, true
                 )
         );
 

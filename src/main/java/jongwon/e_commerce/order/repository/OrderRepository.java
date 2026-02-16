@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface OrderRepository {
     Order save(Long memberId, String orderName);
     Order findById(Long id);
+    Order findByPayOrderId(String payOrderId);
 }

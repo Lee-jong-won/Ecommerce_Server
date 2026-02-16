@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.exception;
 
-import jongwon.e_commerce.common.exception.DomainException;
+import jongwon.e_commerce.order.domain.common.exception.DomainException;
 
 public class OrderNotExistException extends DomainException {
     public OrderNotExistException() {

@@ -4,7 +4,7 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,9 +18,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OrderValidatorTest {
+class PaymentValidatorTest {
     @InjectMocks
-    OrderValidator orderValidator;
+    PaymentValidator paymentValidator;
     @Mock
     OrderJpaRepository orderJpaRepository;
 
@@ -41,7 +41,7 @@ class OrderValidatorTest {
                 .thenReturn(Optional.of(order));
 
         // when
-        Order result = orderValidator.validateOrder(request);
+        Order result = paymentValidator.validateOrder(request);
 
         // then
         assertEquals(10000, result.getTotalAmount());
@@ -62,7 +62,7 @@ class OrderValidatorTest {
         // when & then
         assertThrows(
                 OrderNotExistException.class,
-                () -> orderValidator.validateOrder(request)
+                () -> paymentValidator.validateOrder(request)
         );
     }
 
@@ -84,7 +84,7 @@ class OrderValidatorTest {
         // when & then
         assertThrows(
                 InvalidAmountException.class,
-                () -> orderValidator.validateOrder(request)
+                () -> paymentValidator.validateOrder(request)
         );
     }
 }

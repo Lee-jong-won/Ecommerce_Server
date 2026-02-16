@@ -24,7 +24,10 @@ public class Pay {
     private String orderId;
 
     @Column(name = "payment_id", nullable = false)
-    private String paymentKey;
+    private String paymentId;
+
+    @Column(name = "pg_type", nullable = false)
+    private String pgType;
 
     @Column(name = "pay_method", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
@@ -45,12 +48,12 @@ public class Pay {
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //
-    public static Pay create(Long fkOrderId, String orderId, String paymentKey, long payAmount){
+    public static Pay create(Long fkOrderId, String orderId, String pgType, long payAmount){
         Pay pay = new Pay();
         pay.fkOrderId = fkOrderId;
         pay.orderId = orderId;
-        pay.paymentKey = paymentKey;
-        pay.payStatus = PayStatus.PENDING;
+        pay.pgType = pgType;
+        pay.payStatus = PayStatus.CREATED;
         pay.payAmount = payAmount;
         return pay;
     }
@@ -70,6 +73,12 @@ public class Pay {
 
     public void setPayMethod(PayMethod payMethod){
         this.payMethod = payMethod;
+    }
+
+    public void markPending(){
+        if(payStatus != PayStatus.CREATED)
+            throw new InvalidPayStatusException("결제 승인 중으로 처리 불가 사태 " + payStatus);
+        setPayStatus(PayStatus.PENDING);
     }
 
     // PG 승인 성공 응답 수신

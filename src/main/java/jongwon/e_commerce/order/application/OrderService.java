@@ -40,8 +40,10 @@ public class OrderService {
             orderItems.add(orderItem);
         }
 
-        //총 주문 금액 계산
+        // 총 주문 금액 계산
         order.setTotalAmount(orderItems);
+
+        //
         
         return order;
     }

@@ -4,10 +4,9 @@ import jongwon.e_commerce.payment.exception.external.PaymentErrorCode;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.external.toss.TossPaymentClient;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +25,7 @@ class PaymentApprovalFacadeTest {
     @InjectMocks
     PaymentApprovalFacade facade;
     @Mock
-    PaymentPrepareService paymentPrepareService;
+    PaymentCreateService paymentPrepareService;
     @Mock
     PaymentResultService paymentResultService;
     @Mock

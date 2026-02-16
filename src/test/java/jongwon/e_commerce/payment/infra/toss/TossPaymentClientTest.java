@@ -1,41 +1,15 @@
 package jongwon.e_commerce.payment.infra.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import jongwon.e_commerce.external.http.client.HttpClientFactory;
-import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.external.http.policy.HttpClientPolicy;
-import jongwon.e_commerce.external.toss.TossPaymentClient;
-import jongwon.e_commerce.external.toss.TossPaymentClientErrorHandler;
-import jongwon.e_commerce.external.toss.TossPaymentErrorMapper;
-import jongwon.e_commerce.payment.exception.external.TossPaymentException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiNetworkException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentSystemException.TossPaymentSystemException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
-import org.apache.hc.core5.util.Timeout;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import jongwon.e_commerce.payment.toss.TossPaymentClientErrorHandler;
 import org.springframework.retry.backoff.BackOffPolicy;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.web.client.RestClient;
-import tools.jackson.databind.ObjectMapper;
 
-import java.time.OffsetDateTime;
-import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TossPaymentClientTest {
     WireMockServer wireMockServer;

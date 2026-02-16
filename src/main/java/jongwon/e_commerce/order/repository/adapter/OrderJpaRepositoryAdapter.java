@@ -29,4 +29,13 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
                 () -> new OrderNotExistException("해당 주문은 존재하지 않습니다.")
         );
     }
+
+    @Override
+    public Order findByPayOrderId(String payOrderId) {
+        return orderJpaRepository.findByPayOrderId(payOrderId).orElseThrow(
+                () -> new OrderNotExistException("해당 주문은 존재하지 않습니다.")
+        );
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.presentation.dto;
+package jongwon.e_commerce.payment.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,13 +6,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TossPaymentCancelRequest {
-    public String paymentKey;
-    public String cancelReason;
-    public String idempotencyKey;
 
-    public TossPaymentCancelRequest(String paymentKey, String cancelReason, String idempotencyKey){
+    public String paymentKey;
+    public String idempotencyKey;
+    public String cancelReason;
+
+    public TossPaymentCancelRequest(String paymentKey, String idempotencyKey, String cancelReason){
         this.paymentKey = paymentKey;
-        this.cancelReason = cancelReason;
         this.idempotencyKey = idempotencyKey;
+        this.cancelReason = cancelReason;
     }
 }

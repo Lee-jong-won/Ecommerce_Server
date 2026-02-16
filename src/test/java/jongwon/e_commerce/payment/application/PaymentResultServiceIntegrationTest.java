@@ -12,8 +12,8 @@ import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.repository.jpa.PaymentJpaRepository;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +49,7 @@ class PaymentResultServiceIntegrationTest {
     OrderItemJpaRepository orderItemJpaRepository;
 
     @Autowired
-    PaymentRepository paymentRepository;
+    PaymentJpaRepository paymentJpaRepository;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -77,7 +77,7 @@ class PaymentResultServiceIntegrationTest {
         orderItem = orderItemJpaRepository.save(OrderItem.createOrderItem(order.getOrderId(), product.getProductId(), product.getProductName(),
                 product.getProductPrice(), 1));
 
-        payment = paymentRepository.save(Pay.create(order.getOrderId(), order.getPayOrderId(),
+        payment = paymentJpaRepository.save(Pay.create(order.getOrderId(), order.getPayOrderId(),
                 "paykey", 2000));
     }
 
@@ -115,7 +115,7 @@ class PaymentResultServiceIntegrationTest {
 
         // then
         Order updatedOrder = orderJpaRepository.findById(order.getOrderId()).orElseThrow();
-        Pay updatedPayment = paymentRepository.findById(payment.getPayId()).orElseThrow();
+        Pay updatedPayment = paymentJpaRepository.findById(payment.getPayId()).orElseThrow();
         Product updatedProduct = productJpaRepository.findById(product.getProductId()).orElseThrow();
 
         assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.PAID);
@@ -134,7 +134,7 @@ class PaymentResultServiceIntegrationTest {
 
         // then
         Order updatedOrder = orderJpaRepository.findById(order.getOrderId()).orElseThrow();
-        Pay updatedPayment = paymentRepository.findById(payment.getPayId()).orElseThrow();
+        Pay updatedPayment = paymentJpaRepository.findById(payment.getPayId()).orElseThrow();
 
         assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.FAILED);
         assertThat(updatedPayment.getPayStatus()).isEqualTo(PayStatus.FAILED);
@@ -146,7 +146,7 @@ class PaymentResultServiceIntegrationTest {
         paymentResultService.applyTimeout(payment.getPaymentKey());
 
         // then
-        Pay updatedPayment = paymentRepository.findById(payment.getPayId()).orElseThrow();
+        Pay updatedPayment = paymentJpaRepository.findById(payment.getPayId()).orElseThrow();
         assertThat(updatedPayment.getPayStatus()).isEqualTo(PayStatus.SYNC_TIMEOUT);
     }
 }

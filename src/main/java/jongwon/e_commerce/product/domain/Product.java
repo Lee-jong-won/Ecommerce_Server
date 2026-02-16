@@ -41,6 +41,9 @@ public class Product {
 
     // 재고 추가
     public void addStock(int quantity){
+        if (this.productStatus != ProductStatus.SELLING) {
+            throw new InvalidProductStatusException("판매중인 상품만 재고 증가 가능");
+        }
         this.stockQuantity += quantity;
     }
 

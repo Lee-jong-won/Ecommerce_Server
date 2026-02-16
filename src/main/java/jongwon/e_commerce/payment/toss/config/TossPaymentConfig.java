@@ -1,6 +1,5 @@
-package jongwon.e_commerce.external.toss;
+package jongwon.e_commerce.payment.toss.config;
 
-import jongwon.e_commerce.external.toss.TossPaymentProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

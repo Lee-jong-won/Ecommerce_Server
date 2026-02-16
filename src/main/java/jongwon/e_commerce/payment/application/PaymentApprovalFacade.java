@@ -1,125 +1,39 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.payment.exception.external.TossPaymentException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossApiTimeoutException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentRetryableException.TossPaymentRetryableException;
-import jongwon.e_commerce.payment.exception.external.TossPaymentUserFaultException.TossPaymentUserFaultException;
-import jongwon.e_commerce.external.toss.TossPaymentClient;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveRequest;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentApproveResponse;
-import jongwon.e_commerce.payment.presentation.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.exception.external.TossPaymentTimeoutException;
+import jongwon.e_commerce.payment.toss.TossApiService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Component
+@Service
+@RequiredArgsConstructor
 @Slf4j
 public class PaymentApprovalFacade {
-    private final PaymentPrepareService paymentPrepareService;
-    private final PaymentResultService paymentResultService;
-    private final TossPaymentClient tossPaymentClient;
+    private final PreparePaymentApprovalService preparePaymentApprovalService;
+    private final TossApiService tossApiService;
+    private final PaymentCompleteService paymentCompleteService;
 
-    public PaymentApprovalFacade(PaymentPrepareService paymentPrepareService,
-                                 PaymentResultService paymentResultService,
-                                 TossPaymentClient tossPaymentClient
-                                 ){
-        this.paymentPrepareService = paymentPrepareService;
-        this.paymentResultService = paymentResultService;
-        this.tossPaymentClient = tossPaymentClient;
-    }
-
-    public TossPaymentApproveResponse approvePayment(TossPaymentApproveRequest request){
-        paymentPrepareService.preparePayment(request);
+    public void approvePayment(TossPaymentApproveRequest request){
+        //1. 결제 전처리
+        preparePaymentApprovalService.preparePaymentApproval(request.getOrderId(), request.getAmount());
         try {
-            TossPaymentApproveResponse response = tossPaymentClient.callApproveApi(request);
-            handleSuccess(request, response);
-            return response;
-        } catch (TossPaymentException e) {
-            handleFailure(request, e);
-            throw e;
-        }
-    }
-
-    private void handleSuccess(TossPaymentApproveRequest request,
-                               TossPaymentApproveResponse response) {
-
-        boolean dbSuccessApplied = safeExecute(
-                "applySuccess",
-                request.getPaymentKey(),
-                () -> paymentResultService.applySuccess(
-                        request.getPaymentKey(),
-                        request.getPayOrderId(),
-                        response
-                )
-        );
-
-        if(!dbSuccessApplied){
-            tossPaymentClient.callCancelApi(new TossPaymentCancelRequest(request.getPaymentKey(),
-                    "DB 반영 실패로 인한 결제 취소", UUID.randomUUID().toString()));
-        }
-    }
-
-    private void handleFailure(TossPaymentApproveRequest request, TossPaymentException e) {
-
-        if (e instanceof TossPaymentUserFaultException) {
-            handleUserFault(request, (TossPaymentUserFaultException) e);
-        } else if (e instanceof TossPaymentRetryableException) {
-            handleRetryableFault(request, (TossPaymentRetryableException) e);
-        }
-    }
-
-    private void handleRetryableFault(TossPaymentApproveRequest request,
-                                      TossPaymentRetryableException e) {
-        if (e instanceof TossApiTimeoutException) {
-            safeExecute(
-                    "applyTimeout",
-                    request.getPaymentKey(),
-                    () -> paymentResultService.applyTimeout(
-                            request.getPaymentKey()
-                    )
-            );
-        } else {
-            safeExecute(
-                    "applyFailure",
-                    request.getPaymentKey(),
-                    () -> paymentResultService.applyFail(
-                            request.getPaymentKey(),
-                            request.getPayOrderId()
-                    )
-            );
-        }
-    }
-
-    private void handleUserFault(TossPaymentApproveRequest request,
-                                 TossPaymentUserFaultException e) {
-        safeExecute(
-                "applyFail",
-                request.getPaymentKey(),
-                () -> paymentResultService.applyFail(
-                        request.getPaymentKey(),
-                        request.getPayOrderId()
-                )
-        );
-    }
-
-    private boolean safeExecute(
-            String actionName,
-            String paymentKey,
-            Runnable action
-    ){
-        try {
-            action.run();
-            return true;
-        } catch (DataAccessException dataAccessException) {
-            log.error(
-                    "[CRITICAL] 결제 상태 반영 실패 - action: {}, paymentKey: {}, originalException: {}, dbException: {}",
-                    actionName,
-                    paymentKey,
-                    dataAccessException.getMessage()
-            );
-            return false;
+            // 2. 결제 승인 api 호출
+            TossPaymentApproveResponse response = tossApiService.approve(request, UUID.randomUUID().toString());
+            // 3-1. 성공 시, 성공 상태 DB에 반영
+            paymentCompleteService.completeSuccess(request.getPaymentKey(), request.getOrderId(),
+                    response.getApprovedAt(), response.getMethod());
+        } catch(TossPaymentTimeoutException e){
+            // 3-2. 타임아웃 발생 시, 타임아웃 상태 DB에 반영
+            paymentCompleteService.completeTimeout(request.getOrderId());
+        } catch(TossPaymentException e){
+            // 3-3. 그 외 예외 발생 시, 실패 상태로 DB에 반영
+            paymentCompleteService.completeFail(request.getOrderId());
         }
     }
 
