@@ -5,6 +5,7 @@ import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -12,9 +13,10 @@ import org.springframework.web.client.RestClient;
 import java.util.Map;
 
 @Component
+@Primary
 @Slf4j
 @RequiredArgsConstructor
-public class TossApiCaller {
+public class TossApiCaller{
 
     private final @Qualifier("tossRestClient")RestClient restClient;
     private final TossNetworkExceptionTranslator translator;
@@ -24,7 +26,6 @@ public class TossApiCaller {
             String idempotencyKey
     ) {
         TossPaymentApproveResponse response;
-
         try{
             response = restClient.post()
                     .uri("/payments/confirm")

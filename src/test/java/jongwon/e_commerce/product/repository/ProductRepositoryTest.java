@@ -16,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @ActiveProfiles("test")
 class ProductRepositoryTest {
-
     @Autowired
     ProductJpaRepository productJpaRepository;
-
     @Test
     void 상품이_정상적으로_저장된다_JPA() {
         //given

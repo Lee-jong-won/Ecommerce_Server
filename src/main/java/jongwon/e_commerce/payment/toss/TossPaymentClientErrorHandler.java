@@ -24,11 +24,11 @@ public class TossPaymentClientErrorHandler implements RestClient
     ) {
         try {
             if(response.getStatusCode().is4xxClientError()){
-                throw new TossPaymentClientException("결제 중 오류가 발생했습니다. 다시 시도해주세요");
+                throw new TossPaymentClientException("결제 관련 처리중 오류가 발생했습니다. 다시 시도해주세요");
             }
 
             if(response.getStatusCode().is5xxServerError()){
-                throw new TossPaymentServerException("결제 중 오류가 발생했습니다. 다시 시도해주세요");
+                throw new TossPaymentServerException("결제 관련 처리중 오류가 발생했습니다. 다시 시도해주세요");
             }
         } catch (IOException e) {
             throw new TossPaymentException("알 수 없는 오류입니다.");

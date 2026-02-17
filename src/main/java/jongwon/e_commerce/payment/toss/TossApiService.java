@@ -3,7 +3,6 @@ package jongwon.e_commerce.payment.toss;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
-import jongwon.e_commerce.payment.toss.TossApiCaller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.retry.support.RetryTemplate;
