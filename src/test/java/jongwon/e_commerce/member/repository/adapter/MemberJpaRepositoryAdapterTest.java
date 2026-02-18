@@ -1,8 +1,8 @@
-package jongwon.e_commerce.member.repository;
+package jongwon.e_commerce.member.repository.adapter;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.exception.MemberNotFoundException;
-import jongwon.e_commerce.member.repository.adapter.MemberJpaRepositoryAdapter;
+import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class MemberRepositoryTest {
+class MemberJpaRepositoryAdapterTest {
 
     @Autowired
     MemberJpaRepository memberJpaRepository;

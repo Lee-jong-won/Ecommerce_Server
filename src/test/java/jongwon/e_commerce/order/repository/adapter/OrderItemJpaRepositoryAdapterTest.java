@@ -1,10 +1,10 @@
-package jongwon.e_commerce.order.repository;
+package jongwon.e_commerce.order.repository.adapter;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.repository.adapter.OrderItemJpaRepositoryAdapter;
+import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.product.domain.Product;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class OrderItemRepositoryTest {
+class OrderItemJpaRepositoryAdapterTest {
 
     @Autowired
     OrderItemJpaRepository orderItemJpaRepository;
@@ -61,7 +61,6 @@ class OrderItemRepositoryTest {
         assertEquals(orderItemEntity.getOrderPrice(), findOrderItemEntity.getOrderPrice());
         assertEquals(orderItemEntity.getProductId(), findOrderItemEntity.getProductId());
     }
-
 
 
 }

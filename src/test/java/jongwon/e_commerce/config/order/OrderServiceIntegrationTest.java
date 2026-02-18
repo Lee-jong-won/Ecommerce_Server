@@ -6,7 +6,7 @@ import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.application.OrderService;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
-import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
+import jongwon.e_commerce.order.dto.OrderItemRequest;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;

@@ -1,10 +1,10 @@
-package jongwon.e_commerce.order.repository;
+package jongwon.e_commerce.order.repository.adapter;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderStatus;
-import jongwon.e_commerce.order.repository.adapter.OrderJpaRepositoryAdapter;
+import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @Transactional
 @ActiveProfiles("test")
-class OrderRepositoryTest {
+class OrderJpaRepositoryAdapterTest {
 
     @Autowired
     OrderJpaRepository orderJpaRepository;
@@ -57,7 +57,7 @@ class OrderRepositoryTest {
         Order order = Order.createOrder(member.getMemberId(), "주문1");
 
         // when
-         orderJpaRepository.save(order);
+        orderJpaRepository.save(order);
 
         // then
         assertDoesNotThrow(() -> orderRepository.findById(order.getOrderId()));
@@ -71,6 +71,5 @@ class OrderRepositoryTest {
         //when && then
         assertThrows(OrderNotExistException.class, () -> orderRepository.findById(1L));
     }
-
 
 }

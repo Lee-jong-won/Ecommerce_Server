@@ -12,4 +12,6 @@ public interface OrderItemRepository {
 
     List<OrderItem> findOrderItems(Long orderId);
 
+    Optional<OrderItem> findById(Long id);
+
 }

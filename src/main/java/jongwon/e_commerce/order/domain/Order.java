@@ -37,6 +37,10 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private long totalAmount;
 
+    // 테스트 용도
+    public void setOrderId(long orderId){
+        this.orderId = orderId;
+    }
     public static Order createOrder(Long memberId, String orderName){
         Order order = new Order();
         order.memberId = memberId;

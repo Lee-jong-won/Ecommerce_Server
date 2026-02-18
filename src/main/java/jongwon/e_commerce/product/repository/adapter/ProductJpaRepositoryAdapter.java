@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Primary
 @RequiredArgsConstructor
@@ -22,8 +24,7 @@ public class ProductJpaRepositoryAdapter implements ProductRepository {
     }
 
     @Override
-    public Product findById(Long id) {
-        return productJpaRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    public Optional<Product> findById(Long id) {
+        return productJpaRepository.findById(id);
     }
 }

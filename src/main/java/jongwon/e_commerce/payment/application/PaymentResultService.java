@@ -4,8 +4,11 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.exception.OrderNotExistException;
+import jongwon.e_commerce.payment.exception.PaymentNotFoundException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +24,13 @@ public class PaymentResultService {
 
     public void applySuccess(String payOrderId, OffsetDateTime approvedAt, String method) {
         //결제 및 주문 조회
-        Pay payment = paymentRepository.findByOrderId(payOrderId);
-        Order order = orderRepository.findByPayOrderId(payOrderId);
+        Pay payment = paymentRepository.findByOrderId(payOrderId).orElseThrow(
+                () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
+        );
+
+        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+                () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
+        );
 
         //order 상태 변경
         order.markPaid();
@@ -34,10 +42,14 @@ public class PaymentResultService {
     }
 
     public void applyFail(String payOrderId) {
-
         //결제 및 주문 조회
-        Pay payment = paymentRepository.findByOrderId(payOrderId);
-        Order order = orderRepository.findByPayOrderId(payOrderId);
+        Pay payment = paymentRepository.findByOrderId(payOrderId).orElseThrow(
+                () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
+        );
+
+        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+                () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
+        );
 
         //payment 상태 변경
         payment.markFailed();
@@ -48,7 +60,9 @@ public class PaymentResultService {
 
     public void applyTimeout(String payOrderId){
         // 결제 조회
-        Pay payment = paymentRepository.findByOrderId(payOrderId);
+        Pay payment = paymentRepository.findByOrderId(payOrderId).orElseThrow(
+                () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
+        );
 
         // payment 상태 변경
         payment.markSyncTimeout();

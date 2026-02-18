@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Primary
 @Repository
@@ -24,18 +26,13 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
     }
 
     @Override
-    public Order findById(Long id) {
-        return orderJpaRepository.findById(id).orElseThrow(
-                () -> new OrderNotExistException("해당 주문은 존재하지 않습니다.")
-        );
+    public Optional<Order> findById(Long id) {
+        return orderJpaRepository.findById(id);
     }
 
     @Override
-    public Order findByPayOrderId(String payOrderId) {
-        return orderJpaRepository.findByPayOrderId(payOrderId).orElseThrow(
-                () -> new OrderNotExistException("해당 주문은 존재하지 않습니다.")
-        );
+    public Optional<Order> findByPayOrderId(String payOrderId) {
+        return orderJpaRepository.findByPayOrderId(payOrderId);
     }
-
 
 }

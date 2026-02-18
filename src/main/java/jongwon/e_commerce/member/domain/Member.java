@@ -29,6 +29,11 @@ public class Member {
     @Column(length = 255)
     private String addr;
 
+    // 테스트 용도
+    public void setMemberId(Long memberId){
+        this.memberId = memberId;
+    }
+
     public static Member create(String loginId, String password,
                                String memberName, String email, String addr){
         Member member = new Member();

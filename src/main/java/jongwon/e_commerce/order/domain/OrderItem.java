@@ -29,6 +29,10 @@ public class OrderItem {
     @Column(name = "order_quantity", nullable = false)
     private int orderQuantity;
 
+    public void setOrderItemId(long id){
+        this.orderItemId = id;
+    }
+
     public static OrderItem createOrderItem(Long orderId, Long productId, String productName, int orderPrice, int orderQuantity){
         OrderItem orderItem = new OrderItem();
         orderItem.orderId = orderId;

@@ -2,10 +2,11 @@ package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.presentation.dto.OrderItemRequest;
+import jongwon.e_commerce.order.dto.OrderItemRequest;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,10 @@ public class OrderService {
         for(int i = 0; i < requests.size(); i++){
             OrderItemRequest orderItemRequest = requests.get(i);
 
-            Product product = productRepository.findById(orderItemRequest.getProductId());
+            Product product = productRepository.findById(orderItemRequest.getProductId()).orElseThrow(
+                    () -> new ProductNotFoundException(orderItemRequest.getProductId())
+            );
+
             OrderItem orderItem = orderItemRepository.save(order.getOrderId(), product.getProductId(), product.getProductName(),
                     product.getProductPrice(), orderItemRequest.getStockQuantity());
 

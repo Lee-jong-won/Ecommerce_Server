@@ -5,15 +5,19 @@ import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
+import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StockService {
 
@@ -22,19 +26,36 @@ public class StockService {
     private final OrderRepository orderRepository;
 
     public void decreaseStock(String payOrderId) {
-        Order order = orderRepository.findByPayOrderId(payOrderId);
+
+        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+                () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
+        );
+
         List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getOrderId());
         for (OrderItem orderItem : orderItems) {
-            Product product = productRepository.findById(orderItem.getProductId());
+
+            Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(
+                    () -> new ProductNotFoundException(orderItem.getProductId())
+            );
+
             product.removeStock(orderItem.getOrderQuantity());
         }
     }
 
     public void increaseStock(String payOrderId){
-        Order order = orderRepository.findByPayOrderId(payOrderId);
+
+        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+                () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
+        );
+
         List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getOrderId());
+
         for (OrderItem orderItem : orderItems) {
-            Product product = productRepository.findById(orderItem.getProductId());
+
+            Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(
+                    () -> new ProductNotFoundException(orderItem.getProductId())
+            );
+
             product.addStock(orderItem.getOrderQuantity());
         }
     }

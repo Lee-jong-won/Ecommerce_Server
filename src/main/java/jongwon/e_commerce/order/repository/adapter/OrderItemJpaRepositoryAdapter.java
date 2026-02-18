@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Primary
@@ -26,6 +27,11 @@ public class OrderItemJpaRepositoryAdapter implements OrderItemRepository {
     public List<OrderItem> findOrderItems(Long orderId) {
         List<OrderItem> orderItems = orderItemJpaRepository.findByOrderId(orderId);
         return orderItems;
+    }
+
+    @Override
+    public Optional<OrderItem> findById(Long id) {
+        return orderItemJpaRepository.findById(id);
     }
 
 

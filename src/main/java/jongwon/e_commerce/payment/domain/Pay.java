@@ -26,9 +26,6 @@ public class Pay {
     @Column(name = "payment_id", nullable = false)
     private String paymentId;
 
-    @Column(name = "pg_type", nullable = false)
-    private String pgType;
-
     @Column(name = "pay_method", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private PayMethod payMethod;
@@ -48,17 +45,21 @@ public class Pay {
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //
-    public static Pay create(Long fkOrderId, String orderId, String pgType, long payAmount){
+    public static Pay create(Long fkOrderId, String orderId, long payAmount){
         Pay pay = new Pay();
         pay.fkOrderId = fkOrderId;
         pay.orderId = orderId;
-        pay.pgType = pgType;
         pay.payStatus = PayStatus.CREATED;
         pay.payAmount = payAmount;
         return pay;
     }
 
-    //비즈니스 로직
+    // 비즈니스 로직
+
+    // 테스트용
+    public void setPayId(long payId){
+        this.payId = payId;
+    }
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
     }

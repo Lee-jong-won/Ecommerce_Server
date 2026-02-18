@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @Primary
 @RequiredArgsConstructor
@@ -23,9 +25,7 @@ public class MemberJpaRepositoryAdapter implements MemberRepository {
     }
 
     @Override
-    public Member findById(Long id) {
-        return memberJpaRepository.findById(id).orElseThrow(
-                () -> new MemberNotFoundException(id)
-        );
+    public Optional<Member> findById(Long id) {
+        return memberJpaRepository.findById(id);
     }
 }
