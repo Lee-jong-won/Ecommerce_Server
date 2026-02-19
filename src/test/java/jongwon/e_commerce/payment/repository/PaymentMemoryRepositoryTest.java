@@ -55,5 +55,4 @@ class PaymentMemoryRepositoryTest {
         // then
         assertThat(result).isEqualTo(pay1);
     }
-
 }

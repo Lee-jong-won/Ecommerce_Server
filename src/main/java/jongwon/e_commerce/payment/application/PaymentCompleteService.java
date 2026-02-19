@@ -19,18 +19,18 @@ public class PaymentCompleteService {
     private final PaymentResultService paymentResultService;
     private final TossPaymentGateWay tossPaymentGateWay;
 
-    public void completeSuccess(String paymentKey, String payOrderId,
+    public void completeSuccess(String paymentKey, String orderId,
                                 OffsetDateTime approvedAt, String method){
         try{
-            paymentResultService.applySuccess(payOrderId, approvedAt, method);
+            paymentResultService.applySuccess(orderId, approvedAt, method);
         }catch(DataAccessException e){
             //1. 로그 남기기
-            log.error("[CRITICAL] 결제 상태 반영 실패 - payOrderId : {}", payOrderId);
+            log.error("[CRITICAL] 결제 상태 반영 실패 - OrderId : {}", orderId);
 
             //2. 보상 트랜잭션 시작
 
             //2-1.재고 원복
-            stockService.increaseStock(payOrderId);
+            stockService.increaseStock(orderId);
 
             //2-2.결제 취소
             tossPaymentGateWay.payCancel(new TossPaymentCancelRequest(paymentKey, UUID.randomUUID().toString(),
@@ -38,19 +38,19 @@ public class PaymentCompleteService {
         }
     }
 
-    public void completeTimeout(String payOrderId){
+    public void completeTimeout(String orderId){
         try{
-            paymentResultService.applyTimeout(payOrderId);
+            paymentResultService.applyTimeout(orderId);
         }catch(DataAccessException e){
-            log.error("[CRITICAL] 결제 상태 반영 실패 - payOrderId : {}", payOrderId);
+            log.error("[CRITICAL] 결제 상태 반영 실패 - payOrderId : {}", orderId);
         }
     }
 
-    public void completeFail(String payOrderId){
+    public void completeFail(String orderId){
         try{
-            paymentResultService.applyFail(payOrderId);
+            paymentResultService.applyFail(orderId);
         }catch(DataAccessException e){
-            log.error("[CRITICAL] 결제 상태 반영 실패 - payOrderId : {}", payOrderId);
+            log.error("[CRITICAL] 결제 상태 반영 실패 - orderId : {}", orderId);
         }
     }
 

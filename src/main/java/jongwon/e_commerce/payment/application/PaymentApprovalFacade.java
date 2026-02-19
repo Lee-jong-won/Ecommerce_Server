@@ -18,7 +18,6 @@ public class PaymentApprovalFacade {
     private final PreparePaymentApprovalService preparePaymentApprovalService;
     private final TossPaymentGateWay tossPaymentGateWay;
     private final PaymentCompleteService paymentCompleteService;
-
     public void approvePayment(TossPaymentApproveRequest request){
         //1. 결제 전처리
         preparePaymentApprovalService.preparePaymentApproval(request.getOrderId(), request.getAmount());

@@ -39,7 +39,6 @@ public class TossPaymentHttpClientConfig {
             TossPaymentProperties properties,
             TossPaymentClientErrorHandler tossPaymentClientErrorHandler
     ) {
-
         return RestClient.builder()
                 .baseUrl(properties.getApiUrl())
                 .defaultStatusHandler(HttpStatusCode::isError, tossPaymentClientErrorHandler)
