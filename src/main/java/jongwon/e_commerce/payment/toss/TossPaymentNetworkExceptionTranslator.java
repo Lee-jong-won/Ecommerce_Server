@@ -11,7 +11,7 @@ import java.net.SocketTimeoutException;
 
 @Component
 @Slf4j
-public class TossNetworkExceptionTranslator {
+public class TossPaymentNetworkExceptionTranslator {
     public TossPaymentException translateNetworkException(ResourceAccessException e) {
         Throwable cause = e.getCause();
         if (isReadTimeout(cause)) {

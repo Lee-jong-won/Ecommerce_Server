@@ -1,7 +1,7 @@
 package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
-import jongwon.e_commerce.payment.toss.TossApiService;
+import jongwon.e_commerce.payment.toss.TossPaymentGateWay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +17,7 @@ public class PaymentCompleteService {
 
     private final StockService stockService;
     private final PaymentResultService paymentResultService;
-    private final TossApiService tossApiService;
+    private final TossPaymentGateWay tossPaymentGateWay;
 
     public void completeSuccess(String paymentKey, String payOrderId,
                                 OffsetDateTime approvedAt, String method){
@@ -33,7 +33,7 @@ public class PaymentCompleteService {
             stockService.increaseStock(payOrderId);
 
             //2-2.결제 취소
-            tossApiService.cancel(new TossPaymentCancelRequest(paymentKey, UUID.randomUUID().toString(),
+            tossPaymentGateWay.cancel(new TossPaymentCancelRequest(paymentKey, UUID.randomUUID().toString(),
                     "DB 저장 실패로 인한, 결제 취소"));
         }
     }

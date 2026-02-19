@@ -10,7 +10,7 @@ import java.net.SocketTimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TossNetworkExceptionTranslatorTest {
+class TossPaymentNetworkExceptionTranslatorTest {
 
     @Test
     void 타임아웃_예외가_토스예외로_정상적으로_해석된다(){
@@ -19,10 +19,10 @@ class TossNetworkExceptionTranslatorTest {
                 new SocketTimeoutException());
 
         //when
-        TossNetworkExceptionTranslator tossNetworkExceptionTranslator = new TossNetworkExceptionTranslator();
+        TossPaymentNetworkExceptionTranslator tossPaymentNetworkExceptionTranslator = new TossPaymentNetworkExceptionTranslator();
 
         //then
-        assertInstanceOf(TossPaymentTimeoutException.class, tossNetworkExceptionTranslator.translateNetworkException(resourceAccessException));
+        assertInstanceOf(TossPaymentTimeoutException.class, tossPaymentNetworkExceptionTranslator.translateNetworkException(resourceAccessException));
     }
 
     @Test
@@ -32,10 +32,10 @@ class TossNetworkExceptionTranslatorTest {
         ResourceAccessException resourceAccessException = new ResourceAccessException("연결 예외", new ConnectException());
 
         //when
-        TossNetworkExceptionTranslator tossNetworkExceptionTranslator = new TossNetworkExceptionTranslator();
+        TossPaymentNetworkExceptionTranslator tossPaymentNetworkExceptionTranslator = new TossPaymentNetworkExceptionTranslator();
 
         //then
-        assertInstanceOf(TossPaymentException.class, tossNetworkExceptionTranslator.translateNetworkException(resourceAccessException));
+        assertInstanceOf(TossPaymentException.class, tossPaymentNetworkExceptionTranslator.translateNetworkException(resourceAccessException));
     }
 
 }

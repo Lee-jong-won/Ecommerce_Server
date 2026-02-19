@@ -4,7 +4,7 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentException;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.exception.external.TossPaymentTimeoutException;
-import jongwon.e_commerce.payment.toss.TossApiService;
+import jongwon.e_commerce.payment.toss.TossPaymentGateWay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Slf4j
 public class PaymentApprovalFacade {
     private final PreparePaymentApprovalService preparePaymentApprovalService;
-    private final TossApiService tossApiService;
+    private final TossPaymentGateWay tossPaymentGateWay;
     private final PaymentCompleteService paymentCompleteService;
 
     public void approvePayment(TossPaymentApproveRequest request){
@@ -24,7 +24,7 @@ public class PaymentApprovalFacade {
         preparePaymentApprovalService.preparePaymentApproval(request.getOrderId(), request.getAmount());
         try {
             // 2. 결제 승인 api 호출
-            TossPaymentApproveResponse response = tossApiService.approve(request, UUID.randomUUID().toString());
+            TossPaymentApproveResponse response = tossPaymentGateWay.approve(request, UUID.randomUUID().toString());
             // 3-1. 성공 시, 성공 상태 DB에 반영
             paymentCompleteService.completeSuccess(request.getPaymentKey(), request.getOrderId(),
                     response.getApprovedAt(), response.getMethod());
