@@ -19,9 +19,8 @@ public class PaymentCompleteService {
     private final PaymentResultService paymentResultService;
     private final TossApiService tossApiService;
 
-    public void completeSuccess(String paymentKey,
-                                String payOrderId, OffsetDateTime approvedAt, String method){
-
+    public void completeSuccess(String paymentKey, String payOrderId,
+                                OffsetDateTime approvedAt, String method){
         try{
             paymentResultService.applySuccess(payOrderId, approvedAt, method);
         }catch(DataAccessException e){

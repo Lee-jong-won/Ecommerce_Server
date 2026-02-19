@@ -11,6 +11,7 @@ import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.repository.PaymentMemoryRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductMemoryRepository;
@@ -44,10 +45,41 @@ class PaymentResultServiceTest {
     PaymentResultService paymentResultService = new PaymentResultService(paymentMemoryRepository, orderMemoryRepository);
 
     // 엔티티
+    Member member;
+    Product product1;
+    Product product2;
+    Order order;
+    Pay pay;
 
     @BeforeEach
     public void beforeEach(){
+        // 주문할 멤버 설정
+        member = memberMemoryRepository.save("wwwl7749", "1234", "이종원",
+                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
 
+        // 주문할 상품 설정
+        product1 = productMemoryRepository.save("상품1", 1000);
+        product1.changeStock(10);
+        product1.startSelling();
+
+        product2 = productMemoryRepository.save("상품2", 2000);
+        product2.changeStock(10);
+        product2.startSelling();
+
+        // 주문할 상품과 수량 매핑
+        List<OrderItemRequest> orderItemRequestList = List.of(
+                new OrderItemRequest(product1.getProductId(), 2),
+                new OrderItemRequest(product2.getProductId(), 3)
+        );
+
+        // 주문하기
+        order = orderService.order(member.getMemberId(), "주문1", orderItemRequestList);
+
+        // 결제 데이터 생성
+        pay = paymentCreateService.preparePayment(order.getOrderId());
+
+        // 결제 승인 준비
+        preparePaymentApprovalService.preparePaymentApproval(pay.getOrderId(), pay.getPayAmount());
     }
 
     @AfterEach
@@ -62,34 +94,8 @@ class PaymentResultServiceTest {
     @Test
     void 외부_PG로부터_OK_응답시_결제정보와_주문정보가_성공으로_업데이트_된다(){
         // given
-
-        // 주문할 멤버
-        Member member = memberMemoryRepository.save("wwwl7749", "1234", "이종원",
-                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
-
-        // 주문할 상품
-        Product product1 = productMemoryRepository.save("상품1", 1000);
-        product1.changeStock(10);
-        product1.startSelling();
-
-        Product product2 = productMemoryRepository.save("상품2", 2000);
-        product2.changeStock(10);
-        product2.startSelling();
-
-        // 주문할 상품들의 수량
-        List<OrderItemRequest> orderItemRequestList = List.of(
-                new OrderItemRequest(product1.getProductId(), 2),
-                new OrderItemRequest(product2.getProductId(), 3)
-        );
-
-        // 주문
-        Order order = orderService.order(member.getMemberId(), "주문1", orderItemRequestList);
-
-        // 결제 생성
-        Pay pay = paymentCreateService.preparePayment(order.getOrderId());
-
-        // 결제 승인 준비
-        preparePaymentApprovalService.preparePaymentApproval(pay.getOrderId(), pay.getPayAmount());
+        TossPaymentApproveResponse tossPaymentApproveResponse = new TossPaymentApproveResponse("카드",
+                OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE");
 
         // when
         paymentResultService.applySuccess(pay.getOrderId(), OffsetDateTime.parse("2024-02-13T03:18:14Z"), "카드");
@@ -101,7 +107,25 @@ class PaymentResultServiceTest {
         assertEquals(OffsetDateTime.parse("2024-02-13T03:18:14Z"), pay.getApprovedAt());
     }
 
+    @Test
+    void 외부_PG로부터_에러_응답시_결제상태가_실패로_반영된다(){
 
+        // when
+        paymentResultService.applyFail(pay.getOrderId());
+
+        // then
+        assertEquals(PayStatus.FAILED, pay.getPayStatus());
+        assertEquals(OrderStatus.FAILED, order.getOrderStatus());
+    }
+
+    @Test
+    void 타임아웃_시_타임아웃_상태로_반영된다(){
+        // when
+        paymentResultService.applyTimeout(pay.getOrderId());
+
+        // then
+        assertEquals(PayStatus.SYNC_TIMEOUT, pay.getPayStatus());
+    }
 
 
 }
