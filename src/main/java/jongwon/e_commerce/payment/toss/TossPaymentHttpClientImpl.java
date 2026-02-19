@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
@@ -16,23 +17,35 @@ import java.util.Map;
 public class TossPaymentHttpClientImpl implements TossPaymentHttpClient {
 
     @Qualifier("tossRestClient")private final RestClient restClient;
+    private final TossPaymentNetworkExceptionTranslator tossPaymentNetworkExceptionTranslator;
+
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(TossPaymentApproveRequest request, String idempotencyKey) {
-        return restClient.post()
-                .uri("/payments/confirm")
-                .header("Idempotency-Key", idempotencyKey)
-                .body(request)
-                .retrieve()
-                .body(TossPaymentApproveResponse.class);
+        TossPaymentApproveResponse response;
+        try{
+            response = restClient.post()
+                    .uri("/payments/confirm")
+                    .header("Idempotency-Key", idempotencyKey)
+                    .body(request)
+                    .retrieve()
+                    .body(TossPaymentApproveResponse.class);
+        } catch(ResourceAccessException e){
+            throw tossPaymentNetworkExceptionTranslator.translateNetworkException(e);
+        }
+        return response;
     }
 
     @Override
     public void callPayCancelApi(String paymentKey, String idempotencyKey, String cancelReason) {
-        restClient.post()
-                .uri("/{paymentKey}/cancel", paymentKey)
-                .header("Idempotency-Key", idempotencyKey)
-                .body(Map.of("cancelReason", cancelReason))
-                .retrieve()
-                .toBodilessEntity();   // Void면 이게 더 깔끔
+        try {
+            restClient.post()
+                    .uri("/{paymentKey}/cancel", paymentKey)
+                    .header("Idempotency-Key", idempotencyKey)
+                    .body(Map.of("cancelReason", cancelReason))
+                    .retrieve()
+                    .toBodilessEntity();   // Void면 이게 더 깔끔
+        } catch(ResourceAccessException e){
+            throw tossPaymentNetworkExceptionTranslator.translateNetworkException(e);
+        }
     }
 }

@@ -33,7 +33,7 @@ public class PaymentCompleteService {
             stockService.increaseStock(payOrderId);
 
             //2-2.결제 취소
-            tossPaymentGateWay.cancel(new TossPaymentCancelRequest(paymentKey, UUID.randomUUID().toString(),
+            tossPaymentGateWay.payCancel(new TossPaymentCancelRequest(paymentKey, UUID.randomUUID().toString(),
                     "DB 저장 실패로 인한, 결제 취소"));
         }
     }

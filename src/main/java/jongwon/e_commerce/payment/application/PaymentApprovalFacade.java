@@ -24,7 +24,7 @@ public class PaymentApprovalFacade {
         preparePaymentApprovalService.preparePaymentApproval(request.getOrderId(), request.getAmount());
         try {
             // 2. 결제 승인 api 호출
-            TossPaymentApproveResponse response = tossPaymentGateWay.approve(request, UUID.randomUUID().toString());
+            TossPaymentApproveResponse response = tossPaymentGateWay.payApprove(request, UUID.randomUUID().toString());
             // 3-1. 성공 시, 성공 상태 DB에 반영
             paymentCompleteService.completeSuccess(request.getPaymentKey(), request.getOrderId(),
                     response.getApprovedAt(), response.getMethod());
