@@ -9,12 +9,7 @@ public enum PayMethodMapper {
     TRANSFER("계좌이체", PayMethod.TRANSFER),
     VIRTUAL_ACCOUNT("가상계좌", PayMethod.VIRTUAL_ACCOUNT),
     MOBILE("휴대폰", PayMethod.MOBILE),
-    EASY_PAY("간편결제", PayMethod.EASY_PAY),
-
-    // 상품권 계열은 하나로 통합
-    CULTURE_GIFT("문화상품권", PayMethod.GIFT_CERTIFICATE),
-    BOOK_GIFT("도서문화상품권", PayMethod.GIFT_CERTIFICATE),
-    GAME_GIFT("게임문화상품권", PayMethod.GIFT_CERTIFICATE);
+    EASY_PAY("간편결제", PayMethod.EASY_PAY);
 
     private final String tossValue;
     private final PayMethod payMethod;

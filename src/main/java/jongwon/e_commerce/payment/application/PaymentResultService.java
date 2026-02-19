@@ -4,6 +4,7 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.domain.PayMethodMapper;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.exception.PaymentNotFoundException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
@@ -37,7 +38,7 @@ public class PaymentResultService {
 
         //payment 상태 변경
         payment.markSuccess();
-        payment.setPayMethod(PayMethod.valueOf(method));
+        payment.setPayMethod(PayMethodMapper.from(method));
         payment.setApprovedAt(approvedAt);
     }
 

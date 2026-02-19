@@ -37,7 +37,6 @@ public class TossApiCaller{
         } catch( ResourceAccessException e){
             throw translator.translateNetworkException(e);
         }
-
         return response;
     }
 
