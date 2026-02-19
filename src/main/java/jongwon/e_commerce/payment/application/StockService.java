@@ -25,13 +25,13 @@ public class StockService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-    public void decreaseStock(String payOrderId) {
+    public void decreaseStock(String orderId) {
 
-        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );
 
-        List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getOrderId());
+        List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getId());
         for (OrderItem orderItem : orderItems) {
 
             Product product = productRepository.findById(orderItem.getProductId()).orElseThrow(
@@ -42,13 +42,13 @@ public class StockService {
         }
     }
 
-    public void increaseStock(String payOrderId){
+    public void increaseStock(String orderId){
 
-        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );
 
-        List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getOrderId());
+        List<OrderItem> orderItems = orderItemRepository.findOrderItems(order.getId());
 
         for (OrderItem orderItem : orderItems) {
 

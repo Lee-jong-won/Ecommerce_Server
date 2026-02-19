@@ -25,7 +25,7 @@ class OrderMemoryRepositoryTest {
         Order order = orderMemoryRepository.save(memberId, orderId);
 
         // then
-        Order result = orderMemoryRepository.findById(order.getOrderId()).get();
+        Order result = orderMemoryRepository.findById(order.getId()).get();
         assertThat(result).isEqualTo(order);
     }
 
@@ -36,7 +36,7 @@ class OrderMemoryRepositoryTest {
         orderMemoryRepository.save(1L, "order2");
 
         // when
-        Order result = orderMemoryRepository.findByPayOrderId(order1.getPayOrderId()).get();
+        Order result = orderMemoryRepository.findByOrderId(order1.getOrderId()).get();
 
         // then
         assertThat(result).isEqualTo(order1);

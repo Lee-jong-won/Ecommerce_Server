@@ -38,7 +38,7 @@ public class OrderService {
                     () -> new ProductNotFoundException(orderItemRequest.getProductId())
             );
 
-            OrderItem orderItem = orderItemRepository.save(order.getOrderId(), product.getProductId(), product.getProductName(),
+            OrderItem orderItem = orderItemRepository.save(order.getId(), product.getProductId(), product.getProductName(),
                     product.getProductPrice(), orderItemRequest.getStockQuantity());
 
             orderItems.add(orderItem);

@@ -17,13 +17,13 @@ public class PaymentCreateService {
     public void preparePayment(String orderId){
 
         // 1. OrderId(String)로 주문 조회
-        Order order = orderRepository.findByPayOrderId(orderId).orElseThrow(
+        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );
 
         // 2. Payment 생성
-        paymentRepository.save( order.getOrderId(),
-                order.getPayOrderId(),
+        paymentRepository.save( order.getId(),
+                order.getOrderId(),
                 order.getTotalAmount());
     }
 }

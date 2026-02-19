@@ -11,7 +11,8 @@ public class ProductMemoryRepository implements ProductRepository {
     @Override
     public Product save(String productName, int productPrice) {
         Product product = Product.create(productName, productPrice);
-        store.put(++sequence, product);
+        product.setProductId(++sequence);
+        store.put(product.getProductId(), product);
         return product;
     }
 

@@ -49,7 +49,7 @@ class OrderItemJpaRepositoryAdapterTest {
         productJpaRepository.save(product);
 
         // when
-        OrderItem orderItemEntity = orderItemRepository.save(order.getOrderId(), product.getProductId(), product.getProductName(),
+        OrderItem orderItemEntity = orderItemRepository.save(order.getId(), product.getProductId(), product.getProductName(),
                 product.getProductPrice(), product.getStockQuantity());
         OrderItem findOrderItemEntity = orderItemJpaRepository.findById(orderItemEntity.getOrderItemId()).orElseThrow();
 

@@ -15,7 +15,7 @@ public class OrderMemoryRepository implements OrderRepository{
     public Order save(Long memberId, String orderName) {
         Order order = Order.createOrder(memberId, orderName);
         order.setOrderId(++sequence);
-        store.put(order.getOrderId(), order);
+        store.put(order.getId(), order);
         return order;
     }
 
@@ -25,10 +25,10 @@ public class OrderMemoryRepository implements OrderRepository{
     }
 
     @Override
-    public Optional<Order> findByPayOrderId(String payOrderId) {
+    public Optional<Order> findByOrderId(String orderId) {
         Order findOrder = null;
         for(Order order : store.values()){
-            if(order.getPayOrderId().equals(payOrderId)) {
+            if(order.getOrderId().equals(orderId)) {
                 findOrder = order;
                 break;
             }

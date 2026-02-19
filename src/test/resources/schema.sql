@@ -47,9 +47,9 @@ CREATE INDEX idx_product_name
 -- 3. orders 테이블
 CREATE TABLE orders
 (
-    order_id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
+    id     BIGINT      NOT NULL AUTO_INCREMENT,                    -- 주문 ID (PK)
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
-    pay_order_id VARCHAR(64) NOT NULL,                                   -- PG사 결제에 사용되는 orderId
+    order_id VARCHAR(64) NOT NULL,                                   -- PG사 결제에 사용되는 orderId
     ordered_at   TIMESTAMP    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
     order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',  -- 주문 상태
     order_name   VARCHAR(20) NOT NULL,                                   -- 주문 이름 (스냅 샷)
@@ -57,7 +57,7 @@ CREATE TABLE orders
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 레코드가 만들어진 시각
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 레코드가 업데이트 된 시각
 
-    PRIMARY KEY (order_id),
+    PRIMARY KEY (id),
     CONSTRAINT fk_orders_member FOREIGN KEY (fk_member_id) REFERENCES member(member_id)
 );
 

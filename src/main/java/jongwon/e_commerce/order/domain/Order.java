@@ -15,11 +15,11 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long orderId;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "pay_order_id")
-    private String payOrderId;
+    @Column(name = "order_id")
+    private String orderId;
 
     @Column(name = "fk_member_id", nullable = false)
     private Long memberId;
@@ -38,13 +38,13 @@ public class Order {
     private long totalAmount;
 
     // 테스트 용도
-    public void setOrderId(long orderId){
-        this.orderId = orderId;
+    public void setOrderId(long id){
+        this.id = id;
     }
     public static Order createOrder(Long memberId, String orderName){
         Order order = new Order();
         order.memberId = memberId;
-        order.payOrderId = OrderIdGenerator.generate();
+        order.orderId = OrderIdGenerator.generate();
         order.orderStatus = OrderStatus.CREATED;
         order.orderedAt = LocalDateTime.now();
         order.orderName = orderName;

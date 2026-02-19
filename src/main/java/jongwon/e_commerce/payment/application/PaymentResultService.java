@@ -28,7 +28,7 @@ public class PaymentResultService {
                 () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
         );
 
-        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+        Order order = orderRepository.findByOrderId(payOrderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );
 
@@ -47,7 +47,7 @@ public class PaymentResultService {
                 () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
         );
 
-        Order order = orderRepository.findByPayOrderId(payOrderId).orElseThrow(
+        Order order = orderRepository.findByOrderId(payOrderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );
 

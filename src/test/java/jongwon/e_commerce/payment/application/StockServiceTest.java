@@ -1,10 +1,20 @@
 package jongwon.e_commerce.payment.application;
 
+import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.member.repository.MemberMemoryRepository;
+import jongwon.e_commerce.order.application.OrderService;
+import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.dto.OrderItemRequest;
+import jongwon.e_commerce.order.repository.OrderItemMemoryRepository;
+import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
+import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
+import jongwon.e_commerce.product.repository.ProductMemoryRepository;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,81 +27,88 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class StockServiceTest {
-    @InjectMocks
-    StockService stockService;
-    @Mock
-    OrderItemJpaRepository orderItemJpaRepository;
-    @Mock
-    ProductJpaRepository productJpaRepository;
+    MemberMemoryRepository memberMemoryRepository = new MemberMemoryRepository();
+    ProductMemoryRepository productMemoryRepository = new ProductMemoryRepository();
+    OrderItemMemoryRepository orderItemMemoryRepository = new OrderItemMemoryRepository();
+    OrderMemoryRepository orderMemoryRepository = new OrderMemoryRepository();
+    OrderService orderService = new OrderService(orderMemoryRepository, orderItemMemoryRepository, productMemoryRepository);
+    StockService stockService = new StockService(orderItemMemoryRepository,
+            productMemoryRepository, orderMemoryRepository);
+
+    @AfterEach
+    public void afterEach(){
+        memberMemoryRepository.clearStore();
+        productMemoryRepository.clearStore();
+        orderItemMemoryRepository.clearStore();
+        orderMemoryRepository.clearStore();
+    }
 
     @Test
     void 주문에_포함된_모든_상품의_재고가_차감된다() {
         // given
-        Long orderId = 1L;
+        Member member = memberMemoryRepository.save("wwwl7749", "1234", "이종원",
+                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
 
-        OrderItem item1 = mock(OrderItem.class);
-        OrderItem item2 = mock(OrderItem.class);
+        Product product1 = productMemoryRepository.save("상품1", 1000);
+        product1.changeStock(10);
+        product1.startSelling();
 
-        when(item1.getProductId()).thenReturn(10L);
-        when(item1.getOrderQuantity()).thenReturn(2);
+        Product product2 = productMemoryRepository.save("상품2", 2000);
+        product2.changeStock(10);
+        product2.startSelling();
 
-        when(item2.getProductId()).thenReturn(20L);
-        when(item2.getOrderQuantity()).thenReturn(3);
-
-        Product product1 = mock(Product.class);
-        Product product2 = mock(Product.class);
-
-        when(orderItemJpaRepository.findByOrderId(orderId))
-                .thenReturn(List.of(item1, item2));
-        when(productJpaRepository.findById(10L))
-                .thenReturn(Optional.of(product1));
-        when(productJpaRepository.findById(20L))
-                .thenReturn(Optional.of(product2));
+        List<OrderItemRequest> orderItemRequestList = List.of(
+                new OrderItemRequest(product1.getProductId(), 2),
+                new OrderItemRequest(product2.getProductId(), 3)
+        );
+        Order order = orderService.order(member.getMemberId(), "주문1", orderItemRequestList);
 
         // when
-        /*stockService.decreaseStock(orderId);*/
+        stockService.decreaseStock(order.getOrderId());
 
         // then
-        verify(product1).removeStock(2);
-        verify(product2).removeStock(3);
+        assertEquals(8, product1.getStockQuantity());
+        assertEquals(7, product2.getStockQuantity());
     }
 
     @Test
-    void 주문상품이_없으면_아무_상품도_차감하지_않는다() {
+    void 주문에_포함된_모든_상품의_재고가_증가한다(){
         // given
-        Long orderId = 1L;
+        Member member = memberMemoryRepository.save("wwwl7749", "1234", "이종원",
+                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
 
-        when(orderItemJpaRepository.findByOrderId(orderId))
-                .thenReturn(List.of());
+        Product product1 = productMemoryRepository.save("상품1", 1000);
+        product1.changeStock(10);
+        product1.startSelling();
+
+        Product product2 = productMemoryRepository.save("상품2", 2000);
+        product2.changeStock(10);
+        product2.startSelling();
+
+        List<OrderItemRequest> orderItemRequestList = List.of(
+                new OrderItemRequest(product1.getProductId(), 2),
+                new OrderItemRequest(product2.getProductId(), 3)
+        );
+        Order order = orderService.order(member.getMemberId(), "주문1", orderItemRequestList);
 
         // when
-       /* stockService.decreaseStock(orderId);*/
+        stockService.increaseStock(order.getOrderId());
 
         // then
-        verifyNoInteractions(productJpaRepository);
+        assertEquals(12, product1.getStockQuantity());
+        assertEquals(13, product2.getStockQuantity());
     }
 
     @Test
-    void 상품이_존재하지_않으면_ProductNotFoundException이_발생한다() {
-        // given
-        Long orderId = 1L;
-
-        OrderItem orderItem = mock(OrderItem.class);
-        when(orderItem.getProductId()).thenReturn(10L);
-
-        when(orderItemJpaRepository.findByOrderId(orderId))
-                .thenReturn(List.of(orderItem));
-
-        when(productJpaRepository.findById(10L))
-                .thenReturn(Optional.empty());
-
-        // when & then
-      /*  assertThrowsExactly(
-                ProductNotFoundException.class,
-                () -> stockService.decreaseStock(orderId)
-        );*/
+    void 존재하지_않는_주문_조회에_대한_재고차감_작업시도시_예외가_발생한다(){
+        // when && then
+        assertThrows(OrderNotExistException.class, () -> stockService.decreaseStock("1234"));
     }
 
+    @Test
+    void 존재하지_않는_주문_조회에_대한_재고차증가_작업시도시_예외가_발생한다(){
+        // when && then
+        assertThrows(OrderNotExistException.class, () -> stockService.increaseStock("1234"));
+    }
 }

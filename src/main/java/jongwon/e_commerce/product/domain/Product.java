@@ -30,6 +30,10 @@ public class Product {
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
 
+    public void setProductId(Long productId){
+        this.productId = productId;
+    }
+
     // 새로운 상품 생성은 항상 이 메소드를 통해서만
     public static Product create(String productName, int productPrice) {
         Product product = new Product();

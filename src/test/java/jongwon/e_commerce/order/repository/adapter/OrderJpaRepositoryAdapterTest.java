@@ -37,7 +37,7 @@ class OrderJpaRepositoryAdapterTest {
 
         // when
         Order orderEntity = orderRepository.save(member.getMemberId(), "주문1");
-        Order findOrderEntity = orderJpaRepository.findById(orderEntity.getOrderId()).orElseThrow();
+        Order findOrderEntity = orderJpaRepository.findById(orderEntity.getId()).orElseThrow();
 
         // then
         assertEquals("주문1", findOrderEntity.getOrderName());
@@ -60,7 +60,7 @@ class OrderJpaRepositoryAdapterTest {
         orderJpaRepository.save(order);
 
         // then
-        assertDoesNotThrow(() -> orderRepository.findById(order.getOrderId()));
+        assertDoesNotThrow(() -> orderRepository.findById(order.getId()));
     }
 
     @Test
