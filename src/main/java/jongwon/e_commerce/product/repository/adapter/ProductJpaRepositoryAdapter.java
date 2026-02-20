@@ -16,7 +16,6 @@ import java.util.Optional;
 public class ProductJpaRepositoryAdapter implements ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
-
     @Override
     public Product save(String productName, int productPrice) {
         Product product = Product.create(productName, productPrice);

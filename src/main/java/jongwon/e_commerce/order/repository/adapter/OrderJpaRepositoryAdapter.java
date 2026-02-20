@@ -32,7 +32,7 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
 
     @Override
     public Optional<Order> findByOrderId(String payOrderId) {
-        return orderJpaRepository.findByPayOrderId(payOrderId);
+        return orderJpaRepository.findByOrderId(payOrderId);
     }
 
 }

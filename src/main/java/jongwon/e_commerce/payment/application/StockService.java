@@ -26,7 +26,6 @@ public class StockService {
     private final OrderRepository orderRepository;
 
     public void decreaseStock(String orderId) {
-
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
         );

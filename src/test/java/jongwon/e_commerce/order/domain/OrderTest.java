@@ -19,9 +19,9 @@ class OrderTest {
             orderItems.add(OrderItem.createOrderItem(1L,1L, "상품" + i, i * 1000, 10));
 
         Order order = new Order();
-        order.setTotalAmount(orderItems);
+        order.calculateTotalAmount(orderItems);
 
-        assertEquals(6000, order.getTotalAmount());
+        assertEquals(60000, order.getTotalAmount());
     }
 
     @Test
@@ -103,7 +103,7 @@ class OrderTest {
     public void 주문취소로_주문상태_변경(){
         //given
         Order order = Order.createOrder(1L, "order1");
-        order.setOrderStatus(OrderStatus.PAYMENT_PENDING);
+        order.setOrderStatus(OrderStatus.PAID);
 
         //when
         order.markCancel();

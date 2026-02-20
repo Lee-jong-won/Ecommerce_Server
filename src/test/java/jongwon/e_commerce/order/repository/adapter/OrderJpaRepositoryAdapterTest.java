@@ -69,7 +69,7 @@ class OrderJpaRepositoryAdapterTest {
         OrderRepository orderRepository = new OrderJpaRepositoryAdapter(orderJpaRepository);
 
         //when && then
-        assertThrows(OrderNotExistException.class, () -> orderRepository.findById(1L));
+        assertEquals(true, orderRepository.findById(1L).isEmpty());
     }
 
 }

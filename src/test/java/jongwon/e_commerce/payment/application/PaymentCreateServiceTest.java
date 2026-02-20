@@ -22,39 +22,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PaymentCreateServiceTest {
-    // 레포지토리
-    MemberMemoryRepository memberMemoryRepository = new MemberMemoryRepository();
-    ProductMemoryRepository productMemoryRepository = new ProductMemoryRepository();
     OrderMemoryRepository orderMemoryRepository = new OrderMemoryRepository();
-    OrderItemMemoryRepository orderItemMemoryRepository = new OrderItemMemoryRepository();
     PaymentMemoryRepository paymentMemoryRepository = new PaymentMemoryRepository();
-
-    // 서비스
-    OrderService orderService = new OrderService(orderMemoryRepository, orderItemMemoryRepository, productMemoryRepository);
     PaymentCreateService paymentCreateService = new PaymentCreateService(paymentMemoryRepository, orderMemoryRepository);
 
     @AfterEach
     public void afterEach(){
-        memberMemoryRepository.clearStore();
-        productMemoryRepository.clearStore();
         orderMemoryRepository.clearStore();
-        orderItemMemoryRepository.clearStore();
         paymentMemoryRepository.clearStore();
     }
 
     @Test
     void Pay_객체가_정상적으로_생성된다(){
         // given
-        Member member = memberMemoryRepository.save("wwwl7749", "1234", "이종원",
-                "dlwhddnjs951@naver.com", "경기도 고양시 덕양구");
-        Product product1 = productMemoryRepository.save("상품1", 1000);
-        Product product2 = productMemoryRepository.save("상품2", 2000);
-
-        List<OrderItemRequest> orderItemRequestList = List.of(
-                new OrderItemRequest(product1.getProductId(), 2),
-                new OrderItemRequest(product2.getProductId(), 3)
-        );
-        Order order = orderService.order(member.getMemberId(), "주문1", orderItemRequestList);
+        Order order = orderMemoryRepository.save(1L, "order1");
+        order.setTotalAmount(10000);
 
         // when
         Pay pay = paymentCreateService.preparePayment(order.getOrderId());

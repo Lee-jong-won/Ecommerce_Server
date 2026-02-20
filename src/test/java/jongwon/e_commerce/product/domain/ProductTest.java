@@ -17,6 +17,7 @@ class ProductTest {
     public void 재고추가() {
         //Given
         Product product = Product.create("신발", 10000);
+        product.setStatus(ProductStatus.SELLING);
 
         //When
         product.addStock(10);
@@ -30,7 +31,7 @@ class ProductTest {
     void startSelling_success() {
         // Given
         Product product = Product.create("신발", 10000);
-        product.addStock(10);
+        product.changeStock(10);
 
         // When
         product.startSelling();
@@ -44,7 +45,6 @@ class ProductTest {
     void startSelling_fail_when_not_ready() {
         // Given
         Product product = Product.create("신발", 10000);
-        product.addStock(10);
         product.setStatus(ProductStatus.ENDED);
 
         // When & Then
@@ -66,8 +66,8 @@ class ProductTest {
     void stopSelling_success() {
         // Given
         Product product = Product.create("신발", 10000);
-        product.addStock(5);
         product.setStatus(ProductStatus.SELLING);
+        product.addStock(5);
 
         // When
         product.stopSelling();
@@ -92,8 +92,8 @@ class ProductTest {
     void resumeSelling_success() {
         // Given
         Product product = Product.create("신발", 10000);
-        product.addStock(5);
         product.setStatus(ProductStatus.STOPPED);
+        product.changeStock(5);
 
         // When
         product.resumeSelling();
@@ -107,8 +107,6 @@ class ProductTest {
     void resumeSelling_fail_when_not_stopped() {
         // Given
         Product product = Product.create("신발", 10000);
-        product.addStock(5);
-        product.setStatus(ProductStatus.SELLING);
 
         // When & Then
         assertThrows(InvalidProductStatusException.class, () -> product.resumeSelling());
@@ -155,8 +153,8 @@ class ProductTest {
     public void 재고감소_정상(){
         //Given
         Product product = Product.create("신발", 10000);
-        product.addStock(10);
         product.setStatus(ProductStatus.SELLING);
+        product.addStock(10);
 
         //When
         product.removeStock(5);

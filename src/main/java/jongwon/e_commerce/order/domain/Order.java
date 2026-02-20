@@ -52,12 +52,16 @@ public class Order {
     }
 
     //비즈니스 메소드
-    public void setTotalAmount(List<OrderItem> orderItems){
+    public void calculateTotalAmount(List<OrderItem> orderItems){
         int sum = 0;
         for(OrderItem orderItem : orderItems){
-            sum += (orderItem.getOrderPrice() * orderItem.getOrderQuantity());
+            sum += orderItem.calculateAmount();
         }
-        this.totalAmount = sum;
+        setTotalAmount(sum);
+    }
+
+    public void setTotalAmount(int totalAmount){
+        this.totalAmount = totalAmount;
     }
 
     public void setOrderStatus(OrderStatus orderStatus){

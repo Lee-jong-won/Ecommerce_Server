@@ -45,7 +45,7 @@ public class OrderService {
         }
 
         // 총 주문 금액 계산
-        order.setTotalAmount(orderItems);
+        order.calculateTotalAmount(orderItems);
 
         //
         

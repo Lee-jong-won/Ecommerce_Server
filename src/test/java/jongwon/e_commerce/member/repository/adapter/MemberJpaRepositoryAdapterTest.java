@@ -55,7 +55,7 @@ class MemberJpaRepositoryAdapterTest {
         MemberRepository memberRepository = new MemberJpaRepositoryAdapter(memberJpaRepository);
 
         //when && then
-        assertThrows(MemberNotFoundException.class, () -> memberRepository.findById(1L));
+        assertEquals(true, memberRepository.findById(1L).isEmpty());
     }
 
 }

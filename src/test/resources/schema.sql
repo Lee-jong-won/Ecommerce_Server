@@ -77,7 +77,7 @@ CREATE TABLE order_item(
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 레코드가 업데이트 된 시각
 
     PRIMARY KEY (order_item_id), -- 주문 ID와 상품 ID에 대한 유니크 제약 조건
-    CONSTRAINT fk_order_item_orders FOREIGN KEY (fk_order_id) REFERENCES orders(order_id),
+    CONSTRAINT fk_order_item_orders FOREIGN KEY (fk_order_id) REFERENCES orders(id),
     CONSTRAINT fk_order_item_product FOREIGN KEY (fk_product_id) REFERENCES product(product_id),
     CONSTRAINT uq_fk_order_id_fk_product_id UNIQUE (fk_order_id, fk_product_id)
 );
@@ -88,7 +88,6 @@ CREATE TABLE pay (
     fk_order_id BIGINT  NOT NULL,    -- 주문 ID (FK, Unique)
     order_id VARCHAR(255) NOT NULL, -- 우리 서비스에서 random으로 생성되는 주문 ID
     payment_id VARCHAR(255) NOT NULL, -- PG사에서 만들어주는 식별 ID
-    pg_type VARCHAR(10) NOT NULL, -- 결제가 일어난 PG사의 이름
     pay_method VARCHAR(50), -- 결제 수단
     pay_amount INT NOT NULL,    -- 결제 금액
     pay_status  VARCHAR(20) NOT NULL,    -- 결제 상태
@@ -98,7 +97,7 @@ CREATE TABLE pay (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 레코드가 업데이트 된 시각
 
     PRIMARY KEY (pay_id),
-    CONSTRAINT fk_pay_orders FOREIGN KEY (fk_order_id) REFERENCES orders(order_id),
+    CONSTRAINT fk_pay_orders FOREIGN KEY (fk_order_id) REFERENCES orders(id),
     CONSTRAINT uq_fk_order_id UNIQUE (fk_order_id), -- 주문 하나당 결제는 하나
     CONSTRAINT uq_payment_key UNIQUE (payment_id)
 );

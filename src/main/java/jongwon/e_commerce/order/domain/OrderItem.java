@@ -32,6 +32,9 @@ public class OrderItem {
     public void setOrderItemId(long id){
         this.orderItemId = id;
     }
+    public int calculateAmount(){
+        return orderPrice * orderQuantity;
+    }
 
     public static OrderItem createOrderItem(Long orderId, Long productId, String productName, int orderPrice, int orderQuantity){
         OrderItem orderItem = new OrderItem();

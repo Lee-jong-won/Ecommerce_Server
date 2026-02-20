@@ -15,15 +15,12 @@ import java.util.Optional;
 @Primary
 @RequiredArgsConstructor
 public class PaymentJpaRepositoryAdapter implements PaymentRepository {
-
     private final PaymentJpaRepository paymentJpaRepository;
-
     @Override
     public Pay save(Long fkOrderId, String orderId, Long payAmount) {
         Pay pay = Pay.create(fkOrderId, orderId, payAmount);
         return paymentJpaRepository.save(pay);
     }
-
     @Override
     public Optional<Pay> findById(Long id) {
         return paymentJpaRepository.findById(id);

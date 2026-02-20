@@ -4,6 +4,8 @@ import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.adapter.ProductJpaRepositoryAdapter;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
+import org.aspectj.lang.annotation.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -51,6 +53,6 @@ class ProductRepositoryTest {
         ProductRepository productRepository = new ProductJpaRepositoryAdapter(productJpaRepository);
 
         //when && then
-        assertThrows(ProductNotFoundException.class,() -> productRepository.findById(1L));
+        assertEquals(true, productRepository.findById(1L).isEmpty());
     }
 }
