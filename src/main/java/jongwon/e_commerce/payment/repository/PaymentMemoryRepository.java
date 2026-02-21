@@ -48,7 +48,8 @@ public class PaymentMemoryRepository implements PaymentRepository {
         return Optional.ofNullable(findPay);
     }
 
-    public void clearStore(){
-        store.clear();;
+    @Override
+    public void clearStore() {
+        store.clear();
     }
 }

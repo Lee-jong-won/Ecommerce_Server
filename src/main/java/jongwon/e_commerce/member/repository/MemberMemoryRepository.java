@@ -23,6 +23,7 @@ public class MemberMemoryRepository implements MemberRepository{
         return Optional.ofNullable(store.get(id));
     }
 
+    @Override
     public void clearStore(){
         store.clear();
     }

@@ -9,4 +9,5 @@ public interface MemberRepository {
     Member save(String loginId, String password,
                 String memberName, String email, String addr);
     Optional<Member> findById(Long id);
+    void clearStore();
 }

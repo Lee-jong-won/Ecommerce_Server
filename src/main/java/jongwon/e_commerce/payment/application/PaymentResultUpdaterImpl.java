@@ -3,13 +3,10 @@ package jongwon.e_commerce.payment.application;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayMethodMapper;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.payment.exception.PaymentNotFoundException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
-import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +16,12 @@ import java.time.OffsetDateTime;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class PaymentResultService {
+public class PaymentResultUpdaterImpl implements PaymentResultUpdater {
+
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
+    @Override
     public void applySuccess(String orderId, OffsetDateTime approvedAt, String method) {
         //결제 및 주문 조회
         Pay payment = paymentRepository.findByOrderId(orderId).orElseThrow(
@@ -42,6 +41,7 @@ public class PaymentResultService {
         payment.setApprovedAt(approvedAt);
     }
 
+    @Override
     public void applyFail(String orderId) {
         //결제 및 주문 조회
         Pay payment = paymentRepository.findByOrderId(orderId).orElseThrow(
@@ -59,6 +59,7 @@ public class PaymentResultService {
         order.markFailed();
     }
 
+    @Override
     public void applyTimeout(String orderId){
         // 결제 조회
         Pay payment = paymentRepository.findByOrderId(orderId).orElseThrow(

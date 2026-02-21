@@ -34,5 +34,10 @@ public class OrderItemJpaRepositoryAdapter implements OrderItemRepository {
         return orderItemJpaRepository.findById(id);
     }
 
+    @Override
+    public void clearStore() {
+        orderItemJpaRepository.deleteAll();
+    }
+
 
 }

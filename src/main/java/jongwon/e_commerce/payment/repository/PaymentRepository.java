@@ -9,4 +9,5 @@ public interface PaymentRepository {
     Optional<Pay> findById(Long id);
     Optional<Pay> findByOrderId(String orderId);
     Optional<Pay> findByFkOrderId(Long fkOrderId);
+    void clearStore();
 }

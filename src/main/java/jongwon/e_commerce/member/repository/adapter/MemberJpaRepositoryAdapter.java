@@ -28,4 +28,9 @@ public class MemberJpaRepositoryAdapter implements MemberRepository {
     public Optional<Member> findById(Long id) {
         return memberJpaRepository.findById(id);
     }
+
+    @Override
+    public void clearStore() {
+        memberJpaRepository.deleteAll();
+    }
 }

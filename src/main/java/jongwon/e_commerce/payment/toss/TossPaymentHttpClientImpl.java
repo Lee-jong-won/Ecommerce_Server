@@ -2,6 +2,7 @@ package jongwon.e_commerce.payment.toss;
 
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.dto.TossPaymentCancelResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -36,16 +37,18 @@ public class TossPaymentHttpClientImpl implements TossPaymentHttpClient {
     }
 
     @Override
-    public void callPayCancelApi(String paymentKey, String idempotencyKey, String cancelReason) {
+    public TossPaymentCancelResponse callPayCancelApi(String paymentKey, String idempotencyKey, String cancelReason) {
+        TossPaymentCancelResponse response;
         try {
-            restClient.post()
+            response = restClient.post()
                     .uri("/{paymentKey}/cancel", paymentKey)
                     .header("Idempotency-Key", idempotencyKey)
                     .body(Map.of("cancelReason", cancelReason))
                     .retrieve()
-                    .toBodilessEntity();   // Void면 이게 더 깔끔
+                    .body(TossPaymentCancelResponse.class);   // Void면 이게 더 깔끔
         } catch(ResourceAccessException e){
             throw tossPaymentNetworkExceptionTranslator.translateNetworkException(e);
         }
+        return response;
     }
 }

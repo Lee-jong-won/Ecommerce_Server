@@ -1,10 +1,11 @@
-package jongwon.e_commerce.payment.toss;
+package jongwon.e_commerce.payment.toss.gateway;
 
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.exception.external.TossPaymentClientException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentServerException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentTimeoutException;
+import jongwon.e_commerce.payment.toss.TossPaymentHttpClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.retry.backoff.FixedBackOffPolicy;

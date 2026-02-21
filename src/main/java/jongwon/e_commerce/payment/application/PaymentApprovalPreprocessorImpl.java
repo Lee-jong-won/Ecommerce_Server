@@ -5,7 +5,6 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
-import jongwon.e_commerce.payment.exception.PaymentNotFoundException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class PreparePaymentApprovalService {
+public class PaymentApprovalPreprocessorImpl implements PaymentApprovalPreprocessor{
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;

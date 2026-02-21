@@ -6,25 +6,19 @@ import jongwon.e_commerce.order.application.OrderService;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderStatus;
 import jongwon.e_commerce.order.dto.OrderItemRequest;
-import jongwon.e_commerce.order.repository.OrderItemMemoryRepository;
-import jongwon.e_commerce.order.repository.OrderItemRepository;
-import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.stub.StubExceptionPaymentResultService;
+import jongwon.e_commerce.payment.application.stub.StubExceptionPaymentResultUpdaterImpl;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.exception.PaymentCompletionConsistencyException;
-import jongwon.e_commerce.payment.repository.PaymentMemoryRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.payment.toss.TossPaymentGateWay;
+import jongwon.e_commerce.payment.toss.gateway.TossPaymentGateWay;
 import jongwon.e_commerce.payment.toss.stub.StubClientExceptionTossPaymentGateWay;
 import jongwon.e_commerce.payment.toss.stub.StubNormalTossPaymentGateWay;
 import jongwon.e_commerce.payment.toss.stub.StubTimeoutExceptionTossPaymentGateWay;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.repository.ProductMemoryRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class PaymentApprovalFacadeH2DBTest {
-
+class PaymentApprovalServiceH2Test {
     // 레포지토리
     @Autowired
     MemberRepository memberRepository;
@@ -56,13 +49,13 @@ class PaymentApprovalFacadeH2DBTest {
     @Autowired
     OrderService orderService;
     @Autowired
-    StockService stockService;
+    StockChanger stockChanger;
     @Autowired
-    PreparePaymentApprovalService preparePaymentApprovalService;
-    PaymentResultService paymentResultService;
-    PaymentCompleteService paymentCompleteService;
+    PaymentApprovalPreprocessor paymentApprovalPreprocessor;
+    PaymentResultUpdater paymentResultUpdater;
+    PaymentCompleter paymentCompleter;
     TossPaymentGateWay tossPaymentGateWay;
-    PaymentApprovalFacade paymentApprovalFacade;
+    PaymentApprovalService paymentApprovalService;
     // 엔티티
     Member member;
     Product product1;
@@ -93,14 +86,14 @@ class PaymentApprovalFacadeH2DBTest {
     @Test
     void 결제_성공_응답을_받은_후_성공적으로_DB에_반영된다(){
         // given
-        paymentResultService = new PaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new PaymentResultUpdaterImpl(paymentRepository, orderRepository);
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubNormalTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when
-        paymentApprovalFacade.approvePayment(request);
+        paymentApprovalService.approvePayment(request);
 
         // then
         Pay pay = paymentRepository.findByOrderId(order.getOrderId()).get();
@@ -113,28 +106,28 @@ class PaymentApprovalFacadeH2DBTest {
     @Test
     void 결제_성공_응답을_받은후_DB에_반영_실패시_예외가_발생한다(){
         // given
-        paymentResultService = new StubExceptionPaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new StubExceptionPaymentResultUpdaterImpl();
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubNormalTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when && then
         assertThrows(PaymentCompletionConsistencyException.class,
-                () -> paymentApprovalFacade.approvePayment(request));
+                () -> paymentApprovalService.approvePayment(request));
     }
 
     @Test
     void 결제_실패_응답을_받은후_성공적으로_DB에_반영된다(){
         // given
-        paymentResultService = new PaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new PaymentResultUpdaterImpl(paymentRepository, orderRepository);
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubClientExceptionTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when
-        paymentApprovalFacade.approvePayment(request);
+        paymentApprovalService.approvePayment(request);
 
         // then
         Pay pay = paymentRepository.findByOrderId(order.getOrderId()).get();
@@ -145,28 +138,28 @@ class PaymentApprovalFacadeH2DBTest {
     @Test
     void 결제_실패_응답을_받은후_DB에_반영_실패시_예외가_발생한다(){
         // given
-        paymentResultService = new StubExceptionPaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new StubExceptionPaymentResultUpdaterImpl();
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubClientExceptionTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when && then
         assertThrows(PaymentCompletionConsistencyException.class,
-                () -> paymentApprovalFacade.approvePayment(request));
+                () -> paymentApprovalService.approvePayment(request));
     }
 
     @Test
     void 타임아웃_발생후_DB에_정상적으로_반영된다(){
         // given
-        paymentResultService = new PaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new PaymentResultUpdaterImpl(paymentRepository, orderRepository);
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubTimeoutExceptionTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when
-        paymentApprovalFacade.approvePayment(request);
+        paymentApprovalService.approvePayment(request);
 
         // then
         Pay pay = paymentRepository.findByOrderId(order.getOrderId()).get();
@@ -177,16 +170,16 @@ class PaymentApprovalFacadeH2DBTest {
     @Test
     void 타임아웃_발생후_DB에_반영_실패시_예외가_발생한다(){
         // given
-        paymentResultService = new StubExceptionPaymentResultService(paymentRepository, orderRepository);
-        paymentCompleteService = new PaymentCompleteService(stockService, paymentResultService);
+        paymentResultUpdater = new StubExceptionPaymentResultUpdaterImpl();
+        paymentCompleter = new PaymentCompleterImpl(stockChanger, paymentResultUpdater);
         tossPaymentGateWay = new StubTimeoutExceptionTossPaymentGateWay(null, null);
-        paymentApprovalFacade = new PaymentApprovalFacade(preparePaymentApprovalService, tossPaymentGateWay, paymentCompleteService);
+        paymentApprovalService = new PaymentApprovalService(paymentApprovalPreprocessor, tossPaymentGateWay, paymentCompleter);
 
         TossPaymentApproveRequest request = new TossPaymentApproveRequest(order.getOrderId(), "paymentId", order.getTotalAmount());
 
         // when && then
         assertThrows(PaymentCompletionConsistencyException.class,
-                () -> paymentApprovalFacade.approvePayment(request));
+                () -> paymentApprovalService.approvePayment(request));
     }
 
 }

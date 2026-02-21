@@ -1,8 +1,10 @@
-package jongwon.e_commerce.payment.toss;
+package jongwon.e_commerce.payment.toss.gateway;
 
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentCancelResponse;
+import jongwon.e_commerce.payment.toss.TossPaymentHttpClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.retry.support.RetryTemplate;
@@ -22,11 +24,11 @@ public class TossPaymentGateWay {
         });
     }
 
-    public void payCancel(TossPaymentCancelRequest request) {
-        retryTemplate.execute(context -> {
-            tossPaymentHttpClient.callPayCancelApi(request.getPaymentKey(),
+    public TossPaymentCancelResponse payCancel(TossPaymentCancelRequest request) {
+        return retryTemplate.execute(context -> {
+            TossPaymentCancelResponse response = tossPaymentHttpClient.callPayCancelApi(request.getPaymentKey(),
                     request.getCancelReason(), request.getIdempotencyKey());
-            return null;
+            return response;
         });
     }
 }

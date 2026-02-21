@@ -34,5 +34,9 @@ public class OrderJpaRepositoryAdapter implements OrderRepository {
     public Optional<Order> findByOrderId(String payOrderId) {
         return orderJpaRepository.findByOrderId(payOrderId);
     }
+    @Override
+    public void clearStore() {
+        orderJpaRepository.deleteAll();
+    }
 
 }

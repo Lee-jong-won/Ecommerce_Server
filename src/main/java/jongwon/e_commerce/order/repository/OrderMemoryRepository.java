@@ -36,6 +36,7 @@ public class OrderMemoryRepository implements OrderRepository{
         return Optional.ofNullable(findOrder);
     }
 
+    @Override
     public void clearStore(){
         store.clear();
     }

@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ProductRepository {
     Product save(String productName, int productPrice);
     Optional<Product> findById(Long id);
+    void clearStore();
 }

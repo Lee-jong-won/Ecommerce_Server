@@ -14,4 +14,5 @@ public interface OrderItemRepository {
 
     Optional<OrderItem> findById(Long id);
 
+    void clearStore();
 }

@@ -36,4 +36,9 @@ public class PaymentJpaRepositoryAdapter implements PaymentRepository {
     public Optional<Pay> findByFkOrderId(Long fkOrderId) {
         return paymentJpaRepository.findByFkOrderId(fkOrderId);
     }
+
+    @Override
+    public void clearStore() {
+        paymentJpaRepository.deleteAll();
+    }
 }

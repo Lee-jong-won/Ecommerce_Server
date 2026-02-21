@@ -1,32 +1,22 @@
 package jongwon.e_commerce.payment.application;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.repository.MemberMemoryRepository;
-import jongwon.e_commerce.order.application.OrderService;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderStatus;
-import jongwon.e_commerce.order.dto.OrderItemRequest;
-import jongwon.e_commerce.order.repository.OrderItemMemoryRepository;
 import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.repository.PaymentMemoryRepository;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.repository.ProductMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PreparePaymentApprovalServiceTest {
+class PaymentApprovalPreprocessorImplTest {
     // 리포지토리
     OrderMemoryRepository orderMemoryRepository = new OrderMemoryRepository();
     PaymentMemoryRepository paymentMemoryRepository = new PaymentMemoryRepository();
-    PreparePaymentApprovalService preparePaymentApprovalService = new PreparePaymentApprovalService(paymentMemoryRepository, orderMemoryRepository);
+    PaymentApprovalPreprocessorImpl paymentApprovalPreprocessorImpl = new PaymentApprovalPreprocessorImpl(paymentMemoryRepository, orderMemoryRepository);
 
     @AfterEach
     public void afterEach(){
@@ -42,7 +32,7 @@ class PreparePaymentApprovalServiceTest {
         String paymentIdSendByClient = "paymentId";
 
         // when
-        Pay pay = preparePaymentApprovalService.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient);
+        Pay pay = paymentApprovalPreprocessorImpl.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient);
 
         // then
         assertEquals(PayStatus.PENDING, pay.getPayStatus());
@@ -58,6 +48,6 @@ class PreparePaymentApprovalServiceTest {
 
         // when && then
         assertThrows(InvalidAmountException.class,
-                () -> preparePaymentApprovalService.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient));
+                () -> paymentApprovalPreprocessorImpl.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient));
     }
 }
