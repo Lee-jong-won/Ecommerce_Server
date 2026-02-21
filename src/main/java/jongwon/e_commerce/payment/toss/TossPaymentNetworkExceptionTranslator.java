@@ -32,6 +32,4 @@ public class TossPaymentNetworkExceptionTranslator {
         }
         return false;
     }
-
-
 }

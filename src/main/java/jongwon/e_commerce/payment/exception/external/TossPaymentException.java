@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 public class TossPaymentException extends InfrastructureException {
     public TossPaymentException(String message){
+        super(message);
     }
 }

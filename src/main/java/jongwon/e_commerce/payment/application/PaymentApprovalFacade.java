@@ -7,6 +7,7 @@ import jongwon.e_commerce.payment.exception.external.TossPaymentTimeoutException
 import jongwon.e_commerce.payment.toss.TossPaymentGateWay;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class PaymentApprovalFacade {
     private final PaymentCompleteService paymentCompleteService;
     public void approvePayment(TossPaymentApproveRequest request){
         //1. 결제 전처리
-        preparePaymentApprovalService.preparePaymentApproval(request.getOrderId(), request.getAmount());
+        preparePaymentApprovalService.preparePaymentApproval(request.getPaymentKey(), request.getOrderId(), request.getAmount());
         try {
             // 2. 결제 승인 api 호출
             TossPaymentApproveResponse response = tossPaymentGateWay.payApprove(request, UUID.randomUUID().toString());
@@ -29,10 +30,10 @@ public class PaymentApprovalFacade {
                     response.getApprovedAt(), response.getMethod());
         } catch(TossPaymentTimeoutException e){
             // 3-2. 타임아웃 발생 시, 타임아웃 상태 DB에 반영
-            paymentCompleteService.completeTimeout(request.getOrderId());
+            paymentCompleteService.completeTimeout(request.getPaymentKey(), request.getOrderId());
         } catch(TossPaymentException e){
             // 3-3. 그 외 예외 발생 시, 실패 상태로 DB에 반영
-            paymentCompleteService.completeFail(request.getOrderId());
+            paymentCompleteService.completeFail(request.getPaymentKey(), request.getOrderId());
         }
     }
 

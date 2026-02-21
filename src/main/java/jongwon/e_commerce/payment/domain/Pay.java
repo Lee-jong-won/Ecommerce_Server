@@ -55,8 +55,7 @@ public class Pay {
     }
 
     // 비즈니스 로직
-
-    // 테스트용
+    public void setPaymentId(String paymentId){this.paymentId = paymentId;}
     public void setPayId(long payId){
         this.payId = payId;
     }
@@ -67,11 +66,6 @@ public class Pay {
     public void setApprovedAt(OffsetDateTime approvedAt){
         this.approvedAt = approvedAt;
     }
-
-    public void setRequestedAt(OffsetDateTime requestedAt){
-        this.requestedAt = requestedAt;
-    }
-
     public void setPayMethod(PayMethod payMethod){
         this.payMethod = payMethod;
     }

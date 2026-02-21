@@ -25,81 +25,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class PreparePaymentApprovalServiceTest {
     // 리포지토리
     OrderMemoryRepository orderMemoryRepository = new OrderMemoryRepository();
-    OrderItemMemoryRepository orderItemMemoryRepository = new OrderItemMemoryRepository();
-    ProductMemoryRepository productMemoryRepository = new ProductMemoryRepository();
     PaymentMemoryRepository paymentMemoryRepository = new PaymentMemoryRepository();
-
-    // 서비스
-    OrderService orderService = new OrderService(orderMemoryRepository,
-            orderItemMemoryRepository, productMemoryRepository);
-    PaymentCreateService paymentCreateService = new PaymentCreateService(paymentMemoryRepository,
-            orderMemoryRepository);
-    StockService stockService = new StockService(orderItemMemoryRepository,
-            productMemoryRepository, orderMemoryRepository);
-    PreparePaymentApprovalService preparePaymentApprovalService = new PreparePaymentApprovalService(stockService,
-            paymentMemoryRepository, orderMemoryRepository);
-
-    // 엔티티
-    Product product1;
-    Product product2;
-    Order order;
-    Pay pay;
-
-    @BeforeEach
-    public void beforeEach(){
-        // 주문할 상품 저장
-        product1 = productMemoryRepository.save("상품1", 1000);
-        product1.changeStock(10);
-        product1.startSelling();
-
-        product2 = productMemoryRepository.save("상품2", 2000);
-        product2.changeStock(10);
-        product2.startSelling();
-
-        // 주문할 상품과 수량 매핑
-        List<OrderItemRequest> orderItemRequestList = List.of(
-                new OrderItemRequest(product1.getProductId(), 2),
-                new OrderItemRequest(product2.getProductId(), 3)
-        );
-
-        // 주문하기
-        order = orderService.order(1L, "주문1", orderItemRequestList);
-
-        // 결제 생성
-        pay = paymentCreateService.preparePayment(order.getOrderId());
-    }
-
+    PreparePaymentApprovalService preparePaymentApprovalService = new PreparePaymentApprovalService(paymentMemoryRepository, orderMemoryRepository);
 
     @AfterEach
     public void afterEach(){
         orderMemoryRepository.clearStore();
-        orderItemMemoryRepository.clearStore();
-        productMemoryRepository.clearStore();
         paymentMemoryRepository.clearStore();
     }
 
     @Test
     void 금액이_일치할_경우_정상적으로_처리된다(){
         // given
+        Order order = orderMemoryRepository.save(1L, "주문1");
+        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 10000L);
         long amountSendByClient = pay.getPayAmount();
 
         // when
-        preparePaymentApprovalService.preparePaymentApproval(pay.getOrderId(), amountSendByClient);
+        preparePaymentApprovalService.preparePaymentApproval("payKey", pay.getOrderId(), amountSendByClient);
 
         // then
         assertEquals(PayStatus.PENDING, pay.getPayStatus());
         assertEquals(OrderStatus.PAYMENT_PENDING, order.getOrderStatus());
-        assertEquals(8, product1.getStockQuantity());
-        assertEquals(7, product2.getStockQuantity());
     }
 
     @Test
     void 가격이_DB에_저장된_정보와_일치하지_않으면_실패한다(){
         //given
+        Order order = orderMemoryRepository.save(1L, "주문1");
+        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 10000L);
         long amountSendByClient = 5000L;
 
         // when && then
         assertThrows(InvalidAmountException.class,
-                () -> preparePaymentApprovalService.preparePaymentApproval(pay.getOrderId(), amountSendByClient));
+                () -> preparePaymentApprovalService.preparePaymentApproval("payKey", pay.getOrderId(), amountSendByClient));
     }
 }

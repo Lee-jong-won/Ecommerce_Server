@@ -29,23 +29,6 @@ class PaymentResultServiceTest {
     PaymentMemoryRepository paymentMemoryRepository = new PaymentMemoryRepository();
     PaymentResultService paymentResultService = new PaymentResultService(paymentMemoryRepository, orderMemoryRepository);
 
-    // 엔티티
-    Order order;
-    Pay pay;
-
-    @BeforeEach
-    public void beforeEach(){
-        // 주문하기
-        order = orderMemoryRepository.save(1L, "주문1");
-
-        // 결제 데이터 생성
-        pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
-
-        // 결제 승인 준비가 이루어졌다고 가정하고, 주문과 결제 상태 변경
-        pay.markPending();
-        order.markPaymentPending();
-    }
-
     @AfterEach
     public void afterEach(){
         orderMemoryRepository.clearStore();
@@ -54,6 +37,12 @@ class PaymentResultServiceTest {
 
     @Test
     void 외부_PG로부터_OK_응답시_결제정보와_주문정보가_성공으로_업데이트_된다(){
+        // given
+        Order order = orderMemoryRepository.save(1L, "주문1");
+        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
+        pay.markPending();
+        order.markPaymentPending();
+
         // when
         paymentResultService.applySuccess(pay.getOrderId(), OffsetDateTime.parse("2024-02-13T03:18:14Z"), "카드");
 
@@ -66,6 +55,12 @@ class PaymentResultServiceTest {
 
     @Test
     void 외부_PG로부터_에러_응답시_결제상태가_실패로_반영된다(){
+        // given
+        Order order = orderMemoryRepository.save(1L, "주문1");
+        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
+        pay.markPending();
+        order.markPaymentPending();
+
         // when
         paymentResultService.applyFail(pay.getOrderId());
 
@@ -76,6 +71,12 @@ class PaymentResultServiceTest {
 
     @Test
     void 타임아웃_시_타임아웃_상태로_반영된다(){
+        // given
+        Order order = orderMemoryRepository.save(1L, "주문1");
+        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
+        pay.markPending();
+        order.markPaymentPending();
+
         // when
         paymentResultService.applyTimeout(pay.getOrderId());
 

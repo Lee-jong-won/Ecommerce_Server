@@ -16,11 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class PreparePaymentApprovalService {
 
-    private final StockService stockService;
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
-    public void preparePaymentApproval(String orderId, long amount) {
+    public void preparePaymentApproval(String paymentId, String orderId, long amount) {
         //orderId로 Pay및 Order 조회
         Pay payment = paymentRepository.findByOrderId(orderId).orElseThrow(
                 () -> new PaymentNotFoundException("해당 주문 ID에 대응되는 결제 정보가 존재하지 않습니다.")
@@ -34,11 +33,9 @@ public class PreparePaymentApprovalService {
         if (payment.getPayAmount() != amount)
             throw new InvalidAmountException();
 
-        //일치 하면, 결제 진행 중으로 결제 상태 변경
+        //일치 하면, 결제 진행 중으로 결제 상태 변경 + 토스에서 준 paymentKey 반영
+        payment.setPaymentId(paymentId);
         payment.markPending();
         order.markPaymentPending();
-
-        // 재고 감소
-        stockService.decreaseStock(orderId);
     }
 }
