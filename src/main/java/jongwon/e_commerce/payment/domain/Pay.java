@@ -45,35 +45,28 @@ public class Pay {
 
     //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
     //
-    public static Pay create(Long fkOrderId, String orderId, long payAmount){
+    public static Pay create(Long fkOrderId, String paymentId, String orderId, long payAmount){
         Pay pay = new Pay();
         pay.fkOrderId = fkOrderId;
+        pay.paymentId = paymentId;
         pay.orderId = orderId;
-        pay.payStatus = PayStatus.CREATED;
+        pay.payStatus = PayStatus.PENDING;
         pay.payAmount = payAmount;
         return pay;
     }
 
     // 비즈니스 로직
-    public void setPaymentId(String paymentId){this.paymentId = paymentId;}
     public void setPayId(long payId){
         this.payId = payId;
     }
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
     }
-
     public void setApprovedAt(OffsetDateTime approvedAt){
         this.approvedAt = approvedAt;
     }
     public void setPayMethod(PayMethod payMethod){
         this.payMethod = payMethod;
-    }
-
-    public void markPending(){
-        if(payStatus != PayStatus.CREATED)
-            throw new InvalidPayStatusException("결제 승인 중으로 처리 불가 사태 " + payStatus);
-        setPayStatus(PayStatus.PENDING);
     }
 
     // PG 승인 성공 응답 수신

@@ -36,5 +36,4 @@ public class PaymentApprovalFacade {
             paymentCompleteService.completeFail(request.getPaymentKey(), request.getOrderId());
         }
     }
-
 }

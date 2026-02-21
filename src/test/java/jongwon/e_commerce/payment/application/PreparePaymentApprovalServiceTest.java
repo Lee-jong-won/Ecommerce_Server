@@ -38,11 +38,11 @@ class PreparePaymentApprovalServiceTest {
     void 금액이_일치할_경우_정상적으로_처리된다(){
         // given
         Order order = orderMemoryRepository.save(1L, "주문1");
-        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 10000L);
-        long amountSendByClient = pay.getPayAmount();
+        long amountSendByClient = order.getTotalAmount();
+        String paymentIdSendByClient = "paymentId";
 
         // when
-        preparePaymentApprovalService.preparePaymentApproval("payKey", pay.getOrderId(), amountSendByClient);
+        Pay pay = preparePaymentApprovalService.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient);
 
         // then
         assertEquals(PayStatus.PENDING, pay.getPayStatus());
@@ -53,11 +53,11 @@ class PreparePaymentApprovalServiceTest {
     void 가격이_DB에_저장된_정보와_일치하지_않으면_실패한다(){
         //given
         Order order = orderMemoryRepository.save(1L, "주문1");
-        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 10000L);
         long amountSendByClient = 5000L;
+        String paymentIdSendByClient = "paymentId";
 
         // when && then
         assertThrows(InvalidAmountException.class,
-                () -> preparePaymentApprovalService.preparePaymentApproval("payKey", pay.getOrderId(), amountSendByClient));
+                () -> preparePaymentApprovalService.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient));
     }
 }

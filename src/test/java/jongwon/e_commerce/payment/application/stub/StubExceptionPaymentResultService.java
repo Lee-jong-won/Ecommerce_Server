@@ -16,7 +16,6 @@ public class StubExceptionPaymentResultService extends PaymentResultService {
     public void applySuccess(String orderId, OffsetDateTime approvedAt, String method) {
         throw new DataAccessResourceFailureException("DB 연결 실패");
     }
-
     @Override
     public void applyFail(String orderId) {
         throw new DataAccessResourceFailureException("DB 연결 실패");

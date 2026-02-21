@@ -63,9 +63,8 @@ class PaymentCompleteServiceTest {
                         new OrderItemRequest(product1.getProductId(), 3),
                         new OrderItemRequest(product2.getProductId(), 2)
                 ));
-        pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 7000L);
-        pay.setPaymentId("payKey");
-        pay.markPending();
+
+        pay = paymentMemoryRepository.save(order.getId(), "paymentId", order.getOrderId(), 7000L);
         order.markPaymentPending();
     }
 

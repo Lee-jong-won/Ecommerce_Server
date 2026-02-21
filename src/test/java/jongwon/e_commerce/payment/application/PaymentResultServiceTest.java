@@ -39,8 +39,7 @@ class PaymentResultServiceTest {
     void 외부_PG로부터_OK_응답시_결제정보와_주문정보가_성공으로_업데이트_된다(){
         // given
         Order order = orderMemoryRepository.save(1L, "주문1");
-        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
-        pay.markPending();
+        Pay pay = paymentMemoryRepository.save(order.getId(), "paymentId", order.getOrderId(), 1000L);
         order.markPaymentPending();
 
         // when
@@ -57,8 +56,7 @@ class PaymentResultServiceTest {
     void 외부_PG로부터_에러_응답시_결제상태가_실패로_반영된다(){
         // given
         Order order = orderMemoryRepository.save(1L, "주문1");
-        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
-        pay.markPending();
+        Pay pay = paymentMemoryRepository.save(order.getId(), "paymentId", order.getOrderId(), 1000L);
         order.markPaymentPending();
 
         // when
@@ -73,8 +71,7 @@ class PaymentResultServiceTest {
     void 타임아웃_시_타임아웃_상태로_반영된다(){
         // given
         Order order = orderMemoryRepository.save(1L, "주문1");
-        Pay pay = paymentMemoryRepository.save(order.getId(), order.getOrderId(), 1000L);
-        pay.markPending();
+        Pay pay = paymentMemoryRepository.save(order.getId(), "paymentId", order.getOrderId(), 1000L);
         order.markPaymentPending();
 
         // when

@@ -19,11 +19,12 @@ class PaymentMemoryRepositoryTest {
     void Payment_저장_테스트(){
         // given
         Long fkOrderId = 1L;
+        String paymentId = "paymentId";
         String orderId = "order1";
         Long payAmount = 10000L;
 
         // when
-        Pay pay = paymentMemoryRepository.save(fkOrderId, orderId, payAmount);
+        Pay pay = paymentMemoryRepository.save(fkOrderId, paymentId, orderId, payAmount);
 
         // then
         Pay result = paymentMemoryRepository.findById(pay.getPayId()).get();
@@ -33,8 +34,8 @@ class PaymentMemoryRepositoryTest {
     @Test
     void Payment를_orderId로_조회_테스트_정상(){
         // given
-        Pay pay1= paymentMemoryRepository.save(1L, "order1", 10000L);
-        paymentMemoryRepository.save(1L, "order2", 10000L);
+        Pay pay1= paymentMemoryRepository.save(1L, "paymentId","order1", 10000L);
+        paymentMemoryRepository.save(1L, "paymentId2","order2", 10000L);
 
         // when
         Pay result = paymentMemoryRepository.findByOrderId("order1").get();
@@ -46,8 +47,8 @@ class PaymentMemoryRepositoryTest {
     @Test
     void Payment를_fkOrderId로_조회_테스트_정상(){
         // given
-        Pay pay1= paymentMemoryRepository.save(1L, "order1", 10000L);
-        paymentMemoryRepository.save(2L, "order2", 10000L);
+        Pay pay1= paymentMemoryRepository.save(1L, "paymentId1","order1", 10000L);
+        paymentMemoryRepository.save(2L, "paymentId2", "order2", 10000L);
 
         // when
         Pay result = paymentMemoryRepository.findByFkOrderId(1L).get();

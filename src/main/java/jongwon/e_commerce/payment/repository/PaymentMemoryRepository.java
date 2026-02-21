@@ -12,8 +12,8 @@ public class PaymentMemoryRepository implements PaymentRepository {
     private static long sequence = 0L;
 
     @Override
-    public Pay save(Long fkOrderId, String orderId, Long payAmount) {
-        Pay pay = Pay.create(fkOrderId, orderId, payAmount);
+    public Pay save(Long fkOrderId, String paymentId, String orderId, Long payAmount) {
+        Pay pay = Pay.create(fkOrderId, paymentId, orderId, payAmount);
         pay.setPayId(++sequence);
         store.put(pay.getPayId(), pay);
         return pay;
