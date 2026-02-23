@@ -4,10 +4,11 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderStatus;
 import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.payment.application.approve.process3.common.PaymentStateUpdater;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.repository.PaymentMemoryRepository;
+import jongwon.e_commerce.payment.repository.memory.PaymentMemoryRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +17,10 @@ import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PaymentResultUpdaterImplTest {
+class PaymentStateUpdaterTest {
     OrderRepository orderRepository = new OrderMemoryRepository();
     PaymentRepository paymentRepository = new PaymentMemoryRepository();
-    PaymentResultUpdater paymentResultUpdater = new PaymentResultUpdaterImpl(paymentRepository, orderRepository);
+    PaymentStateUpdater paymentStateUpdater = new PaymentStateUpdater(paymentRepository, orderRepository);
 
     @AfterEach
     public void afterEach(){
@@ -35,7 +36,7 @@ class PaymentResultUpdaterImplTest {
         order.markPaymentPending();
 
         // when
-        paymentResultUpdater.applySuccess(pay.getOrderId(), OffsetDateTime.parse("2024-02-13T03:18:14Z"), "카드");
+        paymentStateUpdater.applySuccess(pay.getOrderId(), OffsetDateTime.parse("2024-02-13T03:18:14Z"), "카드");
 
         // then
         assertEquals(OrderStatus.PAID, order.getOrderStatus());
@@ -52,7 +53,7 @@ class PaymentResultUpdaterImplTest {
         order.markPaymentPending();
 
         // when
-        paymentResultUpdater.applyFail(pay.getOrderId());
+        paymentStateUpdater.applyFail(pay.getOrderId());
 
         // then
         assertEquals(PayStatus.FAILED, pay.getPayStatus());
@@ -67,7 +68,7 @@ class PaymentResultUpdaterImplTest {
         order.markPaymentPending();
 
         // when
-        paymentResultUpdater.applyTimeout(pay.getOrderId());
+        paymentStateUpdater.applyTimeout(pay.getOrderId());
 
         // then
         assertEquals(PayStatus.SYNC_TIMEOUT, pay.getPayStatus());

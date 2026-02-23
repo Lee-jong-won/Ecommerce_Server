@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application;
+package jongwon.e_commerce.payment.application.approve.process1;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
-public class PaymentApprovalPreprocessorImpl implements PaymentApprovalPreprocessor{
+public class PaymentApprovalPreprocessor {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
 
+    @Transactional
     public Pay preparePaymentApproval(String paymentId, String orderId, long amount) {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException()

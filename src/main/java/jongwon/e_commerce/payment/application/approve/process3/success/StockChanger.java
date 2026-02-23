@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application;
+package jongwon.e_commerce.payment.application.approve.process3.success;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
@@ -10,20 +10,17 @@ import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-public class StockChangerImpl implements StockChanger {
+public class StockChanger {
 
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-    @Override
     public void decreaseStock(String orderId) {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException("해당 주문 ID를 갖는 주문 정보가 존재하지 않습니다.")
@@ -40,7 +37,6 @@ public class StockChangerImpl implements StockChanger {
         }
     }
 
-    @Override
     public void increaseStock(String orderId){
 
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(

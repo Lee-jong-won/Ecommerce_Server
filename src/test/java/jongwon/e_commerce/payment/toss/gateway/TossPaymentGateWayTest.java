@@ -50,8 +50,10 @@ class TossPaymentGateWayTest {
         // given
         TossPaymentApproveRequest request = new TossPaymentApproveRequest("주문1", "1234", 10000);
         String idempotencyKey = "idempotency-key";
-        TossPaymentApproveResponse response = new TossPaymentApproveResponse("카드", OffsetDateTime.parse("2024-02-13T03:18:14Z"),
-                "DONE");
+        TossPaymentApproveResponse response = new TossPaymentApproveResponse("paymentKey",
+                "order1", "카드",
+                OffsetDateTime.parse("2024-02-13T03:18:14Z"),
+                "DONE", null);
 
         when(tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey)).thenReturn(
                 response

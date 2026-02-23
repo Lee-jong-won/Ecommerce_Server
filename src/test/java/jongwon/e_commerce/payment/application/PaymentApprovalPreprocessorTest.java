@@ -3,20 +3,21 @@ package jongwon.e_commerce.payment.application;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderStatus;
 import jongwon.e_commerce.order.repository.OrderMemoryRepository;
+import jongwon.e_commerce.payment.application.approve.process1.PaymentApprovalPreprocessor;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
-import jongwon.e_commerce.payment.repository.PaymentMemoryRepository;
+import jongwon.e_commerce.payment.repository.memory.PaymentMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PaymentApprovalPreprocessorImplTest {
+class PaymentApprovalPreprocessorTest {
     // 리포지토리
     OrderMemoryRepository orderMemoryRepository = new OrderMemoryRepository();
     PaymentMemoryRepository paymentMemoryRepository = new PaymentMemoryRepository();
-    PaymentApprovalPreprocessorImpl paymentApprovalPreprocessorImpl = new PaymentApprovalPreprocessorImpl(paymentMemoryRepository, orderMemoryRepository);
+    PaymentApprovalPreprocessor paymentApprovalPreprocessor = new PaymentApprovalPreprocessor(paymentMemoryRepository, orderMemoryRepository);
 
     @AfterEach
     public void afterEach(){
@@ -32,7 +33,7 @@ class PaymentApprovalPreprocessorImplTest {
         String paymentIdSendByClient = "paymentId";
 
         // when
-        Pay pay = paymentApprovalPreprocessorImpl.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient);
+        Pay pay = paymentApprovalPreprocessor.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient);
 
         // then
         assertEquals(PayStatus.PENDING, pay.getPayStatus());
@@ -48,6 +49,6 @@ class PaymentApprovalPreprocessorImplTest {
 
         // when && then
         assertThrows(InvalidAmountException.class,
-                () -> paymentApprovalPreprocessorImpl.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient));
+                () -> paymentApprovalPreprocessor.preparePaymentApproval(paymentIdSendByClient, order.getOrderId(), amountSendByClient));
     }
 }

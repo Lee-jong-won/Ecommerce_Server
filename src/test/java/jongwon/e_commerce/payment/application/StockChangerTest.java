@@ -10,6 +10,7 @@ import jongwon.e_commerce.order.repository.OrderItemMemoryRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderMemoryRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.payment.application.approve.process3.success.StockChanger;
 import jongwon.e_commerce.payment.exception.OrderNotExistException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductMemoryRepository;
@@ -21,13 +22,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StockChangerImplTest {
+class StockChangerTest {
     MemberRepository memberRepository = new MemberMemoryRepository();
     ProductRepository productRepository = new ProductMemoryRepository();
     OrderItemRepository orderItemRepository = new OrderItemMemoryRepository();
     OrderRepository orderRepository = new OrderMemoryRepository();
     OrderService orderService = new OrderService(orderRepository, orderItemRepository, productRepository);
-    StockChanger stockChanger = new StockChangerImpl(orderItemRepository,
+    StockChanger stockChanger = new StockChanger(orderItemRepository,
             productRepository, orderRepository);
 
     @AfterEach

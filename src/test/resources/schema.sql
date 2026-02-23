@@ -1,14 +1,3 @@
--- 데이터베이스 초기화
-/*DROP DATABASE IF EXISTS ecommerce_testdb;
-CREATE DATABASE ecommerce_testdb;
-USE ecommerce_testdb;*/
-
-/*-- 테이블 초기화
-DROP TABLE IF EXISTS pay;
-DROP TABLE IF EXISTS order_item;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS product;
-DROP TABLE IF EXISTS member;*/
 
 -- 1. member 테이블
 CREATE TABLE member
@@ -100,6 +89,19 @@ CREATE TABLE pay (
     CONSTRAINT fk_pay_orders FOREIGN KEY (fk_order_id) REFERENCES orders(id),
     CONSTRAINT uq_fk_order_id UNIQUE (fk_order_id), -- 주문 하나당 결제는 하나
     CONSTRAINT uq_payment_key UNIQUE (payment_id)
+);
+
+-- 6. mobilePhone 테이블
+CREATE TABLE mobile_phone_pay_detail(
+    id     BIGINT      NOT NULL AUTO_INCREMENT,   -- 핸드폰 결제 상세 ID (PK)
+    fk_pay_id BIGINT NOT NULL, -- 결제 id
+    customer_mobile_phone VARCHAR(50) NULL, -- 전화번호
+    settlement_status VARCHAR(50) NULL, -- 정산상태
+    receipt_url VARCHAR(60) NULL, -- 영수증 URL
+
+    PRIMARY KEY (id),
+    CONSTRAINT fk_phone_pay_detail_pay FOREIGN KEY (fk_pay_id) REFERENCES pay(pay_id),
+    CONSTRAINT uq_fk_pay_id UNIQUE (fk_pay_id)
 );
 
 

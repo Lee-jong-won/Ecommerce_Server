@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.repository;
 
 import jongwon.e_commerce.payment.domain.Pay;
+import jongwon.e_commerce.payment.repository.memory.PaymentMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

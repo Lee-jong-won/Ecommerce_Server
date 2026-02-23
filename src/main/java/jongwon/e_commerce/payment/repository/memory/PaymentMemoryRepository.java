@@ -1,6 +1,7 @@
-package jongwon.e_commerce.payment.repository;
+package jongwon.e_commerce.payment.repository.memory;
 
 import jongwon.e_commerce.payment.domain.Pay;
+import jongwon.e_commerce.payment.repository.PaymentRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,10 @@ public class PaymentMemoryRepository implements PaymentRepository {
     private static long sequence = 0L;
 
     @Override
-    public Pay save(Long fkOrderId, String paymentId, String orderId, Long payAmount) {
+    public Pay save(Long fkOrderId,
+                    String paymentId,
+                    String orderId,
+                    Long payAmount) {
         Pay pay = Pay.create(fkOrderId, paymentId, orderId, payAmount);
         pay.setPayId(++sequence);
         store.put(pay.getPayId(), pay);

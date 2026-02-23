@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.toss.stub;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentCancelResponse;
 import jongwon.e_commerce.payment.toss.gateway.TossPaymentGateWay;
 import jongwon.e_commerce.payment.toss.TossPaymentHttpClient;
 import org.springframework.retry.support.RetryTemplate;
@@ -16,12 +17,12 @@ public class StubNormalTossPaymentGateWay extends TossPaymentGateWay {
 
     @Override
     public TossPaymentApproveResponse payApprove(TossPaymentApproveRequest request, String idempotencyKey) {
-        return new TossPaymentApproveResponse("카드",
-                OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE");
+        return new TossPaymentApproveResponse("paymentKey","order1", "카드",
+                OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE", null);
     }
 
     @Override
-    public void payCancel(TossPaymentCancelRequest request) {
-        return;
+    public TossPaymentCancelResponse payCancel(TossPaymentCancelRequest request) {
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.toss.stub;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.dto.TossPaymentCancelResponse;
 import jongwon.e_commerce.payment.exception.external.TossPaymentClientException;
 import jongwon.e_commerce.payment.toss.gateway.TossPaymentGateWay;
 import jongwon.e_commerce.payment.toss.TossPaymentHttpClient;
@@ -19,7 +20,7 @@ public class StubClientExceptionTossPaymentGateWay extends TossPaymentGateWay {
     }
 
     @Override
-    public void payCancel(TossPaymentCancelRequest request) {
+    public TossPaymentCancelResponse payCancel(TossPaymentCancelRequest request) {
         throw new TossPaymentClientException("클라이언트 예외");
     }
 }

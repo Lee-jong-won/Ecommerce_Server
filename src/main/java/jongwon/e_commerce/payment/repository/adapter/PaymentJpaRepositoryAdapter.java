@@ -17,7 +17,10 @@ import java.util.Optional;
 public class PaymentJpaRepositoryAdapter implements PaymentRepository {
     private final PaymentJpaRepository paymentJpaRepository;
     @Override
-    public Pay save(Long fkOrderId, String paymentId, String orderId, Long payAmount) {
+    public Pay save(Long fkOrderId,
+                    String paymentId,
+                    String orderId,
+                    Long payAmount) {
         Pay pay = Pay.create(fkOrderId, paymentId, orderId, payAmount);
         return paymentJpaRepository.save(pay);
     }
