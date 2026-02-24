@@ -1,5 +1,6 @@
 package jongwon.e_commerce.order.application;
 
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.dto.OrderItemRequest;
@@ -24,12 +25,8 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
 
-    public Order order(Long memberId, String orderName, List<OrderItemRequest> requests){
-
-        //주문 저장
-        Order order = orderRepository.save(memberId, orderName);
-
-        //주문 - 상품 저장
+    public Order order(Member member, String orderName, List<OrderItemRequest> requests){
+        //주문 - 상품 만들기
         List<OrderItem> orderItems = new ArrayList<>();
         for(int i = 0; i < requests.size(); i++){
             OrderItemRequest orderItemRequest = requests.get(i);
@@ -38,17 +35,17 @@ public class OrderService {
                     () -> new ProductNotFoundException(orderItemRequest.getProductId())
             );
 
-            OrderItem orderItem = orderItemRepository.save(order.getId(), product.getProductId(), product.getProductName(),
-                    product.getProductPrice(), orderItemRequest.getStockQuantity());
+            OrderItem orderItem = OrderItem.createOrderItem(product,
+                    product.getProductName(),
+                    product.getProductPrice(),
+                    orderItemRequest.getStockQuantity());
 
             orderItems.add(orderItem);
         }
 
-        // 총 주문 금액 계산
-        order.calculateTotalAmount(orderItems);
+        // 주문 생성
+        Order order = Order.createOrder(member, "orderName", orderItems);
 
-        //
-        
         return order;
     }
 }

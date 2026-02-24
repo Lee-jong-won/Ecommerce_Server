@@ -1,6 +1,7 @@
 package jongwon.e_commerce.member.repository;
 
 import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.member.repository.impl.MemberMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

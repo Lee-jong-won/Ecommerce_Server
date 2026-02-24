@@ -5,14 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class PaymentCompletionConsistencyException extends InfrastructureException {
-    private final String paymentKey;
     private final String orderId;
 
-    public PaymentCompletionConsistencyException(String paymentKey,
-                                       String orderId,
-                                       Throwable cause) {
+    public PaymentCompletionConsistencyException(String orderId, Throwable cause) {
         super(cause);
-        this.paymentKey = paymentKey;
         this.orderId = orderId;
     }
 }

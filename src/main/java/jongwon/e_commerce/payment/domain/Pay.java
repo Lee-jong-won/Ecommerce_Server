@@ -1,6 +1,8 @@
 package jongwon.e_commerce.payment.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,14 +19,12 @@ public class Pay {
     @Column(name = "pay_id")
     private Long payId;
 
-    @Column(name = "fk_order_id", nullable = false)
-    private Long fkOrderId;
-
-    @Column(name = "order_id", nullable = false)
-    private String orderId;
+    @OneToOne
+    @JoinColumn(name = "fk_order_id")
+    private Order order;
 
     @Column(name = "payment_id", nullable = false)
-    private String paymentId;
+    private String paymentKey;
 
     @Column(name = "pay_method", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
@@ -43,15 +43,13 @@ public class Pay {
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
 
-    //결제 인증 이후, 결제 승인을 서버가 프록시할때 만들어짐
-    //
-    public static Pay create(Long fkOrderId, String paymentId, String orderId, long payAmount){
+    public static Pay from(PaymentContext paymentContext){
         Pay pay = new Pay();
-        pay.fkOrderId = fkOrderId;
-        pay.paymentId = paymentId;
-        pay.orderId = orderId;
+        pay.paymentKey = paymentContext.getPaymentKey();
+        pay.approvedAt = paymentContext.getApprovedAt();
+        pay.payAmount = paymentContext.getAmount();
+        pay.payMethod = PayMethodMapper.from(paymentContext.getMethod());
         pay.payStatus = PayStatus.PENDING;
-        pay.payAmount = payAmount;
         return pay;
     }
 
@@ -59,14 +57,9 @@ public class Pay {
     public void setPayId(long payId){
         this.payId = payId;
     }
+    public void setOrder(Order order){this.order = order;}
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
-    }
-    public void setApprovedAt(OffsetDateTime approvedAt){
-        this.approvedAt = approvedAt;
-    }
-    public void setPayMethod(PayMethod payMethod){
-        this.payMethod = payMethod;
     }
 
     // PG 승인 성공 응답 수신

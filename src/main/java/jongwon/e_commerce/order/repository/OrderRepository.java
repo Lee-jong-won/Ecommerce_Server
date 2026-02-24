@@ -5,7 +5,7 @@ import jongwon.e_commerce.order.domain.Order;
 import java.util.Optional;
 
 public interface OrderRepository {
-    Order save(Long memberId, String orderName);
+    Order save(Order order);
     Optional<Order> findById(Long id);
     Optional<Order> findByOrderId(String orderId);
     void clearStore();

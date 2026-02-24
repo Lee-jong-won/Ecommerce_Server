@@ -5,7 +5,7 @@ import jongwon.e_commerce.payment.domain.Pay;
 import java.util.Optional;
 
 public interface PaymentRepository {
-    Pay save(Long fkOrderId, String paymentId, String orderId, Long payAmount);
+    Pay save(Pay pay);
     Optional<Pay> findById(Long id);
     Optional<Pay> findByOrderId(String orderId);
     Optional<Pay> findByFkOrderId(Long fkOrderId);

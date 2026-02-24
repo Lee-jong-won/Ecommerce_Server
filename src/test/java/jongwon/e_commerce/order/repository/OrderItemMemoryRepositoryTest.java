@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.repository;
 
 import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.repository.impl.OrderItemMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

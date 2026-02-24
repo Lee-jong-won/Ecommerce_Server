@@ -1,11 +1,8 @@
 package jongwon.e_commerce.product.repository;
 
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.exception.ProductNotFoundException;
-import jongwon.e_commerce.product.repository.adapter.ProductJpaRepositoryAdapter;
+import jongwon.e_commerce.product.repository.impl.ProductJpaRepositoryImpl;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
-import org.aspectj.lang.annotation.After;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -23,7 +20,7 @@ class ProductRepositoryTest {
     @Test
     void 상품이_정상적으로_저장된다_JPA() {
         //given
-        ProductRepository productRepository = new ProductJpaRepositoryAdapter(productJpaRepository);
+        ProductRepository productRepository = new ProductJpaRepositoryImpl(productJpaRepository);
         String productName = "상품1";
         int productPrice = 10000;
 
@@ -38,7 +35,7 @@ class ProductRepositoryTest {
     @Test
     void 상품이_정상적으로_조회된다_JPA(){
         //given
-        ProductRepository productRepository = new ProductJpaRepositoryAdapter(productJpaRepository);
+        ProductRepository productRepository = new ProductJpaRepositoryImpl(productJpaRepository);
         Product product = Product.create("상품1", 10000);
 
         //when
@@ -50,7 +47,7 @@ class ProductRepositoryTest {
     @Test
     void 상품이_정상적으로_조회되지_않은_경우_예외_Throw_JPA(){
         //given
-        ProductRepository productRepository = new ProductJpaRepositoryAdapter(productJpaRepository);
+        ProductRepository productRepository = new ProductJpaRepositoryImpl(productJpaRepository);
 
         //when && then
         assertEquals(true, productRepository.findById(1L).isEmpty());

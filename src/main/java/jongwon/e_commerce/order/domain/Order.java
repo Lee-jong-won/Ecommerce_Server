@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,9 @@ public class Order {
     @Column(name = "order_id")
     private String orderId;
 
-    @Column(name = "fk_member_id", nullable = false)
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "fk_member_id", nullable = false)
+    private Member member;
 
     @Column(name = "order_name", nullable = false)
     private String orderName;
@@ -41,13 +43,21 @@ public class Order {
     public void setOrderId(long id){
         this.id = id;
     }
-    public static Order createOrder(Long memberId, String orderName){
+    public static Order createOrder(Member member, String orderName, List<OrderItem> orderItems){
+
         Order order = new Order();
-        order.memberId = memberId;
+        order.member = member;
         order.orderId = OrderIdGenerator.generate();
+
+        for(OrderItem orderItem : orderItems)
+            orderItem.setOrder(order);
+
+        order.calculateTotalAmount(orderItems);
+
         order.orderStatus = OrderStatus.CREATED;
         order.orderedAt = LocalDateTime.now();
         order.orderName = orderName;
+
         return order;
     }
 
@@ -90,6 +100,13 @@ public class Order {
             throw new InvalidOrderStateException("PAYMENT_PENDING 상태 에서만 결제 승인 실패 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.FAILED);
+    }
+
+    public void markPayTimeout(){
+        if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
+            throw new InvalidOrderStateException("PAYMENT_PENDING 상태 에서만 타임아웃 처리 가능합니다.");
+        }
+        setOrderStatus(OrderStatus.PAY_TIMEOUT);
     }
 
     //PG사 정책에 의해 결제가 만료되었을 시

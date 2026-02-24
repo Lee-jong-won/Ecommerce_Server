@@ -1,14 +1,14 @@
 package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.repository.MemberMemoryRepository;
+import jongwon.e_commerce.member.repository.impl.MemberMemoryRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.dto.OrderItemRequest;
-import jongwon.e_commerce.order.repository.OrderItemMemoryRepository;
-import jongwon.e_commerce.order.repository.OrderMemoryRepository;
+import jongwon.e_commerce.order.repository.impl.OrderItemMemoryRepository;
+import jongwon.e_commerce.order.repository.impl.OrderMemoryRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.exception.ProductNotFoundException;
-import jongwon.e_commerce.product.repository.ProductMemoryRepository;
+import jongwon.e_commerce.product.repository.impl.ProductMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

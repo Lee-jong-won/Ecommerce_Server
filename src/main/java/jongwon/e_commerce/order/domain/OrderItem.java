@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.product.domain.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,11 +15,13 @@ public class OrderItem {
     @Column(name = "order_item_id")
     private Long orderItemId;
 
-    @Column(name = "fk_order_id", nullable = false)
-    private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "fk_order_id")
+    private Order order;
 
-    @Column(name = "fk_product_id", nullable = false)
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "fk_product_id")
+    private Product product;
 
     @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
@@ -35,11 +38,16 @@ public class OrderItem {
     public int calculateAmount(){
         return orderPrice * orderQuantity;
     }
+    public void setOrder(Order order){
+        this.order = order;
+    }
 
-    public static OrderItem createOrderItem(Long orderId, Long productId, String productName, int orderPrice, int orderQuantity){
+    public static OrderItem createOrderItem(Product product,
+                                            String productName,
+                                            int orderPrice,
+                                            int orderQuantity){
         OrderItem orderItem = new OrderItem();
-        orderItem.orderId = orderId;
-        orderItem.productId = productId;
+        orderItem.product = product;
         orderItem.productName = productName;
         orderItem.orderPrice = orderPrice;
         orderItem.orderQuantity = orderQuantity;
