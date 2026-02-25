@@ -1,10 +1,11 @@
 package jongwon.e_commerce.payment.repository;
 
-import jongwon.e_commerce.payment.domain.MobilePhonePay;
+import jongwon.e_commerce.payment.domain.MPPay;
+import jongwon.e_commerce.payment.domain.jpa.MPPayJpaEntity;
 
 import java.util.Optional;
 
 public interface MobilePhonePayRepository {
-    MobilePhonePay save(MobilePhonePay pay);
-    Optional<MobilePhonePay> findById(Long id);
+    MPPay save(MPPay mpPay);
+    Optional<MPPay> findById(Long id);
 }

@@ -1,68 +1,75 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.payment.application.approve.result.context.MPPayDetail;
+import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
+import jongwon.e_commerce.payment.application.approve.result.context.PaymentDetail;
+import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PayTest {
-
     @Test
-    @DisplayName("PENDING 상태에서 결제 성공으로 전이된다")
-    void pending_to_success() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.PENDING);
+    void 정상적으로_결제가_생성된다(){
+        //given
 
-        payment.markSuccess();
+        // 결제 공통 정보
+        int amount = 1000;
+        String orderId = "order1";
+        String paymentKey = "paymentKey";
+        String method = "카드";
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+        String status = "DONE";
 
-        assertEquals(PayStatus.SUCCESS, payment.getPayStatus());
+        // 핸드폰 결제 정보(결제 상세 정보)
+        String customerMobilePhone = "010-1234-5678";
+        String settlementStatus = "정산완료";
+        String receiptUrl = "http://naver.com";
+
+        PaymentDetail mobilePhoneDetail = MPPayDetail.builder().
+                customerMobilePhone(customerMobilePhone).
+                settlementStatus(settlementStatus).
+                receiptUrl(receiptUrl).
+                build();
+
+        PaymentContext paymentContext = PaymentContext.builder().
+                amount(amount).
+                orderId(orderId).
+                paymentKey(paymentKey).
+                method(method).
+                approvedAt(approvedAt).
+                status(status).
+                paymentDetail(mobilePhoneDetail).
+                build();
+
+        // pay 생성을 위한 dummy 주문
+        Order order = new Order();
+
+        // when
+        Pay pay = Pay.create(order, paymentContext);
+
+        // then
+        assertEquals(paymentKey, pay.getPaymentKey());
+        assertEquals(approvedAt, pay.getApprovedAt());
+        assertEquals(amount, pay.getPayAmount());
+        assertEquals(PayMethod.CARD, pay.getPayMethod());
+        assertEquals(PayStatus.SUCCESS, pay.getPayStatus());
     }
 
     @Test
-    @DisplayName("SYNC_TIMEOUT 상태에서 결제 성공으로 전이된다")
-    void syncTimeout_to_success() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.SYNC_TIMEOUT);
+    void 등록되지_않은_결제수단이_응답으로_왔다면_결제_생성중_예외발생(){
+        //given
+        String method = "테블릿";
+        PaymentContext paymentContext = PaymentContext.builder()
+                .method(method).build();
+        Order order = new Order();
 
-        payment.markSuccess();
-
-        assertEquals(PayStatus.SUCCESS, payment.getPayStatus());
-    }
-
-    @Test
-    @DisplayName("PENDING 상태에서 SYNC_TIMEOUT으로 전이된다")
-    void pending_to_syncTimeout() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.PENDING);
-
-        payment.markSyncTimeout();
-
-        assertEquals(PayStatus.SYNC_TIMEOUT, payment.getPayStatus());
-    }
-
-    @Test
-    @DisplayName("PENDING 상태에서 결제 실패로 전이된다")
-    void pending_to_failed() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.PENDING);
-
-        payment.markFailed();
-
-        assertEquals(PayStatus.FAILED, payment.getPayStatus());
-    }
-
-    @Test
-    @DisplayName("SYNC_TIMEOUT 상태에서 EXPIRED로 전이된다")
-    void syncTimeout_to_expired() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.SYNC_TIMEOUT);
-
-        payment.markExpired();
-
-        assertEquals(PayStatus.EXPIRED, payment.getPayStatus());
+        // when && then
+        assertThrows(UnsupportedPayMethodException.class, () -> Pay.create(order, paymentContext));
     }
 
     @Test
@@ -76,51 +83,4 @@ class PayTest {
         assertEquals(PayStatus.CANCELED, payment.getPayStatus());
     }
 
-    @Test
-    @DisplayName("SUCCESS 상태에서는 FAILED로 전이할 수 없다")
-    void success_to_failed_invalid() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.SUCCESS);
-
-        assertThrows(
-                InvalidPayStatusException.class,
-                payment::markFailed
-        );
-    }
-
-    @Test
-    @DisplayName("FAILED 상태에서는 SUCCESS로 전이할 수 없다")
-    void failed_to_success_invalid() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.FAILED);
-
-        assertThrows(
-                InvalidPayStatusException.class,
-                payment::markSuccess
-        );
-    }
-
-    @Test
-    @DisplayName("PENDING 상태가 아니면 SYNC_TIMEOUT으로 전이할 수 없다")
-    void invalid_to_syncTimeout() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.SUCCESS);
-
-        assertThrows(
-                InvalidPayStatusException.class,
-                payment::markSyncTimeout
-        );
-    }
-
-    @Test
-    @DisplayName("SUCCESS 상태가 아니면 취소할 수 없다")
-    void cancel_invalid_state() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.PENDING);
-
-        assertThrows(
-                InvalidPayStatusException.class,
-                payment::cancel
-        );
-    }
 }

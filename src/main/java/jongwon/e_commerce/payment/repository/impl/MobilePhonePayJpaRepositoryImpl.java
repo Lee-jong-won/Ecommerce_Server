@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.repository.impl;
 
-import jongwon.e_commerce.payment.domain.MobilePhonePay;
+import jongwon.e_commerce.payment.domain.MPPay;
+import jongwon.e_commerce.payment.domain.jpa.MPPayJpaEntity;
 import jongwon.e_commerce.payment.repository.MobilePhonePayRepository;
 import jongwon.e_commerce.payment.repository.jpa.MobilePhonePayDetailJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +17,12 @@ public class MobilePhonePayJpaRepositoryImpl implements MobilePhonePayRepository
 
     private final MobilePhonePayDetailJpaRepository mobilePhonePayDetailJpaRepository;
     @Override
-    public MobilePhonePay save(MobilePhonePay mobilePhonePay) {
-        return mobilePhonePayDetailJpaRepository.save(mobilePhonePay);
+    public MPPay save(MPPay mpPay) {
+        return mobilePhonePayDetailJpaRepository.save(MPPayJpaEntity.from(mpPay)).toDomain();
     }
 
     @Override
-    public Optional<MobilePhonePay> findById(Long id) {
-        return mobilePhonePayDetailJpaRepository.findById(id);
+    public Optional<MPPay> findById(Long id) {
+        return mobilePhonePayDetailJpaRepository.findById(id).map(MPPayJpaEntity::toDomain);
     }
 }

@@ -11,8 +11,7 @@ public class ProductMemoryRepository implements ProductRepository {
     private static long sequence = 0L;
 
     @Override
-    public Product save(String productName, int productPrice) {
-        Product product = Product.create(productName, productPrice);
+    public Product save(Product product) {
         product.setProductId(++sequence);
         store.put(product.getProductId(), product);
         return product;

@@ -1,8 +1,9 @@
 package jongwon.e_commerce.payment.toss.dto;
 
-import jongwon.e_commerce.payment.application.approve.result.context.MobilePhoneDetail;
+import jongwon.e_commerce.payment.application.approve.result.context.MPPayDetail;
 import jongwon.e_commerce.payment.application.approve.result.context.PaymentDetail;
 import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
+import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,7 +20,7 @@ public class TossPaymentApproveResponse {
     private String status; // 결제 상태
     private MobilePhoneDto mobilePhone; // 핸드폰 결제 정보
 
-    public PaymentContext toPaymentContext(){
+    public PaymentContext toPaymentContext(PaymentDetail paymentDetail){
         return PaymentContext.builder().
                 amount(this.amount).
                 orderId(this.orderId).
@@ -27,15 +28,15 @@ public class TossPaymentApproveResponse {
                 method(this.method).
                 approvedAt(this.approvedAt).
                 status(this.status).
-                paymentDetail(convertToDetail()).
+                paymentDetail(paymentDetail).
                 build();
     }
-    private PaymentDetail convertToDetail() {
+    public PaymentDetail convertToDetail() {
         switch (this.method) {
             case "휴대폰":
                 return mobilePhone.toPaymentDetail();
             default:
-                return null;
+                throw new UnsupportedPayMethodException("지원하지 않는 결제 수단입니다.");
         }
     }
 
@@ -46,8 +47,8 @@ public class TossPaymentApproveResponse {
         public String settlementStatus;
         public String receiptUrl;
 
-        public MobilePhoneDetail toPaymentDetail(){
-            return MobilePhoneDetail.builder().
+        public MPPayDetail toPaymentDetail(){
+            return MPPayDetail.builder().
                     customerMobilePhone(this.customerMobilePhone)
                     .settlementStatus(this.settlementStatus)
                     .receiptUrl(this.receiptUrl)

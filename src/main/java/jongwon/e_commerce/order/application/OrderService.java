@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,12 @@ public class OrderService {
         }
 
         // 주문 생성
-        Order order = Order.createOrder(member, "orderName", orderItems);
-
+        Order order = Order.createOrder(member, orderName, LocalDateTime.now(), orderItems);
+        orderRepository.save(order);
+        for(OrderItem orderItem : orderItems) {
+            orderItem.setOrder(order);
+            orderItemRepository.save(orderItem);
+        }
         return order;
     }
 }

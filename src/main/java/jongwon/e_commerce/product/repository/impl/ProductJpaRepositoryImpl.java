@@ -16,8 +16,7 @@ public class ProductJpaRepositoryImpl implements ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
     @Override
-    public Product save(String productName, int productPrice) {
-        Product product = Product.create(productName, productPrice);
+    public Product save(Product product) {
         return productJpaRepository.save(product);
     }
 

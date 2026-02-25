@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MobilePhoneDetail implements PaymentDetail {
+public class MPPayDetail implements PaymentDetail {
     private String customerMobilePhone;
     private String settlementStatus;
     private String receiptUrl;

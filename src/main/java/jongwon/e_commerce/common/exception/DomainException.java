@@ -1,4 +1,4 @@
-package jongwon.e_commerce.order.domain.common.exception;
+package jongwon.e_commerce.common.exception;
 
 public abstract class DomainException extends RuntimeException {
     protected DomainException(){}

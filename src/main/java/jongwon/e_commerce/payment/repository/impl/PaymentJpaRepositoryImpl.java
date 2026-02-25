@@ -1,6 +1,8 @@
 package jongwon.e_commerce.payment.repository.impl;
 
+import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.payment.domain.Pay;
+import jongwon.e_commerce.payment.domain.jpa.PayJpaEntity;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.payment.repository.jpa.PaymentJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,31 +17,8 @@ import java.util.Optional;
 public class PaymentJpaRepositoryImpl implements PaymentRepository {
     private final PaymentJpaRepository paymentJpaRepository;
     @Override
-    public Pay save(Long fkOrderId,
-                    String paymentId,
-                    String orderId,
-                    Long payAmount) {
-        Pay pay = Pay.create(fkOrderId, paymentId, orderId, payAmount);
-        return paymentJpaRepository.save(pay);
+    public void save(Pay pay) {
+        paymentJpaRepository.save(PayJpaEntity.from(pay));
     }
 
-    @Override
-    public Optional<Pay> findById(Long id) {
-        return paymentJpaRepository.findById(id);
-    }
-
-    @Override
-    public Optional<Pay> findByOrderId(String orderId) {
-        return paymentJpaRepository.findByOrderId(orderId);
-    }
-
-    @Override
-    public Optional<Pay> findByFkOrderId(Long fkOrderId) {
-        return paymentJpaRepository.findByFkOrderId(fkOrderId);
-    }
-
-    @Override
-    public void clearStore() {
-        paymentJpaRepository.deleteAll();
-    }
 }

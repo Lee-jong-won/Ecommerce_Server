@@ -5,7 +5,7 @@ import jongwon.e_commerce.product.domain.Product;
 import java.util.Optional;
 
 public interface ProductRepository {
-    Product save(String productName, int productPrice);
+    Product save(Product product);
     Optional<Product> findById(Long id);
     void clearStore();
 }

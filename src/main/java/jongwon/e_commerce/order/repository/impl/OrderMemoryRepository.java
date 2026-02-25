@@ -13,8 +13,7 @@ public class OrderMemoryRepository implements OrderRepository {
     private static long sequence = 0L;
 
     @Override
-    public Order save(Long memberId, String orderName) {
-        Order order = Order.createOrder(memberId, orderName);
+    public Order save(Order order) {
         order.setOrderId(++sequence);
         store.put(order.getId(), order);
         return order;

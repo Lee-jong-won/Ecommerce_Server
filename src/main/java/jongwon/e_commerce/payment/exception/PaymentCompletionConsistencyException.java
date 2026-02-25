@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.exception;
 
-import jongwon.e_commerce.order.domain.common.exception.InfrastructureException;
+import jongwon.e_commerce.common.exception.InfrastructureException;
 import lombok.Getter;
 
 @Getter

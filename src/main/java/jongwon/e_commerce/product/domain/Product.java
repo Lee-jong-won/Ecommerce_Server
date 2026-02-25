@@ -35,7 +35,7 @@ public class Product {
     }
 
     // 새로운 상품 생성은 항상 이 메소드를 통해서만
-    public static Product create(String productName, int productPrice) {
+    public static Product createProduct(String productName, int productPrice) {
         Product product = new Product();
         product.productName = productName;
         product.productPrice = productPrice;

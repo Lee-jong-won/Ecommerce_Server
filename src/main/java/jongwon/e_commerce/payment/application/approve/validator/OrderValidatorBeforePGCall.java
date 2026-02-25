@@ -15,7 +15,7 @@ public class OrderValidatorBeforePGCall {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public void validateOrderForPayment(String orderId, long amount) {
+    public Order validateOrderForPayment(String orderId, long amount) {
         Order order = orderRepository.findByOrderId(orderId).orElseThrow(
                 () -> new OrderNotExistException()
         );
@@ -23,5 +23,7 @@ public class OrderValidatorBeforePGCall {
         if (order.getTotalAmount() != amount)
             throw new InvalidAmountException();
         order.markPaymentPending();
+
+        return order;
     }
 }

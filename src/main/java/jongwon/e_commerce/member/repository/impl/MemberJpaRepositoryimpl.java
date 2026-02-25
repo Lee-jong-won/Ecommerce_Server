@@ -17,9 +17,7 @@ public class MemberJpaRepositoryimpl implements MemberRepository {
     private final MemberJpaRepository memberJpaRepository;
 
     @Override
-    public Member save(String loginId, String password,
-                       String memberName, String email, String addr) {
-        Member member = Member.create(loginId, password, memberName, email, addr);
+    public Member save(Member member) {
         return memberJpaRepository.save(member);
     }
 
