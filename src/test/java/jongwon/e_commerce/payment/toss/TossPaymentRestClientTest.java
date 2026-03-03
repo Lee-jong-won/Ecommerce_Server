@@ -3,7 +3,7 @@ package jongwon.e_commerce.payment.toss;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveRequest;
+import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.exception.external.TossPaymentClientException;
 import jongwon.e_commerce.payment.exception.external.TossPaymentServerException;
@@ -62,7 +62,7 @@ class TossPaymentRestClientTest {
     @Test
     void 정상적으로_결제가_승인된다(){
         // given
-        TossPaymentApproveRequest request = new TossPaymentApproveRequest("a4CWyWY5m89PNh7xJwhk1",
+        PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 10000);
 
@@ -93,7 +93,7 @@ class TossPaymentRestClientTest {
     void 클라이언트_에러_응답시_토스_클라이언트_예외가_발생한다(){
 
         // given
-        TossPaymentApproveRequest request = new TossPaymentApproveRequest("a4CWyWY5m89PNh7xJwhk1",
+        PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 10000);
 
@@ -118,7 +118,7 @@ class TossPaymentRestClientTest {
     @Test
     void 서버_에러_응답시_토스_서버_예외가_throw된다(){
         // given
-        TossPaymentApproveRequest request = new TossPaymentApproveRequest("a4CWyWY5m89PNh7xJwhk1",
+        PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 10000);
 
@@ -143,7 +143,7 @@ class TossPaymentRestClientTest {
     @Test
     void 타임아웃시_toss_타임아웃_예외가_throw된다(){
         // given
-        TossPaymentApproveRequest request = new TossPaymentApproveRequest("a4CWyWY5m89PNh7xJwhk1",
+        PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 10000);
 

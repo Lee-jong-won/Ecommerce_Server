@@ -1,6 +1,6 @@
 package jongwon.e_commerce.order.repository.impl;
 
-import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
 import jongwon.e_commerce.order.repository.OrderRepository;
 
 import java.util.HashMap;
@@ -9,31 +9,31 @@ import java.util.Optional;
 
 public class OrderMemoryRepository implements OrderRepository {
 
-    private static Map<Long, Order> store = new HashMap<>();
+    private static Map<Long, OrderEntity> store = new HashMap<>();
     private static long sequence = 0L;
 
     @Override
-    public Order save(Order order) {
-        order.setOrderId(++sequence);
-        store.put(order.getId(), order);
-        return order;
+    public OrderEntity save(OrderEntity orderEntity) {
+        orderEntity.setOrderId(++sequence);
+        store.put(orderEntity.getId(), orderEntity);
+        return orderEntity;
     }
 
     @Override
-    public Optional<Order> findById(Long id) {
+    public Optional<OrderEntity> findById(Long id) {
         return Optional.ofNullable(store.get(id));
     }
 
     @Override
-    public Optional<Order> findByOrderId(String orderId) {
-        Order findOrder = null;
-        for(Order order : store.values()){
-            if(order.getOrderId().equals(orderId)) {
-                findOrder = order;
+    public Optional<OrderEntity> findByOrderId(String orderId) {
+        OrderEntity findOrderEntity = null;
+        for(OrderEntity orderEntity : store.values()){
+            if(orderEntity.getOrderId().equals(orderId)) {
+                findOrderEntity = orderEntity;
                 break;
             }
         }
-        return Optional.ofNullable(findOrder);
+        return Optional.ofNullable(findOrderEntity);
     }
 
     @Override

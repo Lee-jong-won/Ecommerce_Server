@@ -1,6 +1,6 @@
 package jongwon.e_commerce.order.repository.impl;
 
-import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,15 @@ public class OrderJpaRepositoryImpl implements OrderRepository {
     private final OrderJpaRepository orderJpaRepository;
 
     @Override
-    public Order save(Order order) {
-        return orderJpaRepository.save(order);
+    public OrderEntity save(OrderEntity orderEntity) {
+        return orderJpaRepository.save(orderEntity);
     }
     @Override
-    public Optional<Order> findById(Long id) {
+    public Optional<OrderEntity> findById(Long id) {
         return orderJpaRepository.findById(id);
     }
     @Override
-    public Optional<Order> findByOrderId(String orderId) {
+    public Optional<OrderEntity> findByOrderId(String orderId) {
         return orderJpaRepository.findByOrderId(orderId);
     }
     @Override

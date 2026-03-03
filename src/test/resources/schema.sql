@@ -40,7 +40,7 @@ CREATE TABLE orders
     fk_member_id BIGINT      NOT NULL,                                   -- 회원 ID (FK)
     order_id VARCHAR(64) NOT NULL,                                   -- PG사 결제에 사용되는 orderId
     ordered_at   TIMESTAMP    NOT NULL,                                   -- 주문일 (애플리케이션에서 생성)
-    order_status VARCHAR(20) NOT NULL DEFAULT 'CREATED',  -- 주문 상태
+    order_status VARCHAR(20) NOT NULL DEFAULT 'ORDER',  -- 주문 상태
     order_name   VARCHAR(20) NOT NULL,                                   -- 주문 이름 (스냅 샷)
     total_amount INT         NOT NULL,                                   -- 총 주문 금액 (역정규화)
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 레코드가 만들어진 시각
@@ -75,11 +75,10 @@ CREATE TABLE order_item(
 CREATE TABLE pay (
     pay_id BIGINT  NOT NULL AUTO_INCREMENT, -- 결제 ID (PK)
     fk_order_id BIGINT  NOT NULL,    -- 주문 ID (FK, Unique)
-    order_id VARCHAR(255) NOT NULL, -- 우리 서비스에서 random으로 생성되는 주문 ID
     payment_id VARCHAR(255) NOT NULL, -- PG사에서 만들어주는 식별 ID
     pay_method VARCHAR(50), -- 결제 수단
     pay_amount INT NOT NULL,    -- 결제 금액
-    pay_status  VARCHAR(20) NOT NULL,    -- 결제 상태
+    pay_status  VARCHAR(20) DEFAULT 'PENDING',    -- 결제 상태
     requested_at TIMESTAMP NULL,     -- 결제가 일어난 시각
     approved_at TIMESTAMP NULL, -- 결제가 승인된 시각
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 레코드가 만들어진 시각
@@ -98,10 +97,42 @@ CREATE TABLE mobile_phone_pay_detail(
     customer_mobile_phone VARCHAR(50) NULL, -- 전화번호
     settlement_status VARCHAR(50) NULL, -- 정산상태
     receipt_url VARCHAR(60) NULL, -- 영수증 URL
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 레코드가 만들어진 시각
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- 레코드가 업데이트 된 시각
 
     PRIMARY KEY (id),
     CONSTRAINT fk_phone_pay_detail_pay FOREIGN KEY (fk_pay_id) REFERENCES pay(pay_id),
     CONSTRAINT uq_fk_pay_id UNIQUE (fk_pay_id)
 );
 
+/*-- 그룹 코드 테이블
+CREATE TABLE common_code_group (
+    group_code VARCHAR(50) NOT NULL,
+    group_name VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    use_yn CHAR(1) NOT NULL DEFAULT 'Y',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (group_code)
+);
+*/
+
+
+/*-- 상세 코드 테이블
+CREATE TABLE common_code_detail (
+    group_code VARCHAR(50) NOT NULL,
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    sort_order INT NOT NULL DEFAULT 0,
+    use_yn CHAR(1) NOT NULL DEFAULT 'Y',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE  CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (group_code, code),
+    CONSTRAINT fk_common_code_group_common_code_detail
+        FOREIGN KEY (group_code) REFERENCES common_code_group(group_code)
+);
+*/
 

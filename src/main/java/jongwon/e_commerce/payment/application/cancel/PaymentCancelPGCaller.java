@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.application.cancel;
 
-import jongwon.e_commerce.payment.toss.dto.TossPaymentCancelRequest;
+import jongwon.e_commerce.payment.toss.dto.PayCancelAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentCancelResponse;
 import jongwon.e_commerce.payment.toss.TossPaymentClient;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class PaymentCancelPGCaller {
     private final TossPaymentClient tossPaymentClient;
     private final @Qualifier("tossRetryTemplate") RetryTemplate retryTemplate;
 
-    public TossPaymentCancelResponse callPayCancelApi(TossPaymentCancelRequest request) {
+    public TossPaymentCancelResponse callPayCancelApi(PayCancelAttempt request) {
         return retryTemplate.execute(context -> {
             TossPaymentCancelResponse response = tossPaymentClient.callPayCancelApi(request.getPaymentKey(),
                     request.getCancelReason(), request.getIdempotencyKey());

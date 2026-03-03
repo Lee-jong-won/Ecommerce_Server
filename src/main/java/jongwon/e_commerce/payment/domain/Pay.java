@@ -1,37 +1,89 @@
 package jongwon.e_commerce.payment.domain;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
+import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.OffsetDateTime;
 
 @Getter
-@SuperBuilder
-public abstract class Pay {
-    private Long payId;
+@Builder
+public class Pay {
+
+    private Long id;
     private String paymentKey;
     private PayMethod payMethod;
     private Order order;
     private long payAmount;
     private PayStatus payStatus;
     private OffsetDateTime approvedAt;
+    private PaymentDetail paymentDetail;
 
-    public void setOrder(Order order){this.order = order;}
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
     }
 
     // 결제 취소 (승인 성공 후에만 가능)
-    public void cancel() {
-        if (payStatus != PayStatus.SUCCESS) {
+    public void refund() {
+        if (payStatus != PayStatus.COMPLETE) {
             throw new InvalidPayStatusException(
                     "취소는 결제 성공 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.CANCELED);
+        setPayStatus(PayStatus.REFUND);
+    }
+
+    public void timeout(){
+        if (payStatus != PayStatus.PENDING) {
+            throw new InvalidPayStatusException(
+                    "타임아웃은 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+            );
+        }
+        setPayStatus(PayStatus.TIME_OUT);
+    }
+
+    public void failed(){
+        if(payStatus != PayStatus.PENDING){
+            throw new InvalidPayStatusException(
+                    "실패는 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+            );
+        }
+        setPayStatus(PayStatus.FAILED);
+    }
+
+    public void comeplete(){
+        if(payStatus != PayStatus.PENDING){
+            throw new InvalidPayStatusException(
+                    "성공은 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+            );
+        }
+        setPayStatus(PayStatus.COMPLETE);
+    }
+
+    public static Pay from(Order order,
+                           String paymentKey,
+                           long amount){
+        return Pay.builder().
+                order(order).
+                payStatus(PayStatus.PENDING).
+                paymentKey(paymentKey).
+                payAmount(amount).
+                build();
+    }
+
+    public Pay recordPayResult(PayResult payResult){
+        return Pay.builder()
+                .id(id)
+                .order(order)
+                .paymentKey(paymentKey)
+                .payAmount(payAmount)
+                .payStatus(payStatus)
+                .paymentDetail(payResult.getPaymentDetail())
+                .payMethod(payResult.getPayMethod())
+                .approvedAt(payResult.getApprovedAt())
+                .build();
     }
 }

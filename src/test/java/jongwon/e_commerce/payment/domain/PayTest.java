@@ -1,9 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.application.approve.result.context.MPPayDetail;
-import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
-import jongwon.e_commerce.payment.application.approve.result.context.PaymentDetail;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
+import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,10 +45,10 @@ class PayTest {
                 build();
 
         // pay 생성을 위한 dummy 주문
-        Order order = new Order();
+        OrderEntity orderEntity = new OrderEntity();
 
         // when
-        Pay pay = Pay.create(order, paymentContext);
+        Pay pay = Pay.create(orderEntity, paymentContext);
 
         // then
         assertEquals(paymentKey, pay.getPaymentKey());
@@ -66,10 +64,10 @@ class PayTest {
         String method = "테블릿";
         PaymentContext paymentContext = PaymentContext.builder()
                 .method(method).build();
-        Order order = new Order();
+        OrderEntity orderEntity = new OrderEntity();
 
         // when && then
-        assertThrows(UnsupportedPayMethodException.class, () -> Pay.create(order, paymentContext));
+        assertThrows(UnsupportedPayMethodException.class, () -> Pay.create(orderEntity, paymentContext));
     }
 
     @Test

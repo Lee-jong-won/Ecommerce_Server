@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.toss;
 
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveRequest;
+import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentCancelResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TossPaymentRestClient implements TossPaymentClient {
     private final TossPaymentNetworkExceptionTranslator tossPaymentNetworkExceptionTranslator;
 
     @Override
-    public TossPaymentApproveResponse callPayApprovalApi(TossPaymentApproveRequest request, String idempotencyKey) {
+    public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
         TossPaymentApproveResponse response;
         try{
             response = restClient.post()

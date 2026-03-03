@@ -1,7 +1,7 @@
 package jongwon.e_commerce.order.repository.impl;
 
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderItemEntity;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import lombok.Getter;
 
@@ -10,28 +10,28 @@ import java.util.*;
 @Getter
 public class OrderItemMemoryRepository implements OrderItemRepository {
 
-    private static Map<Long, OrderItem> store = new HashMap<>();
+    private static Map<Long, OrderItemEntity> store = new HashMap<>();
     private static Long sequence = 0L;
 
     @Override
-    public OrderItem save(OrderItem orderItem) {
-        orderItem.setOrderItemId(++sequence);
-        store.put(orderItem.getOrderItemId(), orderItem);
-        return orderItem;
+    public OrderItemEntity save(OrderItemEntity orderItemEntity) {
+        orderItemEntity.setOrderItemId(++sequence);
+        store.put(orderItemEntity.getOrderItemId(), orderItemEntity);
+        return orderItemEntity;
     }
 
     @Override
-    public List<OrderItem> findByOrder(Order order) {
-        List<OrderItem> orderItems = new ArrayList<>();
-        for(OrderItem orderItem : store.values()){
-            if(orderItem.getOrder() == order)
-                orderItems.add(orderItem);
+    public List<OrderItemEntity> findByOrder(OrderEntity orderEntity) {
+        List<OrderItemEntity> orderItemEntities = new ArrayList<>();
+        for(OrderItemEntity orderItemEntity : store.values()){
+            if(orderItemEntity.getOrderEntity() == orderEntity)
+                orderItemEntities.add(orderItemEntity);
         }
-        return orderItems;
+        return orderItemEntities;
     }
 
     @Override
-    public Optional<OrderItem> findById(Long id) {
+    public Optional<OrderItemEntity> findById(Long id) {
         return Optional.ofNullable(store.get(id));
     }
 

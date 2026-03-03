@@ -1,8 +1,6 @@
 package jongwon.e_commerce.payment.toss.dto;
 
-import jongwon.e_commerce.payment.application.approve.result.context.MPPayDetail;
-import jongwon.e_commerce.payment.application.approve.result.context.PaymentContext;
-import jongwon.e_commerce.payment.application.approve.result.context.PaymentDetail;
+import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import org.junit.jupiter.api.Test;
 

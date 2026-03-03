@@ -1,7 +1,7 @@
 package jongwon.e_commerce.order.repository.impl;
 
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderItemEntity;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.jpa.OrderItemJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +18,18 @@ public class OrderItemJpaRepositoryImpl implements OrderItemRepository {
 
     private final OrderItemJpaRepository orderItemJpaRepository;
     @Override
-    public OrderItem save(OrderItem orderItem) {
-        return orderItemJpaRepository.save(orderItem);
+    public OrderItemEntity save(OrderItemEntity orderItemEntity) {
+        return orderItemJpaRepository.save(orderItemEntity);
     }
 
     @Override
-    public List<OrderItem> findByOrder(Order order) {
-        List<OrderItem> orderItems = orderItemJpaRepository.findOrderItemsBy(order);
-        return orderItems;
+    public List<OrderItemEntity> findByOrder(OrderEntity orderEntity) {
+        List<OrderItemEntity> orderItemEntities = orderItemJpaRepository.findOrderItemsBy(orderEntity);
+        return orderItemEntities;
     }
 
     @Override
-    public Optional<OrderItem> findById(Long id) {
+    public Optional<OrderItemEntity> findById(Long id) {
         return orderItemJpaRepository.findById(id);
     }
 

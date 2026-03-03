@@ -1,7 +1,6 @@
 package jongwon.e_commerce.payment.repository;
 
-import jongwon.e_commerce.payment.domain.MPPay;
-import jongwon.e_commerce.payment.domain.jpa.MPPayJpaEntity;
+import jongwon.e_commerce.payment.domain.detail.MPPay;
 
 import java.util.Optional;
 

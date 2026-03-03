@@ -1,12 +1,12 @@
 package jongwon.e_commerce.order.repository;
 
-import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
 
 import java.util.Optional;
 
 public interface OrderRepository {
-    Order save(Order order);
-    Optional<Order> findById(Long id);
-    Optional<Order> findByOrderId(String orderId);
+    OrderEntity save(OrderEntity orderEntity);
+    Optional<OrderEntity> findById(Long id);
+    Optional<OrderEntity> findByOrderId(String orderId);
     void clearStore();
 }

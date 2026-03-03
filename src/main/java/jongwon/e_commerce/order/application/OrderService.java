@@ -1,9 +1,9 @@
 package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.dto.OrderItemRequest;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
+import jongwon.e_commerce.order.repository.jpa.entity.OrderItemEntity;
+import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
@@ -26,31 +26,31 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
 
-    public Order order(Member member, String orderName, List<OrderItemRequest> requests){
+    public OrderEntity order(Member member, String orderName, List<OrderItemCreate> requests){
         //주문 - 상품 만들기
-        List<OrderItem> orderItems = new ArrayList<>();
+        List<OrderItemEntity> orderItemEntities = new ArrayList<>();
         for(int i = 0; i < requests.size(); i++){
-            OrderItemRequest orderItemRequest = requests.get(i);
+            OrderItemCreate orderItemCreate = requests.get(i);
 
-            Product product = productRepository.findById(orderItemRequest.getProductId()).orElseThrow(
-                    () -> new ProductNotFoundException(orderItemRequest.getProductId())
+            Product product = productRepository.findById(orderItemCreate.getProductId()).orElseThrow(
+                    () -> new ProductNotFoundException(orderItemCreate.getProductId())
             );
 
-            OrderItem orderItem = OrderItem.createOrderItem(product,
+            OrderItemEntity orderItemEntity = OrderItemEntity.createOrderItem(product,
                     product.getProductName(),
                     product.getProductPrice(),
-                    orderItemRequest.getStockQuantity());
+                    orderItemCreate.getStockQuantity());
 
-            orderItems.add(orderItem);
+            orderItemEntities.add(orderItemEntity);
         }
 
         // 주문 생성
-        Order order = Order.createOrder(member, orderName, LocalDateTime.now(), orderItems);
-        orderRepository.save(order);
-        for(OrderItem orderItem : orderItems) {
-            orderItem.setOrder(order);
-            orderItemRepository.save(orderItem);
+        OrderEntity orderEntity = OrderEntity.createOrder(member, orderName, LocalDateTime.now(), orderItemEntities);
+        orderRepository.save(orderEntity);
+        for(OrderItemEntity orderItemEntity : orderItemEntities) {
+            orderItemEntity.setOrderEntity(orderEntity);
+            orderItemRepository.save(orderItemEntity);
         }
-        return order;
+        return orderEntity;
     }
 }
