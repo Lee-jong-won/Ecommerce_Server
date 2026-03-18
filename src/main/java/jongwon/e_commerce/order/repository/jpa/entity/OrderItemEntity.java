@@ -45,4 +45,15 @@ public class OrderItemEntity {
 
         return orderItemEntity;
     }
+
+    public OrderItem toModel(){
+        return OrderItem.builder().
+                orderItemId(orderItemId).
+                order(orderEntity.toModel()).
+                product(productEntity.toModel())
+                .productName(productName)
+                .orderPrice(orderPrice)
+                .orderQuantity(orderQuantity)
+                .build();
+    }
 }

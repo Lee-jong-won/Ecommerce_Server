@@ -1,6 +1,8 @@
 package jongwon.e_commerce.product.repository.impl;
 
+import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.repository.jpa.ProductEntity;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,21 +14,23 @@ import java.util.Optional;
 @Repository
 @Primary
 @RequiredArgsConstructor
-public class ProductJpaRepositoryImpl implements ProductRepository {
+public class ProductRepositoryImpl implements ProductRepository {
 
     private final ProductJpaRepository productJpaRepository;
     @Override
     public Product save(Product product) {
-        return productJpaRepository.save(product);
+        return productJpaRepository.save(ProductEntity.from(product)).toModel();
     }
 
     @Override
     public Optional<Product> findById(Long id) {
-        return productJpaRepository.findById(id);
+        return productJpaRepository.findById(id).map(ProductEntity::toModel);
     }
 
     @Override
-    public void clearStore() {
-        productJpaRepository.deleteAll();
+    public Product getById(Long id) {
+        return findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Product", id)
+        );
     }
 }

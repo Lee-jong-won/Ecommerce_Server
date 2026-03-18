@@ -38,7 +38,7 @@ public class MemberEntity {
         memberEntity.addr = member.getAddr();
         memberEntity.email = member.getEmail();
         memberEntity.memberName = member.getMemberName();
-        memberEntity.password = member.getMemberName();
+        memberEntity.password = member.getPassword();
         memberEntity.loginId = member.getLoginId();
 
         return memberEntity;

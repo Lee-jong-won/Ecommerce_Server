@@ -32,7 +32,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         paymentResultApplier.applyPayResult(pay, ((PayApproveSuccess) outcome).getPayResult());
 
         // 3. 재고 감소
-        orderStockProcessor.deductStockBy(pay);
+        orderStockProcessor.deductStockOf(pay.getOrder());
 
         // 4. 응답 생성
         return new PayApproveOutcomeResponse(
