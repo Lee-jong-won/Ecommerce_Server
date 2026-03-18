@@ -12,14 +12,19 @@ import lombok.Getter;
 public class MPPay implements PaymentDetail {
 
     private Long id;
+    private Pay pay;
     private String customerMobilePhone;
     private String settlementStatus;
     private String receiptUrl;
 
-
     @Override
     public PayMethod getPayMethod() {
-        return PayMethod.MOBILE;
+        return pay.getPayMethod();
+    }
+
+    @Override
+    public void setPay(Pay pay) {
+        this.pay = pay;
     }
 
     @Override

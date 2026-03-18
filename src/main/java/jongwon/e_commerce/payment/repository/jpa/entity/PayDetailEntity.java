@@ -4,6 +4,5 @@ import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 
 public interface PayDetailEntity {
-    void setPayEntity(PayEntity payEntity);
-    Pay toModel();
+    PaymentDetail toModel();
 }

@@ -42,6 +42,31 @@ public class PayEntity {
 
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
+    public static PayEntity from(Pay pay){
+        PayEntity jpaEntity = new PayEntity();
+
+        jpaEntity.payId = pay.getId();
+        jpaEntity.orderEntity = OrderEntity.from(pay.getOrder());
+        jpaEntity.paymentKey = pay.getPaymentKey();
+        jpaEntity.payMethod = pay.getPayMethod();
+        jpaEntity.payAmount = pay.getPayAmount();
+        jpaEntity.payStatus = pay.getPayStatus();
+        jpaEntity.approvedAt = pay.getApprovedAt();
+
+        return jpaEntity;
+    }
+
+    public Pay toModel(){
+        return Pay.builder()
+                .id(payId)
+                .order(orderEntity.toModel())
+                .paymentKey(paymentKey)
+                .payMethod(payMethod)
+                .payAmount(payAmount)
+                .payStatus(payStatus)
+                .approvedAt(approvedAt)
+                .build();
+    }
 
     public void setPayDetailEntity(PayDetailEntity payDetailEntity){
         payDetailEntity.setPayEntity(this);
@@ -52,17 +77,5 @@ public class PayEntity {
         this.payStatus = payStatus;
     }
 
-    public static PayEntity from(Pay pay){
-        PayEntity jpaEntity = new PayEntity();
-
-        jpaEntity.orderEntity = OrderEntity.from(pay.getOrder());
-        jpaEntity.paymentKey = pay.getPaymentKey();
-        jpaEntity.payMethod = pay.getPayMethod();
-        jpaEntity.payAmount = pay.getPayAmount();
-        jpaEntity.payStatus = pay.getPayStatus();
-        jpaEntity.approvedAt = pay.getApprovedAt();
-
-        return jpaEntity;
-    }
 
 }

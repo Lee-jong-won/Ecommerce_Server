@@ -1,16 +1,9 @@
 package jongwon.e_commerce.payment.repository.jpa.entity;
 
 import jakarta.persistence.*;
-import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
-import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.OffsetDateTime;
 
 @Entity
 @Getter
@@ -36,13 +29,11 @@ public class MPPayEntity implements PayDetailEntity {
     @Column(name = "receipt_url")
     private String receiptUrl;
 
-    public void setPayEntity(PayEntity payEntity){
-        this.payEntity = payEntity;
-    }
-
     public static MPPayEntity from(MPPay mpPay){
         MPPayEntity mpPayEntity = new MPPayEntity();
 
+        mpPayEntity.id = mpPay.getId();
+        mpPayEntity.payEntity = PayEntity.from(mpPay.getPay());
         mpPayEntity.customerMobilePhone = mpPay.getCustomerMobilePhone();
         mpPayEntity.settlementStatus = mpPay.getSettlementStatus();
         mpPayEntity.receiptUrl = mpPay.getReceiptUrl();
@@ -50,23 +41,13 @@ public class MPPayEntity implements PayDetailEntity {
         return mpPayEntity;
     }
 
-    public Pay toModel(){
-        MPPay mpPay = MPPay.builder()
+    public MPPay toModel(){
+        return MPPay.builder()
                 .id(id)
+                .pay(payEntity.toModel())
                 .customerMobilePhone(customerMobilePhone)
                 .receiptUrl(receiptUrl)
                 .settlementStatus(settlementStatus)
-                .build();
-
-        return Pay.builder()
-                .id(payEntity.getPayId())
-                .payAmount(payEntity.getPayAmount())
-                .payStatus(payEntity.getPayStatus())
-                .payMethod(payEntity.getPayMethod())
-                .approvedAt(payEntity.getApprovedAt())
-                .paymentKey(payEntity.getPaymentKey())
-                .order(payEntity.getOrderEntity().toModel())
-                .paymentDetail(mpPay)
                 .build();
     }
 }

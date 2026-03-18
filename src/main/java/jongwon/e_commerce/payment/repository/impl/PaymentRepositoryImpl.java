@@ -1,10 +1,8 @@
 package jongwon.e_commerce.payment.repository.impl;
 
+import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
-import jongwon.e_commerce.payment.repository.jpa.MPPayJpaRepository;
 import jongwon.e_commerce.payment.repository.jpa.entity.PayDetailEntity;
 import jongwon.e_commerce.payment.repository.jpa.entity.PayEntity;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
@@ -18,32 +16,26 @@ import java.util.Optional;
 @Repository
 @Primary
 @RequiredArgsConstructor
-public class PaymentJpaRepositoryImpl implements PaymentRepository {
+public class PaymentRepositoryImpl implements PaymentRepository {
 
     private final PaymentJpaRepository paymentJpaRepository;
 
+    // 결제 공통 정보 저장
     @Override
     public Pay save(Pay pay) {
-
-        paymentJpaRepository.save(PayEntity.from(pay));
-
+        return paymentJpaRepository.save(PayEntity.from(pay)).toModel();
     }
 
     @Override
-    public Pay saveDetail(Pay pay) {
-        PayEntity payEntity = paymentJpaRepository.
-
-        PaymentDetail paymentDetail = pay.getPaymentDetail();
-        PayDetailEntity payDetailEntity = paymentDetail.toEntity();
-        payDetailEntity.setPayEntity(payEntity);
-        paymentJpaRepository.save(payEntity);
-
-        return payDetailEntity.toModel();
+    public Optional<Pay> findById(long id) {
+        return paymentJpaRepository.findById(id).map(PayEntity::toModel);
     }
 
     @Override
-    public Optional<PayEntity> findById(long id) {
-        return Optional.empty();
+    public Pay getById(Long id) {
+        return findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Pay", id)
+        );
     }
 
 }

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface PaymentRepository {
     Pay save(Pay pay);
-    Pay saveDetail(Pay pay);
-    Optional<PayEntity> findById(long id);
+    Optional<Pay> findById(long id);
+    Pay getById(Long id);
 }

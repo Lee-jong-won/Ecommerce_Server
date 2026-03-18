@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface OrderItemRepository {
     OrderItem save(OrderItem orderItem);
-
     List<OrderItemEntity> findByOrder(OrderEntity orderEntity);
-
     Optional<OrderItemEntity> findById(Long id);
 }

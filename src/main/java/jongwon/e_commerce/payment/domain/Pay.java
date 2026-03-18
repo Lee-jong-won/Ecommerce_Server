@@ -19,7 +19,6 @@ public class Pay {
     private Order order;
     private long payAmount;
     private PayStatus payStatus;
-    private PaymentDetail paymentDetail;
     private OffsetDateTime approvedAt;
 
     public void setPayStatus(PayStatus payStatus){
@@ -82,7 +81,6 @@ public class Pay {
                 .payAmount(payAmount)
                 .payStatus(payStatus)
                 .payMethod(payResult.getPayMethod())
-                .paymentDetail(payResult.getPaymentDetail())
                 .approvedAt(payResult.getApprovedAt())
                 .build();
     }
