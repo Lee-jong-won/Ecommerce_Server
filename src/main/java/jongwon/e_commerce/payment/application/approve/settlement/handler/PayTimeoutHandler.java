@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PayTimeoutHandler implements PayOutcomeHandler {
-
     private final PaymentRepository paymentRepository;
-
     @Override
     public boolean supports(PayApproveOutcomeType type) {
         return type == PayApproveOutcomeType.TIMEOUT;

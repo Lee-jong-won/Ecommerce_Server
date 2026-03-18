@@ -2,13 +2,15 @@ package jongwon.e_commerce.order.domain;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
-import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
-import jongwon.e_commerce.order.repository.jpa.entity.OrderItemEntity;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@Builder
 public class Order {
     private Long id;
     private String orderId;
@@ -17,13 +19,14 @@ public class Order {
     private LocalDateTime orderedAt;
     private OrderStatus orderStatus;
     private long totalAmount;
+    private List<OrderItem> orderItems;
 
-    public void calculateTotalAmount(List<OrderItem> orderItems){
+    public static int calculateTotalAmount(List<OrderItem> orderItems){
         int sum = 0;
         for(OrderItem orderItem : orderItems){
             sum += orderItem.calculateAmount();
         }
-        setTotalAmount(sum);
+        return sum;
     }
 
     public void setTotalAmount(int totalAmount){
@@ -34,21 +37,29 @@ public class Order {
     }
 
     public static Order from(Member member,
-                             String orderName,
-                             String orderId,
                              LocalDateTime orderedAt,
-                             List<OrderItem> orderItems){
-        Order order = new Order();
-        order.member = member;
-        order.orderId = orderId;
-        order.calculateTotalAmount(orderItems);
-        order.orderStatus = OrderStatus.ORDERED;
-        order.orderedAt = orderedAt;
-        order.orderName = orderName;
+                             String orderId,
+                             List<OrderItem> orderItems,
+                             String orderName){
+
+        int totalAmount = calculateTotalAmount(orderItems);
+
+        Order order = Order.builder().
+                member(member).
+                orderedAt(orderedAt).
+                orderId(orderId).
+                totalAmount(totalAmount).
+                orderStatus(OrderStatus.ORDERED).
+                orderedAt(orderedAt).
+                orderName(orderName).build();
+
+        for(OrderItem orderItem : orderItems)
+            orderItem.setOrder(order);
+
         return order;
     }
 
-    //PG로부터 결제 승인 성공 응답을 받을 시
+    // PG로부터 결제 승인 성공 응답을 받을 시
     public void paid() {
         if (this.orderStatus != OrderStatus.ORDERED) {
             throw new InvalidOrderStateException("주문 된 상태에서만 결제 성공 처리 가능합니다.");

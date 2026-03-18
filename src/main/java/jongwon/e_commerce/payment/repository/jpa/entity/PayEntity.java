@@ -43,29 +43,26 @@ public class PayEntity {
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
 
+    public void setPayDetailEntity(PayDetailEntity payDetailEntity){
+        payDetailEntity.setPayEntity(this);
+    }
+
     public void setOrderEntity(OrderEntity orderEntity){this.orderEntity = orderEntity;}
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
     }
 
-    // 결제 취소 (승인 성공 후에만 가능)
-    public void cancel() {
-        if (payStatus != PayStatus.SUCCESS) {
-            throw new InvalidPayStatusException(
-                    "취소는 결제 성공 상태에서만 가능합니다. 현재 상태: " + payStatus
-            );
-        }
-        setPayStatus(PayStatus.CANCELED);
-    }
-
     public static PayEntity from(Pay pay){
         PayEntity jpaEntity = new PayEntity();
-        jpaEntity.orderEntity = pay.getOrderEntity();
+
+        jpaEntity.orderEntity = OrderEntity.from(pay.getOrder());
         jpaEntity.paymentKey = pay.getPaymentKey();
         jpaEntity.payMethod = pay.getPayMethod();
         jpaEntity.payAmount = pay.getPayAmount();
         jpaEntity.payStatus = pay.getPayStatus();
         jpaEntity.approvedAt = pay.getApprovedAt();
+
         return jpaEntity;
     }
+
 }

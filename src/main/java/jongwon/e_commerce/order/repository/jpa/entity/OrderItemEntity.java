@@ -1,7 +1,9 @@
 package jongwon.e_commerce.order.repository.jpa.entity;
 
 import jakarta.persistence.*;
+import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.repository.jpa.ProductEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "order_item")
 public class OrderItemEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
@@ -21,7 +24,7 @@ public class OrderItemEntity {
 
     @ManyToOne
     @JoinColumn(name = "fk_product_id")
-    private Product product;
+    private ProductEntity productEntity;
 
     @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
@@ -32,25 +35,14 @@ public class OrderItemEntity {
     @Column(name = "order_quantity", nullable = false)
     private int orderQuantity;
 
-    public void setOrderItemId(long id){
-        this.orderItemId = id;
-    }
-    public int calculateAmount(){
-        return orderPrice * orderQuantity;
-    }
-    public void setOrderEntity(OrderEntity orderEntity){
-        this.orderEntity = orderEntity;
-    }
-
-    public static OrderItemEntity createOrderItem(Product product,
-                                                  String productName,
-                                                  int orderPrice,
-                                                  int orderQuantity){
+    public static OrderItemEntity from(OrderItem orderItem){
         OrderItemEntity orderItemEntity = new OrderItemEntity();
-        orderItemEntity.product = product;
-        orderItemEntity.productName = productName;
-        orderItemEntity.orderPrice = orderPrice;
-        orderItemEntity.orderQuantity = orderQuantity;
+
+        orderItemEntity.orderItemId = orderItem.getOrderItemId();
+        orderItemEntity.orderEntity = OrderEntity.from(orderItem.getOrder());
+        orderItemEntity.orderPrice = orderItem.getOrderPrice();
+        orderItemEntity.orderQuantity = orderItem.getOrderQuantity();
+
         return orderItemEntity;
     }
 }

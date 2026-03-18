@@ -25,7 +25,6 @@ public class TossPaymentRetryConfig {
                         TossPaymentTimeoutException.class, true
                 )
         );
-
         template.setRetryPolicy(retryPolicy);
 
         // 고정 간격 1초 대기

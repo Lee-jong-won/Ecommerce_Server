@@ -18,37 +18,24 @@ import java.util.Map;
 public class TossPaymentRestClient implements TossPaymentClient {
 
     @Qualifier("tossRestClient")private final RestClient restClient;
-    private final TossPaymentNetworkExceptionTranslator tossPaymentNetworkExceptionTranslator;
 
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
-        TossPaymentApproveResponse response;
-        try{
-            response = restClient.post()
-                    .uri("/payments/confirm")
-                    .header("Idempotency-Key", idempotencyKey)
-                    .body(request)
-                    .retrieve()
-                    .body(TossPaymentApproveResponse.class);
-        } catch(ResourceAccessException e){
-            throw tossPaymentNetworkExceptionTranslator.translateNetworkException(e);
-        }
-        return response;
+        return restClient.post()
+                .uri("/payments/confirm")
+                .header("Idempotency-Key", idempotencyKey)
+                .body(request)
+                .retrieve()
+                .body(TossPaymentApproveResponse.class);
     }
 
     @Override
     public TossPaymentCancelResponse callPayCancelApi(String paymentKey, String idempotencyKey, String cancelReason) {
-        TossPaymentCancelResponse response;
-        try {
-            response = restClient.post()
-                    .uri("/{paymentKey}/cancel", paymentKey)
-                    .header("Idempotency-Key", idempotencyKey)
-                    .body(Map.of("cancelReason", cancelReason))
-                    .retrieve()
-                    .body(TossPaymentCancelResponse.class);   // Void면 이게 더 깔끔
-        } catch(ResourceAccessException e){
-            throw tossPaymentNetworkExceptionTranslator.translateNetworkException(e);
-        }
-        return response;
+        return restClient.post()
+                .uri("/{paymentKey}/cancel", paymentKey)
+                .header("Idempotency-Key", idempotencyKey)
+                .body(Map.of("cancelReason", cancelReason))
+                .retrieve()
+                .body(TossPaymentCancelResponse.class);
     }
 }

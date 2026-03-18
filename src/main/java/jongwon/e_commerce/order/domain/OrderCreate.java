@@ -9,13 +9,14 @@ import java.util.List;
 @Getter
 public class OrderCreate {
 
-    String orderName;
-    List<OrderCreate> orderCreates;
+    private final String orderName;
+    private final List<OrderItemCreate> orderItemCreates;
 
     @Builder
     public OrderCreate(@JsonProperty("orderName")String orderName,
-                       @JsonProperty("orderCreates")List<OrderCreate> orderCreates){
+                       @JsonProperty("orderCreates")List<OrderItemCreate> orderItemCreates
+                       ){
         this.orderName = orderName;
-        this.orderCreates = orderCreates;
+        this.orderItemCreates = orderItemCreates;
     }
 }

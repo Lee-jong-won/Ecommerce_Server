@@ -4,44 +4,28 @@ import jakarta.persistence.*;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Builder
 @Getter
-@NoArgsConstructor
-@Table(name = "product")
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
+
     private Long productId;
-
-    @Column(name = "product_name", nullable = false, length = 100)
     private String productName;
-
-    @Column(name = "product_price", nullable = false)
     private int productPrice;
-
-    @Column(name = "product_status", nullable = false, length = 10)
-    @Enumerated(EnumType.STRING)
     private ProductStatus productStatus;
-
-    @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
 
-    public void setProductId(Long productId){
-        this.productId = productId;
+    // 새로운 상품 생성은 항상 이 메소드를 통해서만
+    public static Product from(String productName, int productPrice) {
+        return Product.builder().
+                productName(productName).
+                productStatus(ProductStatus.READY).
+                productPrice(productPrice).build();
     }
 
-    // 새로운 상품 생성은 항상 이 메소드를 통해서만
-    public static Product createProduct(String productName, int productPrice) {
-        Product product = new Product();
-        product.productName = productName;
-        product.productPrice = productPrice;
-        product.productStatus = ProductStatus.READY;
-        return product;
-    }
 
     // 재고 추가
     public void addStock(int quantity){
@@ -64,6 +48,15 @@ public class Product {
 
         if(stockQuantity == 0)
             stopSelling();
+    }
+
+    // 재고 변경
+    public void changeStock(int stockQuantity) {
+        if (this.productStatus != ProductStatus.READY && this.productStatus != ProductStatus.STOPPED) {
+            throw new InvalidProductStatusException("재고 수정 불가 상태");
+        }
+        if (stockQuantity < 0) throw new IllegalArgumentException();
+        this.stockQuantity = stockQuantity;
     }
 
     // 가격 업데이트
@@ -125,19 +118,10 @@ public class Product {
         this.productPrice = price;
     }
 
-    public void changeStock(int stockQuantity) {
-        if (this.productStatus != ProductStatus.READY && this.productStatus != ProductStatus.STOPPED) {
-            throw new InvalidProductStatusException("재고 수정 불가 상태");
-        }
-        if (stockQuantity < 0) throw new IllegalArgumentException();
-        this.stockQuantity = stockQuantity;
-    }
-
     public boolean validateDeletable() {
         if (this.productStatus != ProductStatus.READY)
             return false;
         return true;
     }
-
 
 }

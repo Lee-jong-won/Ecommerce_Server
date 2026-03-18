@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve.validate;
+package jongwon.e_commerce.payment.application.approve.preprocess;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
