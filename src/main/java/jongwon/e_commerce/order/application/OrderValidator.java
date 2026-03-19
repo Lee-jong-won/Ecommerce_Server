@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve.preprocess;
+package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
@@ -16,9 +16,7 @@ public class OrderValidator {
 
     @Transactional
     public Order validateForPayment(String orderId, long amount) {
-        Order order = orderRepository.findByOrderId(orderId).orElseThrow(
-                () -> new OrderNotExistException()
-        );
+        Order order = orderRepository.getByOrderId(orderId);
         //가격이 일치 하지 않으면, 예외 throw
         if (order.getTotalAmount() != amount)
             throw new InvalidAmountException();

@@ -32,12 +32,4 @@ public class OrderItem {
     public int calculateAmount(){
         return orderPrice * orderQuantity;
     }
-
-    public void deductStock(){
-        getProduct().removeStock(orderQuantity);
-    }
-
-    public void restoreStock(){
-        getProduct().addStock(orderQuantity);
-    }
 }

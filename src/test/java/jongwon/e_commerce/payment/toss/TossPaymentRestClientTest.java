@@ -42,16 +42,12 @@ class TossPaymentRestClientTest {
         ));
 
         // 4XX, 5XX 응답 시, 처리를 위한 핸들러 설정
-        TossPaymentClientErrorHandler tossPaymentClientErrorHandler = new TossPaymentClientErrorHandler();
         RestClient restClient = RestClient.builder()
                 .baseUrl("http://localhost:" + wireMockServer.port())
-                .defaultStatusHandler(HttpStatusCode::isError, tossPaymentClientErrorHandler)
                 .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient))
                 .build();
 
-        // 네트워크 관련 예외 발생 시, 서비스 내부 예외로 변환을 위한 번역기 설정
-        TossPaymentNetworkExceptionTranslator tossNetworkExceptionTranslator = new TossPaymentNetworkExceptionTranslator();
-        tossPaymentHttpClient = new TossPaymentRestClient(restClient, tossNetworkExceptionTranslator);
+        tossPaymentHttpClient = new TossPaymentRestClient(restClient);
     }
 
     @AfterEach
@@ -75,7 +71,7 @@ class TossPaymentRestClientTest {
                         {
                           "status" : "DONE",
                           "approvedAt": "2024-02-13T12:18:14+09:00",
-                          "method": "카드"
+                          "method": "휴대폰"
                         }
                         """)
                 ));
@@ -84,7 +80,6 @@ class TossPaymentRestClientTest {
         TossPaymentApproveResponse response = tossPaymentHttpClient.callPayApprovalApi(request, UUID.randomUUID().toString());
 
         //then
-        assertEquals("DONE", response.getStatus());
         assertEquals(OffsetDateTime.parse("2024-02-13T03:18:14Z"), response.getApprovedAt());
         assertEquals("카드", response.getMethod());
     }

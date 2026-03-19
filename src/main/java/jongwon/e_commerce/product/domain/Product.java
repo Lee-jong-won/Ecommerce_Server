@@ -61,8 +61,12 @@ public class Product {
 
     // 가격 업데이트
     public void updateProductPrice(int price){
+        if(productStatus != ProductStatus.READY && productStatus != ProductStatus.STOPPED)
+            throw new InvalidProductStatusException("상품 가격 수정 불가 상태");
+
         if(price <= 0)
             throw new InvalidProductPriceException("price cannot be negative or zero");
+
         this.productPrice = price;
     }
 
@@ -108,20 +112,6 @@ public class Product {
             throw new InvalidProductStatusException("판매중지 상태에서만 판매종료 가능");
         }
         changeStatus(ProductStatus.ENDED);
-    }
-
-    public void changeBasicInfo(String name, int price) {
-        if (this.productStatus != ProductStatus.READY && this.productStatus != ProductStatus.STOPPED) {
-            throw new InvalidProductStatusException("상품 수정 불가능 상태");
-        }
-        this.productName = name;
-        this.productPrice = price;
-    }
-
-    public boolean validateDeletable() {
-        if (this.productStatus != ProductStatus.READY)
-            return false;
-        return true;
     }
 
 }

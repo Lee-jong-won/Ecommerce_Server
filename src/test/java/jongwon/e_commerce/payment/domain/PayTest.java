@@ -1,84 +1,189 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
-import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
-import org.junit.jupiter.api.DisplayName;
+import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.member.domain.MemberCreate;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
+import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.domain.ProductStatus;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PayTest {
+
     @Test
-    void 정상적으로_결제가_생성된다(){
-        //given
-
-        // 결제 공통 정보
-        int amount = 1000;
-        String orderId = "order1";
-        String paymentKey = "paymentKey";
-        String method = "카드";
-        OffsetDateTime approvedAt = OffsetDateTime.now();
-        String status = "DONE";
-
-        // 핸드폰 결제 정보(결제 상세 정보)
-        String customerMobilePhone = "010-1234-5678";
-        String settlementStatus = "정산완료";
-        String receiptUrl = "http://naver.com";
-
-        PaymentDetail mobilePhoneDetail = MPPayDetail.builder().
-                customerMobilePhone(customerMobilePhone).
-                settlementStatus(settlementStatus).
-                receiptUrl(receiptUrl).
-                build();
-
-        PaymentContext paymentContext = PaymentContext.builder().
-                amount(amount).
-                orderId(orderId).
-                paymentKey(paymentKey).
-                method(method).
-                approvedAt(approvedAt).
-                status(status).
-                paymentDetail(mobilePhoneDetail).
-                build();
-
-        // pay 생성을 위한 dummy 주문
-        OrderEntity orderEntity = new OrderEntity();
+    void 결제정보가_정상적으로_생성된다() {
+        // given
+        Order order = createOrder();
 
         // when
-        Pay pay = Pay.create(orderEntity, paymentContext);
+        Pay pay = Pay.from(order, "paymentKey-123", 10000L);
 
         // then
-        assertEquals(paymentKey, pay.getPaymentKey());
-        assertEquals(approvedAt, pay.getApprovedAt());
-        assertEquals(amount, pay.getPayAmount());
-        assertEquals(PayMethod.CARD, pay.getPayMethod());
-        assertEquals(PayStatus.SUCCESS, pay.getPayStatus());
+        assertThat(pay.getOrder()).isEqualTo(order);
+        assertThat(pay.getPaymentKey()).isEqualTo("paymentKey-123");
+        assertThat(pay.getPayAmount()).isEqualTo(10000L);
+        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
     }
 
     @Test
-    void 등록되지_않은_결제수단이_응답으로_왔다면_결제_생성중_예외발생(){
-        //given
-        String method = "테블릿";
-        PaymentContext paymentContext = PaymentContext.builder()
-                .method(method).build();
-        OrderEntity orderEntity = new OrderEntity();
+    void PENDING_상태에서_결제_성공이_가능하다() {
+        // given
+        Pay pay = createPay();
 
-        // when && then
-        assertThrows(UnsupportedPayMethodException.class, () -> Pay.create(orderEntity, paymentContext));
+        // when
+        pay.comeplete();
+
+        // then
+        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
     }
 
     @Test
-    @DisplayName("SUCCESS 상태에서 결제 취소가 가능하다")
-    void success_to_canceled() {
-        Pay payment = new Pay();
-        payment.setPayStatus(PayStatus.SUCCESS);
+    void PENDING이_아닌_상태에서는_결제_성공시_예외가_발생한다() {
+        // given
+        Pay pay = createPay();
+        pay.setPayStatus(PayStatus.COMPLETE);
 
-        payment.cancel();
-
-        assertEquals(PayStatus.CANCELED, payment.getPayStatus());
+        // when & then
+        assertThatThrownBy(pay::comeplete)
+                .isInstanceOf(InvalidPayStatusException.class);
     }
 
+    @Test
+    void PENDING_상태에서_결제_실패가_가능하다() {
+        // given
+        Pay pay = createPay();
+
+        // when
+        pay.failed();
+
+        // then
+        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+    }
+
+    @Test
+    void PENDING이_아닌_상태에서는_결제_실패시_예외가_발생한다() {
+        // given
+        Pay pay = createPay();
+        pay.setPayStatus(PayStatus.COMPLETE);
+
+        // when & then
+        assertThatThrownBy(pay::failed)
+                .isInstanceOf(InvalidPayStatusException.class);
+    }
+
+    @Test
+    void PENDING_상태에서_타임아웃이_가능하다() {
+        // given
+        Pay pay = createPay();
+
+        // when
+        pay.timeout();
+
+        // then
+        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
+    }
+
+    @Test
+    void PENDING이_아닌_상태에서는_타임아웃시_예외가_발생한다() {
+        // given
+        Pay pay = createPay();
+        pay.setPayStatus(PayStatus.COMPLETE);
+
+        // when & then
+        assertThatThrownBy(pay::timeout)
+                .isInstanceOf(InvalidPayStatusException.class);
+    }
+
+    @Test
+    void COMPLETE_상태에서_환불이_가능하다() {
+        // given
+        Pay pay = createPay();
+        pay.setPayStatus(PayStatus.COMPLETE);
+
+        // when
+        pay.refund();
+
+        // then
+        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.REFUND);
+    }
+
+    @Test
+    void COMPLETE가_아닌_상태에서는_환불시_예외가_발생한다() {
+        // given
+        Pay pay = createPay();
+
+        // when & then
+        assertThatThrownBy(pay::refund)
+                .isInstanceOf(InvalidPayStatusException.class);
+    }
+
+
+    @Test
+    void PayResult를_기반으로_Pay가_정상적으로_생성된다() {
+        // given
+        Pay originalPay = createPay();
+
+        PayMethod method = PayMethod.CARD;
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+
+        PayResult payResult = PayResult.builder()
+                .payMethod(method)
+                .approvedAt(approvedAt)
+                .build();
+
+        // when
+        Pay resultPay = originalPay.recordPayResult(payResult);
+
+        // then
+        // 기존 값 유지
+        assertThat(resultPay.getId()).isEqualTo(originalPay.getId());
+        assertThat(resultPay.getOrder()).isEqualTo(originalPay.getOrder());
+        assertThat(resultPay.getPaymentKey()).isEqualTo(originalPay.getPaymentKey());
+        assertThat(resultPay.getPayAmount()).isEqualTo(originalPay.getPayAmount());
+        assertThat(resultPay.getPayStatus()).isEqualTo(originalPay.getPayStatus());
+
+        // PayResult 값 반영
+        assertThat(resultPay.getPayMethod()).isEqualTo(method);
+        assertThat(resultPay.getApprovedAt()).isEqualTo(approvedAt);
+    }
+
+    private Order createOrder() {
+        Member member = Member.from(
+                MemberCreate.builder()
+                        .loginId("testUser")
+                        .password("1234")
+                        .memberName("홍길동")
+                        .email("test@test.com")
+                        .addr("서울")
+                        .build()
+        );
+
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.SELLING);
+
+        OrderItem item = OrderItem.from(product, 1);
+
+        Order order = Order.from(
+                member,
+                LocalDateTime.now(),
+                "order-1",
+                List.of(item),
+                "테스트 주문"
+        );
+        return order;
+    }
+
+    private Pay createPay(){
+        Order order = createOrder();
+        return Pay.from(order, "paymentKey", 10000L);
+    }
 }

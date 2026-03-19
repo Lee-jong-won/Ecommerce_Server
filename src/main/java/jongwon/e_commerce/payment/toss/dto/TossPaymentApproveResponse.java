@@ -30,10 +30,12 @@ public class TossPaymentApproveResponse {
     public PaymentDetail extractPaymentDetail() {
         PayMethod payMethod = PayMethod.from(this.method);
         switch (payMethod) {
-            case MOBILE :
+            case MOBILE -> {
                 return mobilePhone.toPaymentDetail();
-            default:
+            }
+            default -> {
                 throw new UnsupportedPayMethodException("지원하지 않는 결제 수단입니다.");
+            }
         }
     }
 

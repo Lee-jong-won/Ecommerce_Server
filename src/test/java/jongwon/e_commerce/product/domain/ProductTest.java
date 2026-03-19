@@ -1,327 +1,217 @@
 package jongwon.e_commerce.product.domain;
 
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ProductTest {
+
+    /*
+     * 상품 생성 테스트
+     * */
     @Test
-    public void 재고추가() {
-        //Given
-        Product product = Product.createProduct("신발", 10000);
+    void Product를_생성하면_READY_상태와_가격이_설정된다() {
+        // when
+        Product product = Product.from("노트북", 100000);
+
+        // then
+        assertThat(product.getProductName()).isEqualTo("노트북");
+        assertThat(product.getProductPrice()).isEqualTo(100000);
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.READY);
+    }
+
+    /*
+     * 재고 증가 및 감소 테스트
+     * */
+    @Test
+    void 판매중이_아니면_재고_추가시_예외가_발생한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
+
+        // when && then
+        assertThatThrownBy(() -> product.addStock(10))
+                .isInstanceOf(InvalidProductStatusException.class);
+    }
+
+    @Test
+    void 판매중_상태에서는_재고가_증가한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
 
-        //When
+        // when
         product.addStock(10);
 
-        //Then
-        assertEquals(10, product.getStockQuantity());
+        // then
+        assertThat(product.getStockQuantity()).isEqualTo(10);
     }
 
     @Test
-    @DisplayName("판매대기 상태에서 재고가 있으면 판매를 시작한다")
-    void startSelling_success() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStock(10);
-
-        // When
-        product.startSelling();
-
-        // Then
-        Assertions.assertEquals(ProductStatus.SELLING, product.getProductStatus());
-    }
-
-    @Test
-    @DisplayName("판매대기 상태 또는 판매중지 상태가 아니면 판매를 시작할 수 없다")
-    void startSelling_fail_when_not_ready() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.ENDED);
-
-        // When & Then
-        assertThrows(InvalidProductStatusException.class, () -> product.startSelling());
-    }
-
-    @Test
-    @DisplayName("재고가 없으면 판매를 시작할 수 없다")
-    void startSelling_fail_when_no_stock() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-
-        // When & Then
-        assertThrows(NotEnoughStockException.class, () -> product.startSelling());
-    }
-
-    @Test
-    @DisplayName("판매중 상태에서는 판매중지를 할 수 있다")
-    void stopSelling_success() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
+    void 재고보다_많이_차감하면_예외가_발생한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
         product.addStock(5);
 
-        // When
-        product.stopSelling();
-
-        // Then
-        assertEquals(ProductStatus.STOPPED, product.getProductStatus());
+        // when && then
+        assertThatThrownBy(() -> product.removeStock(10))
+                .isInstanceOf(NotEnoughStockException.class);
     }
 
     @Test
-    @DisplayName("판매중 상태가 아니면 판매중지를 할 수 없다")
-    void stopSelling_fail_when_not_selling() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.READY);
-
-        // When & Then
-        assertThrows(InvalidProductStatusException.class, () -> product.stopSelling());
-    }
-
-    @Test
-    @DisplayName("판매중지 상태에서 재고가 있으면 판매를 재개할 수 있다")
-    void resumeSelling_success() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.STOPPED);
-        product.changeStock(5);
-
-        // When
-        product.resumeSelling();
-
-        // Then
-        assertEquals(ProductStatus.SELLING, product.getProductStatus());
-    }
-
-    @Test
-    @DisplayName("판매중지 상태가 아니면 판매를 재개할 수 없다")
-    void resumeSelling_fail_when_not_stopped() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-
-        // When & Then
-        assertThrows(InvalidProductStatusException.class, () -> product.resumeSelling());
-    }
-
-    @Test
-    @DisplayName("판매중지 상태라도 재고가 없으면 판매를 재개할 수 없다")
-    void resumeSelling_fail_when_no_stock() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.STOPPED);
-        // 재고 0
-
-        // When & Then
-        assertThrows(InvalidProductStatusException.class, () -> product.resumeSelling());
-    }
-
-    @Test
-    @DisplayName("판매중지 상태에서는 판매종료를 할 수 있다")
-    void endSelling_success() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.STOPPED);
-
-        // When
-        product.endSelling();
-
-        // Then
-        assertEquals(ProductStatus.ENDED, product.getProductStatus());
-    }
-
-    @Test
-    @DisplayName("판매중지 상태가 아니면 판매종료를 할 수 없다")
-    void endSelling_fail_when_not_stopped() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.SELLING);
-
-        // When & Then
-        assertThrows(InvalidProductStatusException.class, () -> product.endSelling());
-    }
-
-    @Test
-    public void 재고감소_정상(){
-        //Given
-        Product product = Product.createProduct("신발", 10000);
+    void 재고를_차감하면_정상적으로_감소한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
         product.addStock(10);
 
-        //When
+        // when
+        product.removeStock(3);
+
+        // then
+        assertThat(product.getStockQuantity()).isEqualTo(7);
+    }
+
+    @Test
+    void 재고가_0이되면_STOPPED_상태로_변경된다() {
+        // given
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.SELLING);
+        product.addStock(5);
+
+        // when
         product.removeStock(5);
 
-        //Then
-        assertEquals(5, product.getStockQuantity());
-        assertEquals(ProductStatus.SELLING, product.getProductStatus());
+        // then
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.STOPPED);
     }
 
-    @Test
-    @DisplayName("판매중이 아닌 상태에서 재고 차감 시 예외 발생")
-    void removeStock_fail_when_not_selling() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.READY);
-
-        // When and Then
-        assertThrows(InvalidProductStatusException.class, () -> product.removeStock(1));
-    }
-
-    @Test
-    @DisplayName("재고보다 많은 수량을 차감하면 예외 발생")
-    void removeStock_fail_when_not_enough_stock() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.SELLING);
-        product.addStock(3);   // 현재 재고 3
-
-        // When & Then
-        assertThrows(NotEnoughStockException.class, () -> product.removeStock(4));
-    }
-
-    @Test
-    @DisplayName("재고가 0이 되면 자동으로 판매중지 상태가 된다")
-    void removeStock_stop_selling_when_stock_zero() {
-        // Given
-        Product product = Product.createProduct("신발", 10000);
-        product.setStatus(ProductStatus.SELLING);
-        product.addStock(2);
-
-        // When
-        product.removeStock(2);
-
-        // Then
-        assertEquals(0, product.getStockQuantity());
-        assertEquals(ProductStatus.STOPPED, product.getProductStatus());
-    }
-
-    @Test
-    @DisplayName("READY 상태에서는 재고를 변경할 수 있다")
-    void changeStock_readyStatus_success() {
+    /*
+    * 상품 상태 변경 메소드 테스트
+    * */
+    void READY_상태에서_판매를_시작할_수_있다() {
         // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.READY);
+        Product product = Product.from("노트북", 100000);
+        product.addStock(10);
 
         // when
+        product.startSelling();
+
+        // then
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.SELLING);
+    }
+
+    @Test
+    void 재고가_없으면_판매를_시작할_수_없다() {
+        // given
+        Product product = Product.from("노트북", 100000);
+
+        // when && then
+        assertThatThrownBy(() -> product.startSelling())
+                .isInstanceOf(NotEnoughStockException.class);
+    }
+
+    @Test
+    void SELLING_상태가_아니면_판매중지를_할_수_없다() {
+        // given
+        Product product = Product.from("노트북", 100000);
+
+        // when && then
+        assertThatThrownBy(() -> product.stopSelling())
+                .isInstanceOf(InvalidProductStatusException.class);
+    }
+
+    @Test
+    void STOPPED_상태에서_판매를_재개할_수_있다() {
+        // given
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.STOPPED);
         product.changeStock(10);
 
+        // when
+        product.resumeSelling();
+
         // then
-        assertEquals(10, product.getStockQuantity());
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.SELLING);
     }
 
     @Test
-    @DisplayName("STOPPED 상태에서는 재고를 변경할 수 있다")
-    void changeStock_stoppedStatus_success() {
+    void STOPPED_상태에서_판매종료가_가능하다() {
         // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.STOPPED);
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.STOPPED);
 
         // when
-        product.changeStock(20);
+        product.endSelling();
 
         // then
-        assertEquals(20, product.getStockQuantity());
+        assertThat(product.getProductStatus()).isEqualTo(ProductStatus.ENDED);
     }
 
+    /*
+     * 가격 변경 메소드 테스트
+     * */
     @Test
-    @DisplayName("READY, STOPPED가 아닌 상태에서는 재고를 변경할 수 없다")
-    void changeStock_invalidStatus_throwException() {
+    void READY_상태에서_가격을_정상적으로_변경할_수_있다() {
         // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.SELLING);
-
-        // when & then
-        assertThrows(
-                InvalidProductStatusException.class,
-                () -> product.changeStock(10)
-        );
-    }
-
-    @Test
-    @DisplayName("재고를 음수로 변경하려 하면 예외가 발생한다")
-    void changeStock_negativeQuantity_throwException() {
-        // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.READY);
-
-        // when & then
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> product.changeStock(-1)
-        );
-    }
-
-    @Test
-    @DisplayName("READY 상태에서는 상품 기본 정보를 수정할 수 있다")
-    void changeBasicInfo_readyStatus_success() {
-        // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.READY);
+        Product product = Product.from("노트북", 100000);
 
         // when
-        product.changeBasicInfo("운동화", 12000);
+        product.updateProductPrice(200000);
 
         // then
-        assertEquals("운동화", product.getProductName());
-        assertEquals(12000, product.getProductPrice());
+        assertThat(product.getProductPrice()).isEqualTo(200000);
     }
 
     @Test
-    @DisplayName("STOPPED 상태에서는 상품 기본 정보를 수정할 수 있다")
-    void changeBasicInfo_stoppedStatus_success() {
+    void STOPPED_상태에서도_가격을_변경할_수_있다() {
         // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.STOPPED);
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.STOPPED);
 
         // when
-        product.changeBasicInfo("구두", 15000);
+        product.updateProductPrice(150000);
 
         // then
-        assertEquals("구두", product.getProductName());
-        assertEquals(15000, product.getProductPrice());
+        assertThat(product.getProductPrice()).isEqualTo(150000);
     }
 
     @Test
-    @DisplayName("READY, STOPPED가 아닌 상태에서는 상품 기본 정보를 수정할 수 없다")
-    void changeBasicInfo_invalidStatus_throwException() {
+    void SELLING_상태에서는_가격_변경시_예외가_발생한다() {
         // given
-        Product product = Product.createProduct("신발", 10000);
-        product.changeStatus(ProductStatus.SELLING);
+        Product product = Product.from("노트북", 100000);
+        product.setStatus(ProductStatus.SELLING);
 
         // when & then
-        assertThrows(
-                InvalidProductStatusException.class,
-                () -> product.changeBasicInfo("운동화", 12000)
-        );
+        assertThatThrownBy(() -> product.updateProductPrice(200000))
+                .isInstanceOf(InvalidProductStatusException.class)
+                .hasMessage("상품 가격 수정 불가 상태");
     }
 
     @Test
-    public void 가격_정보_수정(){
-        //Given
-        Product product = Product.createProduct("신발", 10000);
+    void 가격이_0_이하면_예외가_발생한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
 
-        //When
-        product.updateProductPrice(5000);
-
-        //Then
-        assertEquals(5000, product.getProductPrice());
+        // when & then
+        assertThatThrownBy(() -> product.updateProductPrice(0))
+                .isInstanceOf(InvalidProductPriceException.class)
+                .hasMessage("price cannot be negative or zero");
     }
 
     @Test
-    public void 가격_정보_수정_예외(){
-        //Given
-        Product product = Product.createProduct("신발", 10000);
+    void 음수_가격이면_예외가_발생한다() {
+        // given
+        Product product = Product.from("노트북", 100000);
 
-        //Then
-        assertThrows(InvalidProductPriceException.class ,() -> product.updateProductPrice(0));
+        // when & then
+        assertThatThrownBy(() -> product.updateProductPrice(-100))
+                .isInstanceOf(InvalidProductPriceException.class);
     }
+
 
 }

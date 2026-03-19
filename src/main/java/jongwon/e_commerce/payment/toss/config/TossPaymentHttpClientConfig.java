@@ -3,7 +3,6 @@ package jongwon.e_commerce.payment.toss.config;
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
-import jongwon.e_commerce.payment.toss.TossPaymentClientErrorHandler;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,12 +35,9 @@ public class TossPaymentHttpClientConfig {
     @Bean(name = "tossRestClient")
     public RestClient createTossRestClient(
             @Qualifier("tossHttpClient") HttpClient tossHttpClient,
-            TossPaymentProperties properties,
-            TossPaymentClientErrorHandler tossPaymentClientErrorHandler
-    ) {
+            TossPaymentProperties properties) {
         return RestClient.builder()
                 .baseUrl(properties.getApiUrl())
-                .defaultStatusHandler(HttpStatusCode::isError, tossPaymentClientErrorHandler)
                 .defaultHeader(
                         HttpHeaders.AUTHORIZATION,
                         buildBasicAuthHeader(

@@ -19,7 +19,13 @@ public class Order {
     private LocalDateTime orderedAt;
     private OrderStatus orderStatus;
     private long totalAmount;
-    private List<OrderItem> orderItems;
+
+    public void setTotalAmount(int totalAmount){
+        this.totalAmount = totalAmount;
+    }
+    public void setOrderStatus(OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+    }
 
     public static int calculateTotalAmount(List<OrderItem> orderItems){
         int sum = 0;
@@ -27,13 +33,6 @@ public class Order {
             sum += orderItem.calculateAmount();
         }
         return sum;
-    }
-
-    public void setTotalAmount(int totalAmount){
-        this.totalAmount = totalAmount;
-    }
-    public void setOrderStatus(OrderStatus orderStatus){
-        this.orderStatus = orderStatus;
     }
 
     public static Order from(Member member,

@@ -16,7 +16,7 @@ public class TestContainerConfig {
                         .withUsername("test")
                         .withPassword("test")
                         .withCopyFileToContainer(
-                                MountableFile.forClasspathResource("/schema.sql"),
+                                MountableFile.forClasspathResource("/sql/schema.sql"),
                                 "/docker-entrypoint-initdb.d/"
                         ).withReuse(true);
     }

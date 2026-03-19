@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.application.approve.settlement.handler;
 
-import jongwon.e_commerce.payment.application.approve.settlement.handler.success.OrderStockProcessor;
+import jongwon.e_commerce.order.application.OrderStockProcessor;
 import jongwon.e_commerce.payment.application.approve.settlement.handler.success.PaymentResultApplier;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
@@ -8,7 +8,6 @@ import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
-import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

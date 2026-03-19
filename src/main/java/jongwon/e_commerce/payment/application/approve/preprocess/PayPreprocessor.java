@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.application.approve.preprocess;
 
+import jongwon.e_commerce.order.application.OrderValidator;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;

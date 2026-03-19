@@ -2,7 +2,6 @@ package jongwon.e_commerce.member.repository.impl;
 
 import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.exception.MemberNotFoundException;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.member.repository.jpa.MemberJpaRepository;
 import jongwon.e_commerce.member.repository.jpa.entity.MemberEntity;

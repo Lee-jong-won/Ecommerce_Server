@@ -40,7 +40,9 @@ public class OrderItemEntity {
 
         orderItemEntity.orderItemId = orderItem.getOrderItemId();
         orderItemEntity.orderEntity = OrderEntity.from(orderItem.getOrder());
+        orderItemEntity.productEntity = ProductEntity.from(orderItem.getProduct());
         orderItemEntity.orderPrice = orderItem.getOrderPrice();
+        orderItemEntity.productName = orderItem.getProductName();
         orderItemEntity.orderQuantity = orderItem.getOrderQuantity();
 
         return orderItemEntity;

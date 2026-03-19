@@ -53,6 +53,7 @@ public class OrderEntity {
         orderEntity.orderName = order.getOrderName();
         orderEntity.orderStatus = order.getOrderStatus();
         orderEntity.totalAmount = order.getTotalAmount();
+        orderEntity.orderedAt = order.getOrderedAt();
 
         return orderEntity;
     }
@@ -65,6 +66,7 @@ public class OrderEntity {
                 .orderName(orderName)
                 .totalAmount(totalAmount)
                 .orderStatus(orderStatus)
+                .member(memberEntity.toModel())
                 .build();
     }
 

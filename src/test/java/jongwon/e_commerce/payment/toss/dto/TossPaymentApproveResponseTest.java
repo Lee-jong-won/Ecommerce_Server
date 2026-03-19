@@ -1,66 +1,83 @@
 package jongwon.e_commerce.payment.toss.dto;
 
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TossPaymentApproveResponseTest {
-
     @Test
-    void 외부_PG응답의_결제유형이_핸드폰이면_핸드폰_상세정보가_만들어진다(){
+    void Toss응답이_PayResult로_정상_변환된다() {
         // given
-        TossPaymentApproveResponse.MobilePhoneDto mobilePhoneDto = new TossPaymentApproveResponse.MobilePhoneDto("010-1234-5678",
-                "정산완료",
-                "https://naver.com");
-        TossPaymentApproveResponse tossPaymentApproveResponse = new TossPaymentApproveResponse(
-                10000, "order1", "paymentKey", "휴대폰", OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE",
-                mobilePhoneDto);
+        TossPaymentApproveResponse.MobilePhoneDto mobilePhone =
+                new TossPaymentApproveResponse.MobilePhoneDto(
+                        "01012345678",
+                        "SETTLED",
+                        "http://receipt.url"
+                );
+
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+        TossPaymentApproveResponse response =
+                new TossPaymentApproveResponse(
+                        "휴대폰",
+                        approvedAt,
+                        mobilePhone
+                );
 
         // when
-        PaymentDetail paymentDetail = tossPaymentApproveResponse.convertToDetail();
+        PayResult payResult = response.toPayResult();
 
         // then
-        assertInstanceOf(MPPayDetail.class, paymentDetail);
+        assertThat(payResult.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        assertThat(payResult.getApprovedAt()).isEqualTo(approvedAt);
+        assertThat(payResult.getPaymentDetail()).isNotNull();
     }
 
     @Test
-    void 외부_PG응답의_결제유형이_우리_서비스에_등록되지_않았다면_예외가_발생한다(){
+    void MOBILE_결제수단이면_PaymentDetail이_정상적으로_생성된다() {
         // given
-        TossPaymentApproveResponse tossPaymentApproveResponse = new TossPaymentApproveResponse(
-                10000, "order1", "paymentKey", "카드", OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE",
-                null);
+        TossPaymentApproveResponse.MobilePhoneDto mobilePhone =
+                new TossPaymentApproveResponse.MobilePhoneDto(
+                        "01012345678",
+                        "SETTLED",
+                        "http://receipt.url"
+                );
 
-        // when && then
-        assertThrows(UnsupportedPayMethodException.class, () -> tossPaymentApproveResponse.convertToDetail());
-    }
-
-    @Test
-    void 외부PG_응답이_정상적으로_PaymentContext로_변환된다(){
-        // given
-        TossPaymentApproveResponse.MobilePhoneDto mobilePhoneDto = new TossPaymentApproveResponse.MobilePhoneDto("010-1234-5678",
-                "정산완료",
-                "https://naver.com");
-        TossPaymentApproveResponse tossPaymentApproveResponse = new TossPaymentApproveResponse(
-                10000, "order1",
-                "paymentKey", "휴대폰",
-                OffsetDateTime.parse("2024-02-13T03:18:14Z"), "DONE",
-                mobilePhoneDto);
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+        TossPaymentApproveResponse response =
+                new TossPaymentApproveResponse(
+                        "휴대폰",
+                        approvedAt,
+                        mobilePhone
+                );
 
         // when
-        PaymentDetail paymentDetail = tossPaymentApproveResponse.convertToDetail();
-        PaymentContext paymentContext = tossPaymentApproveResponse.toPaymentContext(paymentDetail);
+        MPPay mpPay = (MPPay) response.extractPaymentDetail();
 
         // then
-        assertEquals(tossPaymentApproveResponse.getAmount(), paymentContext.getAmount());
-        assertEquals(tossPaymentApproveResponse.getOrderId(), paymentContext.getOrderId());
-        assertEquals(tossPaymentApproveResponse.getPaymentKey(), paymentContext.getPaymentKey());
-        assertEquals(tossPaymentApproveResponse.getMethod(), paymentContext.getMethod());
-        assertEquals(tossPaymentApproveResponse.getApprovedAt(), paymentContext.getApprovedAt());
-        assertEquals(paymentDetail, paymentContext.getPaymentDetail());
+        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("01012345678");
+        assertThat(mpPay.getReceiptUrl()).isEqualTo("http://receipt.url");
+        assertThat(mpPay.getSettlementStatus()).isEqualTo("SETTLED");
     }
 
+    @Test
+    void 지원하지_않는_결제수단이면_예외가_발생한다() {
+        // given
+        TossPaymentApproveResponse response =
+                new TossPaymentApproveResponse(
+                        "UNKNOWN",
+                        OffsetDateTime.now(),
+                        null
+                );
+
+        // when & then
+        assertThatThrownBy(response::extractPaymentDetail)
+                .isInstanceOf(UnsupportedPayMethodException.class);
+    }
 }

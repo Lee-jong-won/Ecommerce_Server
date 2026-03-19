@@ -67,15 +67,4 @@ public class PayEntity {
                 .approvedAt(approvedAt)
                 .build();
     }
-
-    public void setPayDetailEntity(PayDetailEntity payDetailEntity){
-        payDetailEntity.setPayEntity(this);
-    }
-
-    public void setOrderEntity(OrderEntity orderEntity){this.orderEntity = orderEntity;}
-    public void setPayStatus(PayStatus payStatus){
-        this.payStatus = payStatus;
-    }
-
-
 }

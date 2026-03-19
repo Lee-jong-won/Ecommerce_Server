@@ -3,14 +3,12 @@ package jongwon.e_commerce.order.application;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.repository.jpa.entity.OrderEntity;
-import jongwon.e_commerce.order.repository.jpa.entity.OrderItemEntity;
 import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.exception.ProductNotFoundException;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +20,14 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
-public class OrderService {
+@Builder
+public class OrderExecutor {
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
 
+    @Transactional
     public Order order(Member member, String orderName, List<OrderItemCreate> requests){
         //주문 - 상품 만들기
         List<OrderItem> orderItems = new ArrayList<>();
