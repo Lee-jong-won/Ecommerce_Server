@@ -6,6 +6,7 @@ import jongwon.e_commerce.payment.toss.dto.TossPaymentCancelResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.retry.RetryOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
@@ -18,24 +19,24 @@ import java.util.Map;
 public class TossPaymentRestClient implements TossPaymentClient {
 
     @Qualifier("tossRestClient")private final RestClient restClient;
-
+    @Qualifier("tossRetryTemplate")private final RetryOperations payApproveRetryOperation;
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
-        return restClient.post()
+        return payApproveRetryOperation.execute(context -> restClient.post()
                 .uri("/payments/confirm")
                 .header("Idempotency-Key", idempotencyKey)
                 .body(request)
                 .retrieve()
-                .body(TossPaymentApproveResponse.class);
+                .body(TossPaymentApproveResponse.class));
     }
 
     @Override
     public TossPaymentCancelResponse callPayCancelApi(String paymentKey, String idempotencyKey, String cancelReason) {
-        return restClient.post()
+        return payApproveRetryOperation.execute(context -> restClient.post()
                 .uri("/{paymentKey}/cancel", paymentKey)
                 .header("Idempotency-Key", idempotencyKey)
                 .body(Map.of("cancelReason", cancelReason))
                 .retrieve()
-                .body(TossPaymentCancelResponse.class);
+                .body(TossPaymentCancelResponse.class));
     }
 }

@@ -18,9 +18,9 @@ import java.util.List;
 @Slf4j
 public class PaymentApprovalService {
     // 결제 승인 전 주문 정보 검증 부
-    private final PayPreprocessor payPreprocessor;
+    private final PayPreprocessor payPreprocessor; // 추상화 필요
     // 결제 승인 시도 부
-    private final PayApprovalExecutor payApprovalExecutor;
+    private final PayApprovalExecutor payApprovalExecutor; // 추상화 필요
     private final List<PayOutcomeHandler> outcomeHandlers;
 
     public PayApproveOutcomeResponse approvePayment(PayApproveAttempt attempt){

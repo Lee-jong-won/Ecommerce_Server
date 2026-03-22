@@ -19,14 +19,12 @@ import java.util.UUID;
 public class PayApprovalExecutor {
 
     private final TossPaymentClient tossPaymentClient;
-    private final @Qualifier("tossRetryTemplate") RetryOperations tossPayApproveRetryOperation;
     private final PayApproveExceptionTranslator payApproveExceptionTranslator;
 
     public PayApproveOutcome executePayApprove(PayApproveAttempt request){
         try{
-            TossPaymentApproveResponse response = tossPayApproveRetryOperation.execute(context ->
-                    tossPaymentClient.callPayApprovalApi(request, UUID.randomUUID().toString())
-            );
+            TossPaymentApproveResponse response = tossPaymentClient.callPayApprovalApi(request,
+                    UUID.randomUUID().toString());
             return new PayApproveSuccess(response.toPayResult());
         } catch(RestClientException e){
             return payApproveExceptionTranslator.translate(e);
