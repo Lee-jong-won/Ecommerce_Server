@@ -29,7 +29,7 @@ public class PayEntity {
     @Column(name = "payment_id", nullable = false)
     private String paymentKey;
 
-    @Column(name = "pay_method", nullable = false, length = 50)
+    @Column(name = "pay_method", length = 50)
     @Enumerated(EnumType.STRING)
     private PayMethod payMethod;
 

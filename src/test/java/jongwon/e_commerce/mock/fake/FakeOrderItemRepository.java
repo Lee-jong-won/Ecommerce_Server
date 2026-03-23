@@ -1,4 +1,4 @@
-package jongwon.e_commerce.mock;
+package jongwon.e_commerce.mock.fake;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;

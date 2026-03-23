@@ -73,15 +73,16 @@ public class Pay {
                 build();
     }
 
-    public Pay recordPayResult(PayResult payResult){
+    public Pay reflectPaySuccess(PayResult.PayResultCommon payResultCommon){
+        comeplete();
         return Pay.builder()
                 .id(id)
                 .order(order)
                 .paymentKey(paymentKey)
                 .payAmount(payAmount)
                 .payStatus(payStatus)
-                .payMethod(payResult.getPayMethod())
-                .approvedAt(payResult.getApprovedAt())
+                .payMethod(payResultCommon.getPayMethod())
+                .approvedAt(payResultCommon.getApprovedAt())
                 .build();
     }
 }

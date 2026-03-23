@@ -1,4 +1,4 @@
-package jongwon.e_commerce.mock;
+package jongwon.e_commerce.mock.fake;
 
 import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.product.domain.Product;

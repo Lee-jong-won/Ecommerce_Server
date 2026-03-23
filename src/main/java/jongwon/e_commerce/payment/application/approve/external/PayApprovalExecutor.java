@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve.execute;
+package jongwon.e_commerce.payment.application.approve.external;
 
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
@@ -6,8 +6,6 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.toss.TossPaymentClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.retry.RetryOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 

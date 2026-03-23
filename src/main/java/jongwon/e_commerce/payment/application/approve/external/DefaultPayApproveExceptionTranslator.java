@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve.execute;
+package jongwon.e_commerce.payment.application.approve.external;
 
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;

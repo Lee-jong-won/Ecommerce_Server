@@ -19,10 +19,11 @@ public class TossPaymentApproveResponse {
     private MobilePhoneDto mobilePhone; // 핸드폰 결제 정보
 
     public PayResult toPayResult(){
-        PayMethod payMethod = PayMethod.from(method);
         return PayResult.builder().
-                payMethod(payMethod).
-                approvedAt(approvedAt).
+                payResultCommon(PayResult.PayResultCommon.
+                        builder().approvedAt(approvedAt)
+                                .payMethod(PayMethod.from(method)).
+                        build()).
                 paymentDetail(extractPaymentDetail()).
                 build();
     }

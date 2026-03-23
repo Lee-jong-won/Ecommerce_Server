@@ -2,9 +2,9 @@ package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.domain.MemberCreate;
-import jongwon.e_commerce.mock.FakeOrderItemRepository;
-import jongwon.e_commerce.mock.FakeOrderRepository;
-import jongwon.e_commerce.mock.FakeProductRepository;
+import jongwon.e_commerce.mock.fake.FakeOrderItemRepository;
+import jongwon.e_commerce.mock.fake.FakeOrderRepository;
+import jongwon.e_commerce.mock.fake.FakeProductRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
@@ -42,6 +42,17 @@ class OrderStockProcessorTest {
 
         this.orderStockProcessor = new OrderStockProcessor(orderItemRepository, productRepository);
 
+        // 주문할 멤버 생성
+        Member member = Member.from(
+                MemberCreate.builder()
+                        .loginId("testUser")
+                        .password("1234")
+                        .memberName("홍길동")
+                        .email("test@test.com")
+                        .addr("서울")
+                        .build()
+        );
+
         // 상품 저장
         Product product1 = Product.from("노트북", 20000);
         product1.changeStock(10);
@@ -54,16 +65,7 @@ class OrderStockProcessorTest {
         productRepository.save(product1);
         productRepository.save(product2);
 
-        Member member = Member.from(
-                MemberCreate.builder()
-                        .loginId("testUser")
-                        .password("1234")
-                        .memberName("홍길동")
-                        .email("test@test.com")
-                        .addr("서울")
-                        .build()
-        );
-
+        // 주문 상품 요청 생성
         OrderItemCreate orderItemCreate1 = OrderItemCreate.builder()
                 .stockQuantity(2)
                 .productId(1L).build();
@@ -73,6 +75,8 @@ class OrderStockProcessorTest {
                 .productId(2L).build();
 
         List<OrderItemCreate> orderItemCreateList = List.of(orderItemCreate1, orderItemCreate2);
+
+        // 주문 생성
         orderExecutor.order(member, "노트북 외 1건", orderItemCreateList);
     }
 
@@ -105,6 +109,4 @@ class OrderStockProcessorTest {
         assertThat(product1.getStockQuantity()).isEqualTo(12);
         assertThat(product2.getStockQuantity()).isEqualTo(11);
     }
-
-
 }

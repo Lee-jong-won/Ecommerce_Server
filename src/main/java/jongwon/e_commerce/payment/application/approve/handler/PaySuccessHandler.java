@@ -1,10 +1,12 @@
-package jongwon.e_commerce.payment.application.approve.settlement.handler;
+package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.order.application.OrderStockProcessor;
-import jongwon.e_commerce.payment.application.approve.settlement.handler.success.PaymentResultApplier;
+import jongwon.e_commerce.payment.application.approve.PaymentService;
+import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
@@ -16,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaySuccessHandler implements PayOutcomeHandler {
 
-    private final PaymentResultApplier paymentResultApplier;
     private final OrderStockProcessor orderStockProcessor;
+    private final PaymentService paymentService;
+    private final PayDetailSaver payDetailSaver;
 
     @Override
     public boolean supports(PayApproveOutcomeType type) {
@@ -27,8 +30,14 @@ public class PaySuccessHandler implements PayOutcomeHandler {
     @Override
     @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
-        // 2. 결제 결과 반영
-        paymentResultApplier.applyPayResult(pay, ((PayApproveSuccess) outcome).getPayResult());
+        PayApproveSuccess payApproveSuccess = (PayApproveSuccess)outcome;
+        PayResult payResult = payApproveSuccess.getPayResult();
+
+        // 1. 결제 공통 정보 업데이트
+        Pay updatedPay = paymentService.update(pay.getId(), payResult.getPayResultCommon());
+
+        // 2. 결제 상세 정보 저장
+        payDetailSaver.save(updatedPay, payResult.getPaymentDetail());
 
         // 3. 재고 감소
         orderStockProcessor.deductStockOf(pay.getOrder());

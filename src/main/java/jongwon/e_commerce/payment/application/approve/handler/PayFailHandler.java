@@ -1,9 +1,8 @@
-package jongwon.e_commerce.payment.application.approve.settlement.handler;
+package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
@@ -25,7 +24,7 @@ public class PayFailHandler implements PayOutcomeHandler {
     @Override
     @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
-        PayApproveFail payApproveFail = (PayApproveFail) outcome;
+        pay.failed();
         paymentRepository.save(pay);
 
         return new PayApproveOutcomeResponse(

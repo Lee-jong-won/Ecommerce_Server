@@ -1,8 +1,7 @@
 package jongwon.e_commerce.payment.application.approve;
 
-import jongwon.e_commerce.payment.application.approve.execute.PayApprovalExecutor;
-import jongwon.e_commerce.payment.application.approve.preprocess.PayPreprocessor;
-import jongwon.e_commerce.payment.application.approve.settlement.handler.PayOutcomeHandler;
+import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
+import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
@@ -18,14 +17,14 @@ import java.util.List;
 @Slf4j
 public class PaymentApprovalService {
     // 결제 승인 전 주문 정보 검증 부
-    private final PayPreprocessor payPreprocessor; // 추상화 필요
+    private final PaymentService paymentService; // 추상화 필요
     // 결제 승인 시도 부
     private final PayApprovalExecutor payApprovalExecutor; // 추상화 필요
     private final List<PayOutcomeHandler> outcomeHandlers;
 
     public PayApproveOutcomeResponse approvePayment(PayApproveAttempt attempt){
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
-        Pay pay = payPreprocessor.preProcess(attempt);
+        Pay pay = paymentService.preProcess(attempt);
 
         //2. 결제 승인 요청
         PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt);

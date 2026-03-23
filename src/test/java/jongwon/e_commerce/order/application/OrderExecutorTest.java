@@ -2,9 +2,9 @@ package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.domain.MemberCreate;
-import jongwon.e_commerce.mock.FakeOrderItemRepository;
-import jongwon.e_commerce.mock.FakeOrderRepository;
-import jongwon.e_commerce.mock.FakeProductRepository;
+import jongwon.e_commerce.mock.fake.FakeOrderItemRepository;
+import jongwon.e_commerce.mock.fake.FakeOrderRepository;
+import jongwon.e_commerce.mock.fake.FakeProductRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;

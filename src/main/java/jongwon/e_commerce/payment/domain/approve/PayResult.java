@@ -10,7 +10,14 @@ import java.time.OffsetDateTime;
 @Getter
 @Builder
 public class PayResult {
-    private OffsetDateTime approvedAt;
-    private PayMethod payMethod;
+    private PayResultCommon payResultCommon;
     private PaymentDetail paymentDetail;
+
+    @Getter
+    @Builder
+    public static class PayResultCommon {
+        private OffsetDateTime approvedAt;
+        private PayMethod payMethod;
+    }
+
 }
