@@ -4,7 +4,7 @@ import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
-import jongwon.e_commerce.payment.toss.TossPaymentClient;
+import jongwon.e_commerce.payment.toss.PaymentApproveClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -16,12 +16,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PayApprovalExecutor {
 
-    private final TossPaymentClient tossPaymentClient;
+    private final PaymentApproveClient paymentApproveClient;
     private final PayApproveExceptionTranslator payApproveExceptionTranslator;
 
     public PayApproveOutcome executePayApprove(PayApproveAttempt request){
         try{
-            TossPaymentApproveResponse response = tossPaymentClient.callPayApprovalApi(request,
+            TossPaymentApproveResponse response = paymentApproveClient.callPayApprovalApi(request,
                     UUID.randomUUID().toString());
             return new PayApproveSuccess(response.toPayResult());
         } catch(RestClientException e){

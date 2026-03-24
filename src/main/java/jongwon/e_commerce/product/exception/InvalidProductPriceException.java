@@ -1,8 +1,6 @@
 package jongwon.e_commerce.product.exception;
 
-import jongwon.e_commerce.common.exception.DomainException;
-
-public class InvalidProductPriceException extends DomainException {
+public class InvalidProductPriceException extends RuntimeException {
     public InvalidProductPriceException() {
     }
     public InvalidProductPriceException(String message) {

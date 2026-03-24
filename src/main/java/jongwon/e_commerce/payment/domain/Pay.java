@@ -7,6 +7,7 @@ import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -20,6 +21,8 @@ public class Pay {
     private long payAmount;
     private PayStatus payStatus;
     private OffsetDateTime approvedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
@@ -81,6 +84,8 @@ public class Pay {
                 .paymentKey(paymentKey)
                 .payAmount(payAmount)
                 .payStatus(payStatus)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .payMethod(payResultCommon.getPayMethod())
                 .approvedAt(payResultCommon.getApprovedAt())
                 .build();

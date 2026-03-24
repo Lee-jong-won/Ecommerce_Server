@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TossPaymentRestClientTest {
 
     WireMockServer wireMockServer;
-    TossPaymentRestClient tossPaymentHttpClient;
+    PaymentApproveClientImpl tossPaymentHttpClient;
 
     @BeforeEach
     void setUp(){
@@ -50,7 +50,7 @@ class TossPaymentRestClientTest {
         TossPaymentRetryConfig tossPaymentRetryConfig = new TossPaymentRetryConfig();
         RetryTemplate tossPaymentRetryTemplate = tossPaymentRetryConfig.paymentApproveRetryTemplate();
 
-        tossPaymentHttpClient = new TossPaymentRestClient(restClient, tossPaymentRetryTemplate);
+        tossPaymentHttpClient = new PaymentApproveClientImpl(restClient, tossPaymentRetryTemplate);
     }
 
     @AfterEach

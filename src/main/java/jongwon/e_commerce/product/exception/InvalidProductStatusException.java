@@ -1,8 +1,6 @@
 package jongwon.e_commerce.product.exception;
 
-import jongwon.e_commerce.common.exception.DomainException;
-
-public class InvalidProductStatusException extends DomainException {
+public class InvalidProductStatusException extends RuntimeException {
 
     public InvalidProductStatusException() {
     }

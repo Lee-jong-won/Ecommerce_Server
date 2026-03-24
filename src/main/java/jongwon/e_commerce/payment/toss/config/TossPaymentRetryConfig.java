@@ -41,17 +41,17 @@ public class TossPaymentRetryConfig {
 
     private Classifier<Throwable, RetryPolicy> configureRetryPolicy() {
         return throwable -> {
-            // 1️⃣ HTTP 상태 코드 기반 retry
+            // HTTP 상태 코드 기반 retry
             if (throwable instanceof RestClientResponseException ex) {
                 return getRetryPolicyForStatus(ex.getStatusCode().value());
             }
 
-            // 2️⃣ ResourceAccessException (네트워크 계열)
+            // ResourceAccessException (네트워크 계열)
             if (throwable instanceof ResourceAccessException ex) {
                 return isReadTimeout(ex) ? simpleRetryPolicy : neverRetryPolicy;
             }
 
-            // 3️⃣ 나머지는 retry 안함
+            // 나머지는 retry 안함
             return neverRetryPolicy;
         };
     }

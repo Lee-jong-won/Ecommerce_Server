@@ -32,11 +32,12 @@ class TossPaymentApproveResponseTest {
 
         // when
         PayResult payResult = response.toPayResult();
+        PayResult.PayResultCommon payResultCommon = payResult.getPayResultCommon();
 
         // then
-        assertThat(payResult.getPayMethod()).isEqualTo(PayMethod.MOBILE);
-        assertThat(payResult.getApprovedAt()).isEqualTo(approvedAt);
-        assertThat(payResult.getPaymentDetail()).isNotNull();
+        assertThat(payResultCommon.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        assertThat(payResultCommon.getApprovedAt()).isEqualTo(approvedAt);
+        assertThat(payResult.getPaymentDetail()).isInstanceOf(MPPay.class);
     }
 
     @Test

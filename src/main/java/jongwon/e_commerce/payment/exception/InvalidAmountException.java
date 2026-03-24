@@ -1,8 +1,6 @@
 package jongwon.e_commerce.payment.exception;
 
-import jongwon.e_commerce.common.exception.DomainException;
-
-public class InvalidAmountException extends DomainException {
+public class InvalidAmountException extends RuntimeException {
 
     public InvalidAmountException() {
     }

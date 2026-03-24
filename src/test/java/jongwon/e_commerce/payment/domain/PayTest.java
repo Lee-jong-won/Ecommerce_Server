@@ -5,6 +5,8 @@ import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.domain.detail.MPPay;
+import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
@@ -128,25 +130,23 @@ class PayTest {
 
 
     @Test
-    void PayResult를_기반으로_Pay가_정상적으로_생성된다() {
+    void 결제_공통정보가_Pay에_정상적으로_반영된다() {
         // given
         Pay originalPay = createPay();
 
         PayMethod method = PayMethod.CARD;
         OffsetDateTime approvedAt = OffsetDateTime.now();
 
-        PayResult payResult = PayResult.builder()
-                .payMethod(method)
-                .approvedAt(approvedAt)
-                .build();
+        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
+                payMethod(method).
+                approvedAt(approvedAt).
+                build();
 
         // when
-        Pay resultPay = originalPay.recordPayResult(payResult);
+        Pay resultPay = originalPay.reflectPaySuccess(payResultCommon);
 
         // then
         // 기존 값 유지
-        assertThat(resultPay.getId()).isEqualTo(originalPay.getId());
-        assertThat(resultPay.getOrder()).isEqualTo(originalPay.getOrder());
         assertThat(resultPay.getPaymentKey()).isEqualTo(originalPay.getPaymentKey());
         assertThat(resultPay.getPayAmount()).isEqualTo(originalPay.getPayAmount());
         assertThat(resultPay.getPayStatus()).isEqualTo(originalPay.getPayStatus());

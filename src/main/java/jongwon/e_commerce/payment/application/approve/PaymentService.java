@@ -10,10 +10,12 @@ import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Builder
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PaymentService {
 
     private final OrderRepository orderRepository;
@@ -23,6 +25,7 @@ public class PaymentService {
         return paymentRepository.getById(id);
     }
 
+    @Transactional
     public Pay preProcess(PayApproveAttempt attempt){
         String orderId = attempt.getOrderId();;
         String paymentKey = attempt.getPaymentKey();;
@@ -36,6 +39,7 @@ public class PaymentService {
         return paymentRepository.save(pay);
     }
 
+    @Transactional
     public Pay update(long id, PayResult.PayResultCommon payResultCommon){
         Pay pay = getById(id);
         pay = pay.reflectPaySuccess(payResultCommon);

@@ -1,15 +1,14 @@
 package jongwon.e_commerce.mock.stub;
 
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
-import jongwon.e_commerce.payment.toss.TossPaymentClient;
+import jongwon.e_commerce.payment.toss.PaymentApproveClient;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentCancelResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.nio.charset.StandardCharsets;
 
-public class StubTossPaymentRestClientErrorResponse implements TossPaymentClient {
+public class StubPaymentRestApproveClientErrorResponse implements PaymentApproveClient {
 
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
@@ -33,8 +32,4 @@ public class StubTossPaymentRestClientErrorResponse implements TossPaymentClient
         throw exception;
     }
 
-    @Override
-    public TossPaymentCancelResponse callPayCancelApi(String paymentKey, String cancelReason, String idempotencyKey) {
-        return null;
-    }
 }

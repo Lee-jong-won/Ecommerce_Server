@@ -9,11 +9,13 @@ import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.jpa.MPPayJpaRepository;
 import jongwon.e_commerce.payment.repository.jpa.entity.MPPayEntity;
 import jongwon.e_commerce.payment.repository.jpa.entity.PayDetailEntity;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Builder
 public class PayDetailSaver {
 
     private final MPPayRepository mpPayRepository;

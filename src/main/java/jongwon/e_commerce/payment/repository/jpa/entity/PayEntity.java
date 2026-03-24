@@ -8,7 +8,10 @@ import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Entity
@@ -42,6 +45,15 @@ public class PayEntity {
 
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
+
+    @CreationTimestamp // INSERT 시 자동으로 값을 채워줌
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp // UPDATE 시 자동으로 값을 채워줌
+    private LocalDateTime updatedAt;
+
     public static PayEntity from(Pay pay){
         PayEntity jpaEntity = new PayEntity();
 
@@ -52,6 +64,8 @@ public class PayEntity {
         jpaEntity.payAmount = pay.getPayAmount();
         jpaEntity.payStatus = pay.getPayStatus();
         jpaEntity.approvedAt = pay.getApprovedAt();
+        jpaEntity.createdAt = pay.getCreatedAt();
+        jpaEntity.updatedAt = pay.getUpdatedAt();
 
         return jpaEntity;
     }
@@ -65,6 +79,8 @@ public class PayEntity {
                 .payAmount(payAmount)
                 .payStatus(payStatus)
                 .approvedAt(approvedAt)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }
