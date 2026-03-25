@@ -7,12 +7,11 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.net.SocketTimeoutException;
 
-public class StubPaymentRestApproveClientTimeout implements PaymentApproveClient {
-
+public class StubPaymentRestApproveClientConnTimeout implements PaymentApproveClient {
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
-        throw new ResourceAccessException("타임아웃 발생", new SocketTimeoutException());
+        SocketTimeoutException cause = new SocketTimeoutException("connect timed out");
+        ResourceAccessException ex = new ResourceAccessException("I/O error", cause);
+        throw ex;
     }
-
-
 }

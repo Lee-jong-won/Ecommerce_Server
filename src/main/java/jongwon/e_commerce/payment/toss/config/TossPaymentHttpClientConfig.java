@@ -57,6 +57,7 @@ public class TossPaymentHttpClientConfig {
                 .build();
     }
 
+
     private String buildBasicAuthHeader(String secretKey, String basicAuthPrefix){
         return basicAuthPrefix + " " + Base64.getEncoder()
                 .encodeToString((secretKey + ":").getBytes(StandardCharsets.UTF_8));

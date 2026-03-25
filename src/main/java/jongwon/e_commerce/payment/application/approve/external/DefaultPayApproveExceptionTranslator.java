@@ -22,7 +22,7 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                 return new PayApproveTimeout();
 
             if(isConnectTimeout(restClientException.getCause()))
-                return new PayApproveFail("TEMPORARY_ERROR",
+                return new PayApproveFail("CONNECTION_TIMEOUT",
                     "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
         }
 

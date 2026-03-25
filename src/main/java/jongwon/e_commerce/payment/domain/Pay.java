@@ -57,7 +57,7 @@ public class Pay {
     }
 
     public void comeplete(){
-        if(payStatus != PayStatus.PENDING){
+        if(payStatus != PayStatus.PENDING && payStatus != PayStatus.TIME_OUT){
             throw new InvalidPayStatusException(
                     "성공은 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
             );

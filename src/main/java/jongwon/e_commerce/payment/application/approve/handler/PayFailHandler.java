@@ -26,10 +26,12 @@ public class PayFailHandler implements PayOutcomeHandler {
     @Override
     @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
-        pay.failed();
-        paymentRepository.save(pay);
 
         PayApproveFail payApproveFail = (PayApproveFail) outcome;
+        if(!payApproveFail.getErrorCode().equals("CONNECTION_TIMEOUT"))
+            pay.failed();
+
+        paymentRepository.save(pay);
 
         return new PayFailureResponse(
                 pay.getPayStatus(),

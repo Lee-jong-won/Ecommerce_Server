@@ -25,7 +25,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.mysql:mysql-connector-j:8.3.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
@@ -36,6 +36,9 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry:2.0.12'
 	implementation 'org.springframework:spring-aspects'
 
+	implementation 'com.h2database:h2'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
@@ -43,10 +46,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.wiremock:wiremock-standalone:3.0.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
-	testImplementation 'org.testcontainers:mysql:1.17.6'
-	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation 'com.mysql:mysql-connector-j:8.3.0'
 	testRuntimeOnly 'com.h2database:h2'
 }
 

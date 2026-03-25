@@ -45,7 +45,7 @@ class DefaultPayApproveExceptionTranslatorTest {
         assertThat(result).isInstanceOf(PayApproveFail.class);
 
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("TEMPORARY_ERROR");
+        assertThat(fail.getErrorCode()).isEqualTo("CONNECTION_TIMEOUT");
     }
 
     @Test

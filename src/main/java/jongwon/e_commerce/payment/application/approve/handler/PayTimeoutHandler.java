@@ -9,6 +9,7 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class PayTimeoutHandler implements PayOutcomeHandler {
     }
 
     @Override
+    @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
         pay.timeout();
         paymentRepository.save(pay);

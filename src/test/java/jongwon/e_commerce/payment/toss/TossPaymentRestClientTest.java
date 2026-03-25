@@ -1,9 +1,11 @@
 package jongwon.e_commerce.payment.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.toss.config.TossPaymentHttpClientConfig;
 import jongwon.e_commerce.payment.toss.config.TossPaymentRetryConfig;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -29,23 +31,17 @@ class TossPaymentRestClientTest {
 
     WireMockServer wireMockServer;
     PaymentApproveClientImpl tossPaymentHttpClient;
+    TossPaymentHttpClientConfigForTest tossPaymentHttpClientConfig = new TossPaymentHttpClientConfigForTest();
 
     @BeforeEach
     void setUp(){
         // wire mock 서버 시작
-        wireMockServer = new WireMockServer(0);
+        wireMockServer = new WireMockServer(8081);
         wireMockServer.start();
 
         // 타임아웃을 위한 정책 설정
-        HttpClient httpClient = HttpClientFactory.create(List.of(
-                ConnectionPolicy.builder().socketTimeout(Timeout.ofMilliseconds(1000))
-                        .build()
-        ));
-
-        RestClient restClient = RestClient.builder()
-                .baseUrl("http://localhost:" + wireMockServer.port())
-                .requestFactory(new HttpComponentsClientHttpRequestFactory(httpClient))
-                .build();
+        HttpClient httpClient = tossPaymentHttpClientConfig.tossHttpClientForTest();
+        RestClient restClient = tossPaymentHttpClientConfig.createTossRestClientForTest(httpClient);
 
         TossPaymentRetryConfig tossPaymentRetryConfig = new TossPaymentRetryConfig();
         RetryTemplate tossPaymentRetryTemplate = tossPaymentRetryConfig.paymentApproveRetryTemplate();

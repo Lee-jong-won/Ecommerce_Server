@@ -13,6 +13,7 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -29,7 +30,6 @@ public class PaySuccessHandler implements PayOutcomeHandler {
     }
 
     @Override
-    @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
         PayApproveSuccess payApproveSuccess = (PayApproveSuccess)outcome;
         PayResult payResult = payApproveSuccess.getPayResult();
