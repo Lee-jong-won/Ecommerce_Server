@@ -1,8 +1,10 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.controller.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
@@ -27,10 +29,12 @@ public class PayFailHandler implements PayOutcomeHandler {
         pay.failed();
         paymentRepository.save(pay);
 
-        return new PayApproveOutcomeResponse(
-                PayStatus.FAILED,
-                "PAYMENT_FAIL",
-                "결제에 실패했습니다" // 결제 실패 유형별 세분화 처리 필요시, payApproveFail에서 정보 추출
+        PayApproveFail payApproveFail = (PayApproveFail) outcome;
+
+        return new PayFailureResponse(
+                pay.getPayStatus(),
+                payApproveFail.getErrorCode(),
+                payApproveFail.getMessage()
         );
     }
 }

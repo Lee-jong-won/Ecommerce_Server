@@ -109,6 +109,6 @@ INSERT INTO pay (
           'paymentKey',
           'MOBILE',
           55000,
-          'COMPLETE',
+          'PENDING',
           TIMESTAMP '2023-01-01 10:00:00.123456'
           );

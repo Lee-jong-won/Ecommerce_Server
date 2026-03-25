@@ -4,10 +4,13 @@ import jongwon.e_commerce.payment.domain.PayStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Getter
-public class PayApproveOutcomeResponse {
+public abstract class PayApproveOutcomeResponse {
+
     private final PayStatus payStatus;
-    private final String code;
-    private final String message;
+
+    protected PayApproveOutcomeResponse(PayStatus payStatus){
+        this.payStatus = payStatus;
+    }
+
 }

@@ -1,10 +1,11 @@
 package jongwon.e_commerce.medium;
 
-import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
+import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
+import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.controller.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,31 +22,30 @@ import static org.assertj.core.api.Assertions.assertThat;
         @Sql(value = "/sql/pay-save-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 })
-public class PayDetailSaverTest {
+class PayFailHandlerTest {
 
     @Autowired
-    PayDetailSaver payDetailSaver;
+    PayFailHandler payFailHandler;
 
     @Autowired
     PaymentRepository paymentRepository;
 
     @Test
-    void 휴대폰_결제_정보가_정상적으로_저장된다(){
+    void 결제_실패가_성공적으로_반영된다(){
         // given
-        PaymentDetail paymentDetail = MPPay.from("010-1234-5678", "DONE", "naver");
+        PayApproveFail payApproveFail = new PayApproveFail(
+                "INVALID_CARD",
+                "카드 정보 오류"
+        );
         Pay pay = paymentRepository.getById(1L);
 
         // when
-        MPPay mpPay = (MPPay) payDetailSaver.save(pay, paymentDetail);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) payFailHandler.handle(pay, payApproveFail);
 
         // then
-        assertThat(mpPay.getId()).isEqualTo(1L);
-        assertThat(mpPay.getPay().getPayMethod()).isEqualTo(PayMethod.MOBILE);
-        assertThat(mpPay.getPay().getPaymentKey()).isEqualTo("paymentKey");
-        assertThat(mpPay.getReceiptUrl()).isEqualTo("naver");
-        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("010-1234-5678");
-        assertThat(mpPay.getSettlementStatus()).isEqualTo("DONE");
+        assertThat(payFailureResponse.getCode()).isEqualTo("INVALID_CARD");
+        assertThat(payFailureResponse.getMessage()).isEqualTo("카드 정보 오류");
+        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.FAILED);
     }
-
 
 }

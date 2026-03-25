@@ -60,7 +60,7 @@ public class PaymentServiceTest {
 
 
         // when
-        Pay updatedPay = paymentService.update(pay.getId(), payResultCommon);
+        Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResultCommon);
 
         // then
         assertThat(updatedPay.getId()).isEqualTo(pay.getId());

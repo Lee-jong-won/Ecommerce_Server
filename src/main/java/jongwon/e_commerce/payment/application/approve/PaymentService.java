@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
+import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
@@ -40,10 +41,11 @@ public class PaymentService {
     }
 
     @Transactional
-    public Pay update(long id, PayResult.PayResultCommon payResultCommon){
+    public Pay updatePayResult(long id, PayResult.PayResultCommon payResultCommon){
         Pay pay = getById(id);
         pay = pay.reflectPaySuccess(payResultCommon);
         return paymentRepository.save(pay);
     }
+
 
 }

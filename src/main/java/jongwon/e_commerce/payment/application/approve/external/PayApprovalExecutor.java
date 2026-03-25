@@ -5,6 +5,7 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.toss.PaymentApproveClient;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 
 @Service
+@Builder
 @RequiredArgsConstructor
 public class PayApprovalExecutor {
 

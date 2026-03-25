@@ -4,6 +4,7 @@ import jongwon.e_commerce.order.application.OrderStockProcessor;
 import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.controller.PaySuccessResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
@@ -34,7 +35,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         PayResult payResult = payApproveSuccess.getPayResult();
 
         // 1. 결제 공통 정보 업데이트
-        Pay updatedPay = paymentService.update(pay.getId(), payResult.getPayResultCommon());
+        Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResult.getPayResultCommon());
 
         // 2. 결제 상세 정보 저장
         payDetailSaver.save(updatedPay, payResult.getPaymentDetail());
@@ -43,10 +44,10 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         orderStockProcessor.deductStockOf(pay.getOrder());
 
         // 4. 응답 생성
-        return new PayApproveOutcomeResponse(
-                PayStatus.COMPLETE,
-                "PAYMENT_SUCCESS",
-                "결제에 성공했습니다"
+        return new PaySuccessResponse(
+                updatedPay.getPayStatus(),
+                updatedPay.getPayMethod(),
+                updatedPay.getPayAmount()
         );
     }
 }
