@@ -41,8 +41,6 @@ public class PaymentServiceTest {
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
         assertThat(pay.getPayAmount()).isEqualTo(55000);
         assertThat(pay.getPaymentKey()).isEqualTo("paymentKey");
-        assertThat(pay.getCreatedAt()).isNotNull();
-        assertThat(pay.getUpdatedAt()).isNotNull();
     }
 
     @Test

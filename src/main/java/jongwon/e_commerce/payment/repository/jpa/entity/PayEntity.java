@@ -46,12 +46,12 @@ public class PayEntity {
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
 
-    @CreationTimestamp // INSERT 시 자동으로 값을 채워줌
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false,
+            insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
-    @UpdateTimestamp // UPDATE 시 자동으로 값을 채워줌
+    @Column(name = "updated_at", nullable = false, updatable = false,
+            insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
     public static PayEntity from(Pay pay){
