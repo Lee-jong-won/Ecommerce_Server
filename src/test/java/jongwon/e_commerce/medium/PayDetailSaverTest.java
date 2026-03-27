@@ -39,7 +39,7 @@ public class PayDetailSaverTest {
         MPPay mpPay = (MPPay) payDetailSaver.save(pay, paymentDetail);
 
         // then
-        assertThat(mpPay.getId()).isEqualTo(1L);
+        assertThat(mpPay.getId()).isNotNull();
         assertThat(mpPay.getPay().getPayMethod()).isEqualTo(PayMethod.MOBILE);
         assertThat(mpPay.getPay().getPaymentKey()).isEqualTo("paymentKey");
         assertThat(mpPay.getReceiptUrl()).isEqualTo("naver");

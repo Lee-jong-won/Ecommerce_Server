@@ -4,8 +4,10 @@ import jongwon.e_commerce.member.repository.jpa.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
 import java.util.Optional;
 
@@ -13,7 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(showSql = true)
 @TestPropertySource("classpath:application-test.properties")
-@Sql(value = "/sql/member-repository-test-data.sql")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SqlGroup({
+        @Sql(value = "/sql/member-repository-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+})
 class MemberJpaRepositoryTest {
 
     @Autowired

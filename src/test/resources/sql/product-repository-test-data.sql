@@ -5,7 +5,7 @@ INSERT INTO product (
     product_status,
     stock_quantity
 ) VALUES (
-             1,
+             11,
              'labtob',
              100000,
              'READY',

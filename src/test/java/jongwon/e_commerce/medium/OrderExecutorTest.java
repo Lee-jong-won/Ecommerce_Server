@@ -31,15 +31,15 @@ public class OrderExecutorTest {
     void 주문이_정상적으로_완료된다(){
 
         // given
-        Member member = memberRepository.getById(1L);
+        Member member = memberRepository.getById(3L);
 
         OrderItemCreate orderItemCreate1 = OrderItemCreate.builder()
                 .stockQuantity(2)
-                .productId(1L).build();
+                .productId(3L).build();
 
         OrderItemCreate orderItemCreate2 = OrderItemCreate.builder()
                 .stockQuantity(1)
-                .productId(2L).build();
+                .productId(4L).build();
 
         List<OrderItemCreate> orderItemCreateList = List.of(orderItemCreate1, orderItemCreate2);
 

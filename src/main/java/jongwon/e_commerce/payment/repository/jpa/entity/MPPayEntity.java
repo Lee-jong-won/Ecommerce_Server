@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "mppay")
+@Table(name = "mobile_phone_pay_detail")
 @NoArgsConstructor
 public class MPPayEntity implements PayDetailEntity {
 

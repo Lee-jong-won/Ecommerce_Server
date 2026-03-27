@@ -6,7 +6,7 @@ INSERT INTO member (
     email,
     addr
 ) VALUES (
-             1,
+             2,
              'testUser',
              'password123',
              'gildong',
@@ -53,7 +53,7 @@ INSERT INTO orders (
 ) VALUES (
              1,
              'test-id',
-             1,
+             2,
              '노트북 외 1건',
              'ORDERED',
              55000,

@@ -6,7 +6,7 @@ INSERT INTO member (
     email,
     addr
 ) VALUES (
-             5,
+             4,
              'testUser',
              'password123',
              'gildong',
@@ -21,7 +21,7 @@ INSERT INTO product (
     product_status,
     stock_quantity
 ) VALUES (
-             7,
+             5,
              'labtob',
              50000,
              'SELLING',
@@ -35,7 +35,7 @@ INSERT INTO product (
     product_status,
     stock_quantity
 ) VALUES (
-             8,
+             6,
              'mobile',
              5000,
              'SELLING',
@@ -51,9 +51,9 @@ INSERT INTO orders (
     total_amount,
     ordered_at
 ) VALUES (
-             3,
+             2,
              'test-id',
-             5,
+             4,
              '노트북 외 1건',
              'ORDERED',
              55000,
@@ -69,9 +69,9 @@ INSERT INTO order_item (
     order_price,
     order_quantity
 ) VALUES (
-             1,
-             3,
-             7,
+             5,
+             2,
+             5,
              'labtob',
              50000,
              1
@@ -86,29 +86,10 @@ INSERT INTO order_item (
     order_price,
     order_quantity
 ) VALUES (
+             6,
              2,
-             3,
-             8,
+             6,
              'mobile',
              5000,
              1
          );
-
--- Pay
-INSERT INTO pay (
-    pay_id,
-    fk_order_id,
-    payment_id,
-    pay_method,
-    pay_amount,
-    pay_status,
-    approved_at
-) VALUES (
-          1,
-          3,
-          'paymentKey',
-          'MOBILE',
-          55000,
-          'PENDING',
-          TIMESTAMP '2023-01-01 10:00:00.123456'
-          );

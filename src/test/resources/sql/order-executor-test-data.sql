@@ -6,7 +6,7 @@ INSERT INTO member (
     email,
     addr
 ) VALUES (
-             1,
+             3,
              'testUser',
              'password123',
              'gildong',
@@ -21,7 +21,7 @@ INSERT INTO product (
     product_status,
     stock_quantity
 ) VALUES (
-             1,
+             3,
              'labtob',
              50000,
              'READY',
@@ -35,7 +35,7 @@ INSERT INTO product (
     product_status,
     stock_quantity
 ) VALUES (
-             2,
+             4,
              'mobile',
              5000,
              'SELLING',

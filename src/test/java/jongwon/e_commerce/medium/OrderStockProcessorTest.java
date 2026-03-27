@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @SqlGroup({
-@Sql(value = "/sql/order-create-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+@Sql(value = "/sql/order-stock-processor-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
 @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 })
 public class OrderStockProcessorTest {
@@ -34,14 +34,14 @@ public class OrderStockProcessorTest {
     @Test
     void 재고가_성공적으로_감소된다(){
         // given
-        Order order = orderRepository.getById(1L);
+        Order order = orderRepository.getById(2L);
 
         // when
         orderStockProcessor.deductStockOf(order);
 
         // then
-        Product product1 = productRepository.getById(1L);
-        Product product2 = productRepository.getById(2L);
+        Product product1 = productRepository.getById(5L);
+        Product product2 = productRepository.getById(6L);
 
         assertThat(product1.getStockQuantity()).isEqualTo(9);
         assertThat(product2.getStockQuantity()).isEqualTo(9);
@@ -50,14 +50,14 @@ public class OrderStockProcessorTest {
     @Test
     void 재고가_성공적으로_증가한다(){
         // given
-        Order order = orderRepository.getById(1L);
+        Order order = orderRepository.getById(2L);
 
         // when
         orderStockProcessor.restoreStockOf(order);
 
         // then
-        Product product1 = productRepository.getById(1L);
-        Product product2 = productRepository.getById(2L);
+        Product product1 = productRepository.getById(5L);
+        Product product2 = productRepository.getById(6L);
 
         assertThat(product1.getStockQuantity()).isEqualTo(11);
         assertThat(product2.getStockQuantity()).isEqualTo(11);
