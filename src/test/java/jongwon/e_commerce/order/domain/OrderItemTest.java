@@ -15,7 +15,7 @@ class OrderItemTest {
         product.setStatus(ProductStatus.SELLING);
 
         // when
-        OrderItem orderItem = OrderItem.from(product, 2);
+        OrderItem orderItem = OrderItem.createOrderItem(product, 2);
 
         // then
         assertThat(orderItem.getProduct()).isEqualTo(product);
@@ -30,7 +30,7 @@ class OrderItemTest {
         Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
 
-        OrderItem orderItem = OrderItem.from(product, 3);
+        OrderItem orderItem = OrderItem.createOrderItem(product, 3);
 
         // when
         int amount = orderItem.calculateAmount();

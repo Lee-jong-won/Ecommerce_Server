@@ -1,5 +1,8 @@
 package jongwon.e_commerce.medium;
 
+import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.controller.PayFailureResponse;
@@ -7,25 +10,37 @@ import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
+import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-@SqlGroup({
-        @Sql(value = "/sql/pay-save-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
+@Transactional
 class PayFailHandlerTest {
 
     @Autowired
     PayFailHandler payFailHandler;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     PaymentRepository paymentRepository;
@@ -33,11 +48,17 @@ class PayFailHandlerTest {
     @Test
     void 결제_실패가_성공적으로_반영된다(){
         // given
+        Pay pay = TestDataFactory.finishPayPreProcess(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository,
+                paymentRepository
+        );
         PayApproveFail payApproveFail = new PayApproveFail(
                 "INVALID_CARD",
                 "카드 정보 오류"
         );
-        Pay pay = paymentRepository.getById(1L);
 
         // when
         PayFailureResponse payFailureResponse = (PayFailureResponse) payFailHandler.handle(pay, payApproveFail);

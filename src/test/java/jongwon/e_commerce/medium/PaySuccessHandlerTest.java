@@ -1,5 +1,8 @@
 package jongwon.e_commerce.medium;
 
+import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PaySuccessHandler;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.controller.PaySuccessResponse;
@@ -10,12 +13,15 @@ import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
+import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 
@@ -24,14 +30,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-@SqlGroup({
-        @Sql(value = "/sql/pay-save-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
+@Transactional
 class PaySuccessHandlerTest {
 
     @Autowired
     PaySuccessHandler paySuccessHandler;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     PaymentRepository paymentRepository;
@@ -39,29 +54,36 @@ class PaySuccessHandlerTest {
     @Test
     void 결제_성공_핸들러가_성공적으로_동작한다(){
         // given
+        Pay pay = TestDataFactory.finishPayPreProcess(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository,
+                paymentRepository);
 
-        // 결제 공통 정보
-        OffsetDateTime approvedAt = OffsetDateTime.now();
-        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
-                payMethod(PayMethod.MOBILE).
-                approvedAt(approvedAt).
-                build();
+        // 결제 성공 결과
+        PayApproveSuccess payApproveSuccess = new PayApproveSuccess(
+                PayResult.builder().
+                    payResultCommon(
+                        PayResult.PayResultCommon.builder().
+                                payMethod(PayMethod.MOBILE).
+                                approvedAt(OffsetDateTime.now()).
+                                build()).
+                    paymentDetail(
+                        MPPay.builder().
+                                customerMobilePhone("010-1234-5678").
+                                settlementStatus("DONE").
+                                receiptUrl("naver").
+                                build()
+                        ).build());
 
-        // 결제 상세 정보
-        MPPay mpPay = MPPay.from("010-1234-5678", "DONE", "naver");
-
-        // 결제 공통 정보 + 결제 상세 정보 = 결제 결과
-        PayResult payResult = PayResult.builder().
-                payResultCommon(payResultCommon).paymentDetail(mpPay).build();
-        PayApproveSuccess payApproveSuccess = new PayApproveSuccess(payResult);
-        Pay pay = paymentRepository.getById(1L);
 
         // when
         PaySuccessResponse response = (PaySuccessResponse) paySuccessHandler.handle(pay, payApproveSuccess);
 
         // then
         assertThat(response.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
-        assertThat(response.getPayAmount()).isEqualTo(55000);
+        assertThat(response.getPayAmount()).isEqualTo(pay.getPayAmount());
         assertThat(response.getPayMethod()).isEqualTo(PayMethod.MOBILE);
     }
 

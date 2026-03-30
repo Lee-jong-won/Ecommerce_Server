@@ -47,8 +47,7 @@ public class TossPaymentApproveResponse {
         public String settlementStatus;
         public String receiptUrl;
         public PaymentDetail toPaymentDetail(){
-            return MPPay.
-                    from(customerMobilePhone, settlementStatus, receiptUrl);
+            return MPPay.createMPPay(customerMobilePhone, settlementStatus, receiptUrl);
         }
     }
 }

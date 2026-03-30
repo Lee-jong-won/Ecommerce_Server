@@ -14,7 +14,7 @@ class MPPayTest {
         String receiptUrl = "http://receipt.url";
 
         // when
-        MPPay mpPay = MPPay.from(customerMobilePhone, settlementStatus, receiptUrl);
+        MPPay mpPay = MPPay.createMPPay(customerMobilePhone, settlementStatus, receiptUrl);
 
         // then
         assertThat(mpPay.getCustomerMobilePhone()).isEqualTo(customerMobilePhone);

@@ -1,5 +1,7 @@
-package jongwon.e_commerce.product.domain;
+package jongwon.e_commerce.order.product.domain;
 
+import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;

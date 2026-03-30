@@ -15,12 +15,9 @@ public class OrderItem {
     private int orderPrice;
     private int orderQuantity;
 
-    public void setOrder(Order order){
-        this.order = order;
-    }
 
     //==생성 메소드==//
-    public static OrderItem from(Product product, int orderQuantity){
+    public static OrderItem createOrderItem(Product product, int orderQuantity){
         return OrderItem.builder().
                 product(product).
                 productName(product.getProductName()).
@@ -32,4 +29,8 @@ public class OrderItem {
     public int calculateAmount(){
         return orderPrice * orderQuantity;
     }
+    public void setOrder(Order order){
+        this.order = order;
+    }
+
 }

@@ -24,8 +24,8 @@ class OrderTest {
         Product product2 = Product.from("마우스", 50000);
         product2.setStatus(ProductStatus.SELLING);
 
-        OrderItem item1 = OrderItem.from(product1, 2); // 200000
-        OrderItem item2 = OrderItem.from(product2, 1); // 50000
+        OrderItem item1 = OrderItem.createOrderItem(product1, 2); // 200000
+        OrderItem item2 = OrderItem.createOrderItem(product2, 1); // 50000
 
         List<OrderItem> items = List.of(item1, item2);
 
@@ -52,12 +52,12 @@ class OrderTest {
         Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
 
-        OrderItem orderItem = OrderItem.from(product, 2);
+        OrderItem orderItem = OrderItem.createOrderItem(product, 2);
 
         List<OrderItem> items = List.of(orderItem);
 
         // when
-        Order order = Order.from(
+        Order order = Order.createOrder(
                 member,
                 LocalDateTime.now(),
                 "order-1",
@@ -135,9 +135,9 @@ class OrderTest {
         Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
 
-        OrderItem item = OrderItem.from(product, 1);
+        OrderItem item = OrderItem.createOrderItem(product, 1);
 
-        Order order = Order.from(
+        Order order = Order.createOrder(
                 member,
                 LocalDateTime.now(),
                 "order-1",

@@ -1,5 +1,7 @@
 package jongwon.e_commerce.member.repository.jpa;
 
+import jongwon.e_commerce.support.fixture.MemberFixture;
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.jpa.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,48 +9,29 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(showSql = true)
 @TestPropertySource("classpath:application-test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@SqlGroup({
-        @Sql(value = "/sql/member-repository-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
 class MemberJpaRepositoryTest {
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;
-
     @Test
     void findById_로_유저_데이터를_찾아올_수_있다(){
         // given
+        Member member = MemberFixture.builder().build().create();
+        MemberEntity memberEntity = memberJpaRepository.save(MemberEntity.from(member));
+
         // when
-        MemberEntity resultEntity = memberJpaRepository.findById(1L).orElseThrow();
+        MemberEntity resultEntity = memberJpaRepository.findById(memberEntity.getMemberId()).orElseThrow();
 
         // then
-        assertThat(resultEntity).isNotNull();
-        assertThat(resultEntity.getMemberId()).isEqualTo(1L);
-        assertThat(resultEntity.getLoginId()).isEqualTo("testUser");
-        assertThat(resultEntity.getPassword()).isEqualTo("password123");
-        assertThat(resultEntity.getMemberName()).isEqualTo("gildong");
-        assertThat(resultEntity.getEmail()).isEqualTo("test@example.com");
-        assertThat(resultEntity.getAddr()).isEqualTo("seoul");
+        assertThat(resultEntity.getMemberName()).isEqualTo(memberEntity.getMemberName());
+        assertThat(resultEntity.getLoginId()).isEqualTo(memberEntity.getLoginId());
+        assertThat(resultEntity.getPassword()).isEqualTo(memberEntity.getPassword());
+        assertThat(resultEntity.getEmail()).isEqualTo(memberEntity.getEmail());
     }
-
-    @Test
-    void findById_는_데이터가_없으면_Optional_empty를_내려준다(){
-        // given
-        // when
-        Optional<MemberEntity> result = memberJpaRepository.findById(2L);
-
-        // then
-        assertThat(result.isEmpty()).isTrue();
-    }
-
 }

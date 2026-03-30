@@ -170,9 +170,9 @@ class PayTest {
         Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);
 
-        OrderItem item = OrderItem.from(product, 1);
+        OrderItem item = OrderItem.createOrderItem(product, 1);
 
-        Order order = Order.from(
+        Order order = Order.createOrder(
                 member,
                 LocalDateTime.now(),
                 "order-1",

@@ -9,6 +9,7 @@ import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class OrderEntity {
     @Column(name = "order_id")
     private String orderId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_member_id", nullable = false)
     private MemberEntity memberEntity;
 

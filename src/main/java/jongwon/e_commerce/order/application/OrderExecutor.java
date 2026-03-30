@@ -28,7 +28,10 @@ public class OrderExecutor {
     private final ProductRepository productRepository;
 
     @Transactional
-    public Order order(Member member, String orderName, List<OrderItemCreate> requests){
+    public Order order(Member member,
+                       String orderName,
+                       String orderId,
+                       List<OrderItemCreate> requests){
         //주문 - 상품 만들기
         List<OrderItem> orderItems = new ArrayList<>();
         for(int i = 0; i < requests.size(); i++){
@@ -38,25 +41,25 @@ public class OrderExecutor {
             int stockQuantity = orderItemCreate.getStockQuantity();
 
             Product product = productRepository.getById(productId);
-            OrderItem orderItem = OrderItem.from(product, stockQuantity);
+            OrderItem orderItem = OrderItem.createOrderItem(product, stockQuantity);
 
             orderItems.add(orderItem);
         }
 
         // 주문 생성
-        Order order = Order.from(member,
+        Order order = Order.createOrder(member,
                 LocalDateTime.now(),
-                UUID.randomUUID().toString(),
+                orderId,
                 orderItems,
                 orderName);
 
         // 주문과 주문 상품 저장
         Order savedOrder = orderRepository.save(order);
+
         for(OrderItem orderItem : orderItems) {
             orderItem.setOrder(savedOrder);
             orderItemRepository.save(orderItem);
         }
-
         return savedOrder;
     }
 }

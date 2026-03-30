@@ -1,9 +1,13 @@
 package jongwon.e_commerce.medium;
 
+import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientConnTimeout;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientErrorResponse;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientNormal;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientReadTimeout;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.external.DefaultPayApproveExceptionTranslator;
@@ -14,12 +18,16 @@ import jongwon.e_commerce.payment.controller.PaySuccessResponse;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.repository.PaymentRepository;
+import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,15 +35,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-@SqlGroup({
-        @Sql(value = "/sql/order-create-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
+@Transactional
 public class PaymentApprovalServiceTest {
     @Autowired
     PaymentService paymentService;
     @Autowired
     List<PayOutcomeHandler> outcomeHandlers;
+    @Autowired
+    MemberRepository memberRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    OrderRepository orderRepository;
+    @Autowired
+    OrderItemRepository orderItemRepository;
+    @Autowired
+    PaymentRepository paymentRepository;
     PaymentApprovalService paymentApprovalService;
     PayApprovalExecutor payApprovalExecutor;
 
@@ -52,8 +67,13 @@ public class PaymentApprovalServiceTest {
                 outcomeHandlers(outcomeHandlers).
                 build();
 
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", 15000);
 
         // when
         PaySuccessResponse response = (PaySuccessResponse) paymentApprovalService.approvePayment(attempt);
@@ -61,7 +81,7 @@ public class PaymentApprovalServiceTest {
         // then
         assertThat(response.getPayMethod()).isEqualTo(PayMethod.MOBILE);
         assertThat(response.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
-        assertThat(response.getPayAmount()).isEqualTo(55000);
+        assertThat(response.getPayAmount()).isEqualTo(15000);
     }
 
     @Test
@@ -76,8 +96,13 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", 15000);
 
         // when
         PayFailureResponse response = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);
@@ -99,8 +124,13 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", 15000);
 
         // when
         PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);
@@ -123,8 +153,13 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", 15000);
 
         // when
         PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);

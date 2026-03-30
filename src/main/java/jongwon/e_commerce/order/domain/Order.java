@@ -35,7 +35,7 @@ public class Order {
         return sum;
     }
 
-    public static Order from(Member member,
+    public static Order createOrder(Member member,
                              LocalDateTime orderedAt,
                              String orderId,
                              List<OrderItem> orderItems,

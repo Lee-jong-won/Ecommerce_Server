@@ -1,5 +1,9 @@
 package jongwon.e_commerce.medium;
 
+import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
@@ -8,6 +12,8 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
+import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +24,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.OffsetDateTime;
@@ -31,41 +38,45 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("classpath:application-test.properties")
-@SqlGroup({
-        @Sql(value = "/sql/order-create-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-})
+@Transactional
 public class PaymentApprovalControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    MockMvc mockMvc;
+    @Autowired
+    MemberRepository memberRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    OrderRepository orderRepository;
+    @Autowired
+    OrderItemRepository orderItemRepository;
+    ObjectMapper objectMapper = new ObjectMapper();
     @MockitoBean
     PayApprovalExecutor payApprovalExecutor;
+
 
     @Test
     void 사용자에게_결제성공이_일어날_수_있다() throws Exception {
         // given
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
-
-        // 결제 공통 정보
-        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
-                payMethod(PayMethod.MOBILE).
-                approvedAt(OffsetDateTime.now()).
-                build();
-
-        // 결제 상세 정보
-        MPPay mpPay = MPPay.builder().
-                customerMobilePhone("010-1234-5678").
-                settlementStatus("DONE").
-                receiptUrl("naver")
-                .build();
-
-        // 결제 공통 정보 + 결제 상세 정보 = 외부API 호출 결과
-        PayResult payResult = PayResult.builder().
-                payResultCommon(payResultCommon).paymentDetail(mpPay).build();
-        PayApproveSuccess payApproveSuccess = new PayApproveSuccess(payResult);
+                "ORDER-DEFAULT", order.getTotalAmount());
+        PayApproveSuccess payApproveSuccess = new PayApproveSuccess(PayResult.builder().
+                payResultCommon(PayResult.PayResultCommon.builder().
+                        payMethod(PayMethod.MOBILE).
+                        approvedAt(OffsetDateTime.now()).
+                        build()).
+                paymentDetail(MPPay.builder().
+                        customerMobilePhone("010-1234-5678").
+                        settlementStatus("DONE").
+                        receiptUrl("naver")
+                        .build()).
+                build());
         when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
 
         // when && then
@@ -82,8 +93,13 @@ public class PaymentApprovalControllerTest {
     @Test
     void 사용자에게_결재실패가_일어날수있다() throws Exception {
         // given
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", order.getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("INVALID_CARD",
@@ -103,10 +119,14 @@ public class PaymentApprovalControllerTest {
 
     @Test
     void 사용자에게_Read타임아웃이_일어날_수_있다() throws Exception {
-
         // given
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", order.getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
@@ -127,8 +147,13 @@ public class PaymentApprovalControllerTest {
     void 사용자에게_Conn타임아웃이_일어날_수_있다() throws Exception {
 
         // given
+        Order order = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "test-id", 55000);
+                "ORDER-DEFAULT", order.getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("CONNECTION_TIMEOUT",

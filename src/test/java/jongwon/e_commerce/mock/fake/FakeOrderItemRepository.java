@@ -44,7 +44,4 @@ public class FakeOrderItemRepository implements OrderItemRepository {
                 .toList();
     }
 
-    public void clearData(){
-        data.clear();
-    }
 }

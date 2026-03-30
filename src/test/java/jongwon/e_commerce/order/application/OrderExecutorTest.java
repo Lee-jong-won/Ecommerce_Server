@@ -2,6 +2,8 @@ package jongwon.e_commerce.order.application;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.domain.MemberCreate;
+import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.mock.fake.FakeMemberRepository;
 import jongwon.e_commerce.mock.fake.FakeOrderItemRepository;
 import jongwon.e_commerce.mock.fake.FakeOrderRepository;
 import jongwon.e_commerce.mock.fake.FakeProductRepository;
@@ -12,8 +14,11 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.PrepareOrderData;
+import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import java.util.List;
 
@@ -23,12 +28,13 @@ class OrderExecutorTest {
 
     private OrderExecutor orderExecutor;
     private ProductRepository productRepository;
+    private MemberRepository memberRepository;
     private OrderRepository orderRepository;
     private OrderItemRepository orderItemRepository;
-
     @BeforeEach
     void init(){
         // 테스트 모듈 초기화
+        memberRepository = new FakeMemberRepository();
         productRepository = new FakeProductRepository();
         orderRepository = new FakeOrderRepository();
         orderItemRepository = new FakeOrderItemRepository();
@@ -38,50 +44,24 @@ class OrderExecutorTest {
                 orderRepository(orderRepository).
                 orderItemRepository(orderItemRepository).
                 build();
-
-        // 상품 저장
-        Product product1 = Product.from("노트북", 20000);
-        product1.changeStock(10);
-        product1.setStatus(ProductStatus.SELLING);
-
-        Product product2 = Product.from("핸드폰", 5000);
-        product2.changeStock(10);
-        product2.setStatus(ProductStatus.SELLING);
-
-        productRepository.save(product1);
-        productRepository.save(product2);
     }
 
     @Test
-    void 주문이_정상적으로_완료된다(){
-        // given
-        Member member = Member.from(
-                MemberCreate.builder()
-                        .loginId("testUser")
-                        .password("1234")
-                        .memberName("홍길동")
-                        .email("test@test.com")
-                        .addr("서울")
-                        .build()
-        );
-
-        OrderItemCreate orderItemCreate1 = OrderItemCreate.builder()
-                .stockQuantity(2)
-                .productId(1L).build();
-
-        OrderItemCreate orderItemCreate2 = OrderItemCreate.builder()
-                .stockQuantity(1)
-                .productId(2L).build();
-
-        List<OrderItemCreate> orderItemCreateList = List.of(orderItemCreate1, orderItemCreate2);
+    void 주문이_정상적으로_진행된다(){
+        // give
+        PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
 
         // when
-        Order order = orderExecutor.order(member, "노트북 외 1건", orderItemCreateList);
+        Order order = orderExecutor.order(prepareOrderData.getMember(),
+                "order1",
+                "order1",
+                prepareOrderData.getOrderItemCreates());
+        orderItemRepository.findByOrder(order).size();
 
         // then
         assertThat(orderItemRepository.findByOrder(order).size()).isEqualTo(2);
-        assertThat(order.getTotalAmount()).isEqualTo(45000);
-        assertThat(order.getOrderName()).isEqualTo("노트북 외 1건");
+        assertThat(order.getTotalAmount()).isEqualTo(15000);
+        assertThat(order.getOrderName()).isEqualTo("order1");
     }
 
 }

@@ -32,7 +32,7 @@ public class MPPay implements PaymentDetail {
         return MPPayEntity.from(this);
     }
 
-    public static MPPay from(
+    public static MPPay createMPPay(
             String customerMobilePhone,
             String settlementStatus,
             String receiptUrl){
