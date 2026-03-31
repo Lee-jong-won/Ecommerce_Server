@@ -16,6 +16,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        log.info("authInterceptor 시작");
         String loginId = request.getHeader("X-MOCK-USER-LOGINID");
         if(loginId == null || loginId.equals("")){
             response.setStatus(401);

@@ -1,4 +1,4 @@
-package jongwon.e_commerce.config.medium;
+package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.MemberRepository;

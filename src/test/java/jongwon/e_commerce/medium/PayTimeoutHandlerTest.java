@@ -1,14 +1,13 @@
-package jongwon.e_commerce.config.medium;
+package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
-import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.application.approve.handler.PayTimeoutHandler;
 import jongwon.e_commerce.payment.controller.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -25,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
-class PayFailHandlerTest {
+class PayTimeoutHandlerTest {
 
     @Autowired
-    PayFailHandler payFailHandler;
+    PayTimeoutHandler payTimeoutHandler;
 
     @Autowired
     MemberRepository memberRepository;
@@ -46,7 +45,7 @@ class PayFailHandlerTest {
     PaymentRepository paymentRepository;
 
     @Test
-    void 결제_실패가_성공적으로_반영된다(){
+    void 결제에_타임아웃이_성공적으로_반영된다(){
         // given
         Pay pay = TestDataFactory.finishPayPreProcess(
                 memberRepository,
@@ -55,18 +54,16 @@ class PayFailHandlerTest {
                 orderRepository,
                 paymentRepository
         );
-        PayApproveFail payApproveFail = new PayApproveFail(
-                "INVALID_CARD",
-                "카드 정보 오류"
-        );
+        PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payFailHandler.handle(pay, payApproveFail);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, payApproveTimeout);
 
         // then
-        assertThat(payFailureResponse.getCode()).isEqualTo("INVALID_CARD");
-        assertThat(payFailureResponse.getMessage()).isEqualTo("카드 정보 오류");
-        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
+        assertThat(payFailureResponse.getCode()).isEqualTo("PAYMENT_TIMEOUT");
+        assertThat(payFailureResponse.getMessage()).isEqualTo("결제 시도가 많습니다. 다시 시도해주세요");
     }
+
 
 }

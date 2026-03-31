@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderExecutor orderExecutor;
-
     @PostMapping
     public ResponseEntity<OrderResponse> order(
             @RequestBody OrderCreate orderCreate,

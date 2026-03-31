@@ -1,11 +1,13 @@
 package jongwon.e_commerce.member.controller;
 
 import jongwon.e_commerce.member.domain.Member;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
+@AllArgsConstructor
 public class MemberResponse {
 
     private String memberName;

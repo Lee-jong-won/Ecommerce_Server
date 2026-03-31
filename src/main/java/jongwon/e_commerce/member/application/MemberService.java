@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Service
 @Builder
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -43,10 +44,5 @@ public class MemberService {
                         () -> new ResourceNotFoundException("User", loginForm.getLoginId())
                 );
         member.login(LocalDateTime.now());
-    }
-
-    @Transactional
-    public void deleteById(long id){
-
     }
 }
