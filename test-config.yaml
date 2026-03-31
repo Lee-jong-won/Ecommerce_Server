@@ -1,0 +1,24 @@
+config:
+  target: "http://64.176.226.236:8080"
+
+  phases:
+    - duration: 60
+      arrivalRate: 5
+
+  defaults:
+    headers:
+      Content-Type: application/json
+
+scenarios:
+  - name: "low traffic order test"
+    flow:
+      - post:
+          url: "/api/order"
+          headers:
+            X-MOCK-USER-LOGINID: "user-{{ $randomInt(1,1000) }}"
+          json:
+            orderName: "order-{{ $randomString() }}"
+            orderId: "order-{{ $randomString() }}"
+            orderItemCreates:
+              - productId: "{{ $randomInt(1,500) }}"
+                quantity: 1
