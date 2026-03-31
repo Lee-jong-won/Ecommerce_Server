@@ -2,10 +2,10 @@ package jongwon.e_commerce.common.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
     public ResourceNotFoundException(String datasource, long id){
-        super(datasource + "에서 ID " + id + "를 찾을 수 없습니다.");
+        super("Could not find " + id + " from " + datasource);
     }
 
     public ResourceNotFoundException(String datasource, String id){
-        super(datasource + "에서 ID" + id + "를 찾을 수 없습니다.");
+        super("Could not find " + id + " from " + datasource);
     }
 }

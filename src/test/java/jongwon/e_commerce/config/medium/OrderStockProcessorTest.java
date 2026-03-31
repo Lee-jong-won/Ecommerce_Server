@@ -1,4 +1,4 @@
-package jongwon.e_commerce.medium;
+package jongwon.e_commerce.config.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.application.OrderStockProcessor;

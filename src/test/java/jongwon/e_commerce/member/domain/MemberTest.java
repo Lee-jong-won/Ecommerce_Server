@@ -18,7 +18,7 @@ class MemberTest {
                 .build();
 
         // when
-        Member member = Member.from(memberCreate);
+        Member member = Member.createMember(memberCreate);
 
         // then
         assertThat(member).isNotNull();

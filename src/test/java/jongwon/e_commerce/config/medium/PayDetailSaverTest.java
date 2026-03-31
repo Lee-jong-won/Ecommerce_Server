@@ -1,14 +1,14 @@
-package jongwon.e_commerce.medium;
+package jongwon.e_commerce.config.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
-import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.PayFailureResponse;
+import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
+import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.domain.detail.MPPay;
+import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -25,48 +25,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
-class PayFailHandlerTest {
+public class PayDetailSaverTest {
 
     @Autowired
-    PayFailHandler payFailHandler;
-
+    PayDetailSaver payDetailSaver;
     @Autowired
     MemberRepository memberRepository;
-
     @Autowired
     ProductRepository productRepository;
-
     @Autowired
     OrderItemRepository orderItemRepository;
-
     @Autowired
     OrderRepository orderRepository;
-
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    MPPayRepository mpPayRepository;
 
     @Test
-    void 결제_실패가_성공적으로_반영된다(){
+    void 휴대폰_결제_정보가_성공적으로_저장된다(){
         // given
-        Pay pay = TestDataFactory.finishPayPreProcess(
+        Pay pay = TestDataFactory.reflectPayCommonResultAfterCallingApi(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository,
-                paymentRepository
-        );
-        PayApproveFail payApproveFail = new PayApproveFail(
-                "INVALID_CARD",
-                "카드 정보 오류"
-        );
+                paymentRepository);
+        PaymentDetail paymentDetail = MPPay.createMPPay("010-1234-5678", "DONE", "naver");
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payFailHandler.handle(pay, payApproveFail);
+        MPPay mpPay = (MPPay) payDetailSaver.save(pay, paymentDetail);
 
         // then
-        assertThat(payFailureResponse.getCode()).isEqualTo("INVALID_CARD");
-        assertThat(payFailureResponse.getMessage()).isEqualTo("카드 정보 오류");
-        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(mpPay.getId()).isNotNull();
+        assertThat(mpPay.getPay()).isNotNull();
+        assertThat(mpPay.getReceiptUrl()).isEqualTo("naver");
+        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("010-1234-5678");
+        assertThat(mpPay.getSettlementStatus()).isEqualTo("DONE");
     }
 
 }

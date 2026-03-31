@@ -21,6 +21,7 @@ public class PaymentApprovalController {
 
     @PostMapping
     public ResponseEntity<PayApproveOutcomeResponse> payApprove(@RequestBody PayApproveAttempt attempt){
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(paymentApprovalService.approvePayment(attempt));
     }

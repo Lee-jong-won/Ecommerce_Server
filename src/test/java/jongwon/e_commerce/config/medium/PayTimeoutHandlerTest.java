@@ -1,14 +1,13 @@
-package jongwon.e_commerce.medium;
+package jongwon.e_commerce.config.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
+import jongwon.e_commerce.payment.application.approve.handler.PayTimeoutHandler;
+import jongwon.e_commerce.payment.controller.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
-import jongwon.e_commerce.payment.repository.MPPayRepository;
+import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -25,43 +24,46 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @Transactional
-public class PayDetailSaverTest {
+class PayTimeoutHandlerTest {
 
     @Autowired
-    PayDetailSaver payDetailSaver;
+    PayTimeoutHandler payTimeoutHandler;
+
     @Autowired
     MemberRepository memberRepository;
+
     @Autowired
     ProductRepository productRepository;
+
     @Autowired
     OrderItemRepository orderItemRepository;
+
     @Autowired
     OrderRepository orderRepository;
+
     @Autowired
     PaymentRepository paymentRepository;
-    @Autowired
-    MPPayRepository mpPayRepository;
 
     @Test
-    void 휴대폰_결제_정보가_성공적으로_저장된다(){
+    void 결제에_타임아웃이_성공적으로_반영된다(){
         // given
-        Pay pay = TestDataFactory.reflectPayCommonResultAfterCallingApi(
+        Pay pay = TestDataFactory.finishPayPreProcess(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository,
-                paymentRepository);
-        PaymentDetail paymentDetail = MPPay.createMPPay("010-1234-5678", "DONE", "naver");
+                paymentRepository
+        );
+        PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
 
         // when
-        MPPay mpPay = (MPPay) payDetailSaver.save(pay, paymentDetail);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, payApproveTimeout);
 
         // then
-        assertThat(mpPay.getId()).isNotNull();
-        assertThat(mpPay.getPay()).isNotNull();
-        assertThat(mpPay.getReceiptUrl()).isEqualTo("naver");
-        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("010-1234-5678");
-        assertThat(mpPay.getSettlementStatus()).isEqualTo("DONE");
+        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
+        assertThat(payFailureResponse.getCode()).isEqualTo("PAYMENT_TIMEOUT");
+        assertThat(payFailureResponse.getMessage()).isEqualTo("결제 시도가 많습니다. 다시 시도해주세요");
     }
+
 
 }

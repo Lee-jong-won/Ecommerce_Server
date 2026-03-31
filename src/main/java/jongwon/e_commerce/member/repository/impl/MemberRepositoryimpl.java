@@ -30,6 +30,11 @@ public class MemberRepositoryimpl implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findByloginId(String loginId) {
+        return memberJpaRepository.findByLoginId(loginId).map(MemberEntity::toModel);
+    }
+
+    @Override
     public Optional<Member> findById(Long id) {
         return memberJpaRepository.findById(id).map(MemberEntity::toModel);
     }

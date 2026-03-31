@@ -30,6 +30,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
     }
 
     @Override
+    @Transactional
     public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
         PayApproveSuccess payApproveSuccess = (PayApproveSuccess)outcome;
         PayResult payResult = payApproveSuccess.getPayResult();

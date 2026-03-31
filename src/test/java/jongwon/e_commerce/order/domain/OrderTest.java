@@ -39,7 +39,7 @@ class OrderTest {
     @Test
     void Order가_정상적으로_생성된다() {
         // given
-        Member member = Member.from(
+        Member member = Member.createMember(
                 MemberCreate.builder()
                         .loginId("testUser")
                         .password("1234")
@@ -122,7 +122,7 @@ class OrderTest {
     }
 
     private Order createOrder() {
-        Member member = Member.from(
+        Member member = Member.createMember(
                 MemberCreate.builder()
                         .loginId("testUser")
                         .password("1234")

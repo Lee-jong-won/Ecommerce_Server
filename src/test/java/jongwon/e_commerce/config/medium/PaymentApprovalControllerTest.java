@@ -1,5 +1,6 @@
-package jongwon.e_commerce.medium;
+package jongwon.e_commerce.config.medium;
 
+import aQute.bnd.annotation.jpms.Open;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
@@ -14,17 +15,21 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.OffsetDateTime;
@@ -37,12 +42,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource("classpath:application-test.properties")
 @Transactional
+@TestPropertySource("classpath:application-test.properties")
 public class PaymentApprovalControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -52,9 +55,10 @@ public class PaymentApprovalControllerTest {
     @Autowired
     OrderItemRepository orderItemRepository;
     ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    MockMvc mockMvc;
     @MockitoBean
     PayApprovalExecutor payApprovalExecutor;
-
 
     @Test
     void 사용자에게_결제성공이_일어날_수_있다() throws Exception {
@@ -82,6 +86,7 @@ public class PaymentApprovalControllerTest {
         // when && then
         mockMvc.perform(
                 post("/api/payment")
+                        .header("X-MOCK-USER-LOGINID", "testUser")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
@@ -109,6 +114,7 @@ public class PaymentApprovalControllerTest {
         // when && then
         mockMvc.perform(
                         post("/api/payment")
+                                .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
@@ -135,6 +141,7 @@ public class PaymentApprovalControllerTest {
         // when && then
         mockMvc.perform(
                         post("/api/payment")
+                                .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
@@ -163,6 +170,7 @@ public class PaymentApprovalControllerTest {
         // when && then
         mockMvc.perform(
                         post("/api/payment")
+                                .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())

@@ -10,13 +10,16 @@ import java.util.List;
 public class OrderCreate {
 
     private final String orderName;
+    private final String orderId;
     private final List<OrderItemCreate> orderItemCreates;
 
     @Builder
     public OrderCreate(@JsonProperty("orderName")String orderName,
+                       @JsonProperty("orderId")String orderId,
                        @JsonProperty("orderCreates")List<OrderItemCreate> orderItemCreates
                        ){
         this.orderName = orderName;
+        this.orderId = orderId;
         this.orderItemCreates = orderItemCreates;
     }
 }

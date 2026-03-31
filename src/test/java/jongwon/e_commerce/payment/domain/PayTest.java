@@ -157,7 +157,7 @@ class PayTest {
     }
 
     private Order createOrder() {
-        Member member = Member.from(
+        Member member = Member.createMember(
                 MemberCreate.builder()
                         .loginId("testUser")
                         .password("1234")
