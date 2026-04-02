@@ -3,15 +3,13 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
-import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

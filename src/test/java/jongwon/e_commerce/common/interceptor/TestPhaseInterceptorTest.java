@@ -1,5 +1,6 @@
 package jongwon.e_commerce.common.interceptor;
 
+import jongwon.e_commerce.common.controller.TestCommonController;
 import jongwon.e_commerce.config.TestControllerConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class TestPhaseInterceptorTest {
-    TestControllerConfig.TestController testController;
+    TestCommonController testController;
     MockMvc mockMvc;
 
     @BeforeEach
     void init(){
-        testController = new TestControllerConfig.TestController();
+        testController = new TestCommonController();
         mockMvc = MockMvcBuilders.
                 standaloneSetup(testController).
                 addInterceptors(new TestPhaseInterceptor()).

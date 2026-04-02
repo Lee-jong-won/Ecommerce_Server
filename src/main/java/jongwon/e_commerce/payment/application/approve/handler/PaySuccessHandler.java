@@ -3,17 +3,15 @@ package jongwon.e_commerce.payment.application.approve.handler;
 import jongwon.e_commerce.order.application.OrderStockProcessor;
 import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
-import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.PaySuccessResponse;
+import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
+import jongwon.e_commerce.payment.controller.dto.PaySuccessResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service

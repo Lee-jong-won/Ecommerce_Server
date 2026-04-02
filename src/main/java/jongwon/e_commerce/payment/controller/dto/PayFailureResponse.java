@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.controller;
+package jongwon.e_commerce.payment.controller.dto;
 
 import jongwon.e_commerce.payment.domain.PayStatus;
 import lombok.Getter;
