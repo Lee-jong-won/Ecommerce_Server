@@ -13,10 +13,12 @@ import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 @Transactional
 public class PaymentServiceTest {
     @Autowired
@@ -45,17 +47,18 @@ public class PaymentServiceTest {
     @Test
     void 주문이_정상적으로_검증된_후_결제_데이터가_정상적으로_생성된다(){
         // given
-        Order order = orderRepository.save(TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository));
+
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "ORDER-DEFAULT",
-                order.getTotalAmount());
+                finishOrderData.getOrder().getTotalAmount());
 
         // when
-        Pay pay = paymentService.preProcess(request);
+        Pay pay = paymentService.preProcess(finishOrderData.getMember(), request);
 
         // then
         assertThat(pay.getPaymentKey()).isEqualTo("a4CWyWY5m89PNh7xJwhk1");
-        assertThat(pay.getPayAmount()).isEqualTo(order.getTotalAmount());
+        assertThat(pay.getPayAmount()).isEqualTo(finishOrderData.getOrder().getTotalAmount());
         assertThat(pay.getOrder()).isNotNull();
         assertThat(pay.getId()).isNotNull();
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
@@ -64,13 +67,14 @@ public class PaymentServiceTest {
     @Test
     void 주문_검증이_성공하지_못하면_예외가_발생한다(){
         // given
-        Order order = orderRepository.save(TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository));
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        Order order = finishOrderData.getOrder();
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
-                "ORDER-DEFAULT",
+                order.getOrderId(),
                 50000);
 
         // when && then
-        assertThrows(InvalidAmountException.class, () -> paymentService.preProcess(request));
+        assertThrows(InvalidAmountException.class, () -> paymentService.preProcess(finishOrderData.getMember(), request));
     }
 
     @Test

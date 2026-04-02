@@ -7,10 +7,12 @@ import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class TestDataInitializer implements CommandLineRunner {
 
     private final MemberRepository memberRepository;

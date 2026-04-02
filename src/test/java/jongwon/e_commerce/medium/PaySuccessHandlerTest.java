@@ -18,6 +18,7 @@ import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 @Transactional
 class PaySuccessHandlerTest {
 

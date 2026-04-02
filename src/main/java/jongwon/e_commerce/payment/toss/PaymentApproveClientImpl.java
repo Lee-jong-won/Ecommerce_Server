@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.toss;
 
+import jongwon.e_commerce.common.interceptor.TestPhaseContext;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,19 @@ public class PaymentApproveClientImpl implements PaymentApproveClient {
     @Qualifier("tossRetryTemplate")private final RetryOperations payApproveRetryOperation;
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
-        return payApproveRetryOperation.execute(context -> restClient.post()
-                .uri("/payments/confirm")
-                .header("Idempotency-Key", idempotencyKey)
-                .body(request)
-                .retrieve()
-                .body(TossPaymentApproveResponse.class));
+        return payApproveRetryOperation.execute(context -> {
+            String phase = TestPhaseContext.get();
+            return restClient.post()
+                    .uri("/payments/confirm")
+                    .header("Idempotency-Key", idempotencyKey)
+                    .headers(headers -> {
+                        if (phase != null) {
+                            headers.add("x-test-phase", phase);
+                        }
+                    })
+                    .body(request)
+                    .retrieve()
+                    .body(TossPaymentApproveResponse.class);
+        });
     }
 }

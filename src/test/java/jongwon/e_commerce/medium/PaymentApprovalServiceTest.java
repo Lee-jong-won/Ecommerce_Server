@@ -20,10 +20,12 @@ import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
@@ -34,7 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 @Transactional
 public class PaymentApprovalServiceTest {
     @Autowired
@@ -67,7 +69,7 @@ public class PaymentApprovalServiceTest {
                 outcomeHandlers(outcomeHandlers).
                 build();
 
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
@@ -76,7 +78,7 @@ public class PaymentApprovalServiceTest {
                 "ORDER-DEFAULT", 15000);
 
         // when
-        PaySuccessResponse response = (PaySuccessResponse) paymentApprovalService.approvePayment(attempt);
+        PaySuccessResponse response = (PaySuccessResponse) paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         assertThat(response.getPayMethod()).isEqualTo(PayMethod.MOBILE);
@@ -96,16 +98,17 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
         // when
-        PayFailureResponse response = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);
+        PayFailureResponse response = (PayFailureResponse) paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         assertThat(response.getCode()).isEqualTo("FAILED_INTERNAL_SYSTEM_PROCESSING");
@@ -124,16 +127,17 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
@@ -153,16 +157,18 @@ public class PaymentApprovalServiceTest {
                 payApprovalExecutor(payApprovalExecutor).
                 outcomeHandlers(outcomeHandlers).build();
 
-        Order order = TestDataFactory.finishOrder(
+
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(attempt);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.PENDING);

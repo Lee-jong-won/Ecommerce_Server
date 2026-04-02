@@ -1,5 +1,7 @@
 package jongwon.e_commerce.payment.controller;
 
+import jongwon.e_commerce.common.argumentResolver.LoginMember;
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import lombok.Builder;
@@ -20,10 +22,11 @@ public class PaymentApprovalController {
     private final PaymentApprovalService paymentApprovalService;
 
     @PostMapping
-    public ResponseEntity<PayApproveOutcomeResponse> payApprove(@RequestBody PayApproveAttempt attempt){
+    public ResponseEntity<PayApproveOutcomeResponse> payApprove(@LoginMember Member member,
+                                                                @RequestBody PayApproveAttempt attempt){
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(paymentApprovalService.approvePayment(attempt));
+                .body(paymentApprovalService.approvePayment(member, attempt));
     }
 
 }

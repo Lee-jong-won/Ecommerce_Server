@@ -49,7 +49,7 @@ public class TestDataFactory {
         return new PrepareOrderData(member, List.of(orderItemCreate1, orderItemCreate2));
     }
 
-    public static Order finishOrder(MemberRepository memberRepository,
+    public static FinishOrderData finishOrder(MemberRepository memberRepository,
                                     ProductRepository productRepository,
                                     OrderItemRepository orderItemRepository,
                                     OrderRepository orderRepository){
@@ -85,7 +85,7 @@ public class TestDataFactory {
                 order(order).
                 product(product2).
                 build().create());
-        return order;
+        return new FinishOrderData(member, order);
     }
 
     public static Pay finishPayPreProcess(MemberRepository memberRepository,
@@ -93,7 +93,7 @@ public class TestDataFactory {
                                 OrderItemRepository orderItemRepository,
                                 OrderRepository orderRepository,
                                 PaymentRepository paymentRepository){
-        Order order = finishOrder(
+        FinishOrderData finishOrderData = finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
@@ -101,8 +101,8 @@ public class TestDataFactory {
 
         Pay pay = paymentRepository.save(PayFixture.
                 builder().
-                order(order).
-                payAmount(order.getTotalAmount()).
+                order(finishOrderData.getOrder()).
+                payAmount(finishOrderData.getOrder().getTotalAmount()).
                 build().
                 create());
 

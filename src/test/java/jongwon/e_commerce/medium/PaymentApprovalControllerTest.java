@@ -14,6 +14,7 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
@@ -43,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@TestPropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 public class PaymentApprovalControllerTest {
 
     @Autowired
@@ -63,13 +65,13 @@ public class PaymentApprovalControllerTest {
     @Test
     void 사용자에게_결제성공이_일어날_수_있다() throws Exception {
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", order.getTotalAmount());
+                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
         PayApproveSuccess payApproveSuccess = new PayApproveSuccess(PayResult.builder().
                 payResultCommon(PayResult.PayResultCommon.builder().
                         payMethod(PayMethod.MOBILE).
@@ -98,13 +100,13 @@ public class PaymentApprovalControllerTest {
     @Test
     void 사용자에게_결재실패가_일어날수있다() throws Exception {
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", order.getTotalAmount());
+                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("INVALID_CARD",
@@ -126,13 +128,13 @@ public class PaymentApprovalControllerTest {
     @Test
     void 사용자에게_Read타임아웃이_일어날_수_있다() throws Exception {
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", order.getTotalAmount());
+                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
@@ -154,13 +156,13 @@ public class PaymentApprovalControllerTest {
     void 사용자에게_Conn타임아웃이_일어날_수_있다() throws Exception {
 
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", order.getTotalAmount());
+                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("CONNECTION_TIMEOUT",

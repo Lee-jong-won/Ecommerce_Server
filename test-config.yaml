@@ -1,24 +1,34 @@
 config:
   target: "http://64.176.226.236:8080"
-
+  processor: "./processor.js"
   phases:
-    - duration: 60
+    - duration: 30
       arrivalRate: 5
-
-  defaults:
-    headers:
-      Content-Type: application/json
+      name: Warm up
+    - duration: 30
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 30
+      arrivalRate: 10
+      rampTo: 5
+      name: End of load
 
 scenarios:
-  - name: "low traffic order test"
+  - name: "order test"
     flow:
+      - function: "setUser"
+      - function: "setProduct"
+      - function: "setOrder"
+
       - post:
           url: "/api/order"
           headers:
-            X-MOCK-USER-LOGINID: "user-{{ $randomInt(1,1000) }}"
+            Content-Type: application/json
+            X-MOCK-USER-LOGINID: "{{ loginId }}"
           json:
-            orderName: "order-{{ $randomString() }}"
-            orderId: "order-{{ $randomString() }}"
-            orderItemCreates:
-              - productId: "{{ $randomInt(1,500) }}"
-                quantity: 1
+            orderName: "{{ orderName }}"
+            orderId: "{{ orderId }}"
+            orderCreates:
+              - productId: "{{ productId }}"
+                stockQuantity: 1

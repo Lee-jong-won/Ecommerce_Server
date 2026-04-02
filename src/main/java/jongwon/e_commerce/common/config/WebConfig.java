@@ -2,7 +2,7 @@ package jongwon.e_commerce.common.config;
 
 import jakarta.persistence.EntityManagerFactory;
 import jongwon.e_commerce.common.argumentResolver.LoginMemberArgumentResolver;
-import jongwon.e_commerce.common.interceptor.AuthInterceptor;
+import jongwon.e_commerce.common.interceptor.TestPhaseInterceptor;
 import jongwon.e_commerce.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
         /*OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor = new OpenEntityManagerInViewInterceptor();
         openEntityManagerInViewInterceptor.setEntityManagerFactory(emf);
         registry.addWebRequestInterceptor(openEntityManagerInViewInterceptor);*/
-
-        registry.addInterceptor(new AuthInterceptor(memberService)).
-                excludePathPatterns(
-                        "/member/create",
-                        "/member/login");
+        registry.addInterceptor(new TestPhaseInterceptor());
     }
 
     @Override

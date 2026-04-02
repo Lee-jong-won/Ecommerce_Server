@@ -1,11 +1,10 @@
 package jongwon.e_commerce.common.argumentResolver;
 
 import jongwon.e_commerce.common.controller.ExceptionControllerAdvice;
-import jongwon.e_commerce.common.interceptor.AuthInterceptor;
+import jongwon.e_commerce.config.TestControllerConfig;
 import jongwon.e_commerce.member.application.MemberService;
 import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.mock.fake.FakeMemberRepository;
-import jongwon.e_commerce.support.TestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class LoginMemberArgumentResolverTest {
 
     MemberService memberService;
-    TestController testController;
+    TestControllerConfig.TestController testController;
     MockMvc mockMvc;
 
     @BeforeEach
     void init(){
         memberService = MemberService.builder().memberRepository(new FakeMemberRepository()).build();
-        testController = new TestController();
+        testController = new TestControllerConfig.TestController();
         mockMvc = MockMvcBuilders.standaloneSetup(testController).
                 setControllerAdvice(new ExceptionControllerAdvice()).
                 setCustomArgumentResolvers(new LoginMemberArgumentResolver(memberService)).

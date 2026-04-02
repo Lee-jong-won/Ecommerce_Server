@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.application.approve;
 
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.controller.PayApproveOutcomeResponse;
@@ -24,9 +25,9 @@ public class PaymentApprovalService {
     private final PayApprovalExecutor payApprovalExecutor; // 추상화 필요
     private final List<PayOutcomeHandler> outcomeHandlers;
 
-    public PayApproveOutcomeResponse approvePayment(PayApproveAttempt attempt){
+    public PayApproveOutcomeResponse approvePayment(Member member, PayApproveAttempt attempt){
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
-        Pay pay = paymentService.preProcess(attempt);
+        Pay pay = paymentService.preProcess(member, attempt);
 
         //2. 결제 승인 요청
         PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt);

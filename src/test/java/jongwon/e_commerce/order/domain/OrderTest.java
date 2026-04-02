@@ -3,6 +3,7 @@ package jongwon.e_commerce.order.domain;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
+import jongwon.e_commerce.order.exception.NotOrderOwnerException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderTest {
 
@@ -121,16 +123,32 @@ class OrderTest {
                 .isInstanceOf(InvalidOrderStateException.class);
     }
 
+    @Test
+    void 주문의_소유자가_아닌_경우_예외가_발생한다(){
+        // given
+        Order order = createOrder();
+        Member member = Member.builder().
+                memberId(2L).
+                loginId("testUser").
+                password("1234").
+                memberName("홍길동").
+                email("test@test.com").
+                addr("서울").
+                build();
+
+        // when && then
+        assertThrows(NotOrderOwnerException.class , () -> order.validateOwner(member));
+    }
+
     private Order createOrder() {
-        Member member = Member.createMember(
-                MemberCreate.builder()
-                        .loginId("testUser")
-                        .password("1234")
-                        .memberName("홍길동")
-                        .email("test@test.com")
-                        .addr("서울")
-                        .build()
-        );
+        Member member = Member.builder().
+                memberId(1L).
+                loginId("testUser").
+                password("1234").
+                memberName("홍길동").
+                email("test@test.com").
+                addr("서울").
+                build();
 
         Product product = Product.from("노트북", 100000);
         product.setStatus(ProductStatus.SELLING);

@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.application.approve;
 
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
@@ -27,12 +28,14 @@ public class PaymentService {
     }
 
     @Transactional
-    public Pay preProcess(PayApproveAttempt attempt){
+    public Pay preProcess(Member member, PayApproveAttempt attempt){
         String orderId = attempt.getOrderId();;
         String paymentKey = attempt.getPaymentKey();;
         long amount = attempt.getAmount();
 
         Order order = orderRepository.getByOrderId(orderId);
+        order.validateOwner(member);
+
         if(order.getTotalAmount() != amount)
             throw new InvalidAmountException();
 

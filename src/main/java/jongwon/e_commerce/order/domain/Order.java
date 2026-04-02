@@ -2,6 +2,7 @@ package jongwon.e_commerce.order.domain;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
+import jongwon.e_commerce.order.exception.NotOrderOwnerException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -56,6 +57,11 @@ public class Order {
             orderItem.setOrder(order);
 
         return order;
+    }
+
+    public void validateOwner(Member owner){
+        if(this.getMember().getMemberId() != owner.getMemberId())
+            throw new NotOrderOwnerException("주문의 소유자가 일치하지 않습니다");
     }
 
     // PG로부터 결제 승인 성공 응답을 받을 시

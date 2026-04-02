@@ -14,6 +14,7 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,14 +47,14 @@ class OrderStockProcessorTest {
     @Test
     void 재고가_정상적으로_감소한다(){
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.deductStockOf(order);
+        List<Product> products = orderStockProcessor.deductStockOf(finishOrderData.getOrder());
 
         // then
         Product product1 = products.get(0);
@@ -66,14 +67,14 @@ class OrderStockProcessorTest {
     @Test
     void 재고가_성공적으로_증가한다(){
         // given
-        Order order = TestDataFactory.finishOrder(
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.restoreStockOf(order);
+        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder());
 
         // then
         Product product1 = products.get(0);

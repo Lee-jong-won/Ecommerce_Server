@@ -19,6 +19,7 @@ import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,17 +55,17 @@ class PaymentServiceTest {
     @Test
     void 주문_검증이_정상적으로_완료된후_결제가_정상적으로_저장된다(){
         // given
-        Order order = orderRepository.save(TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository));
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "ORDER-DEFAULT",
-                order.getTotalAmount());
+                finishOrderData.getOrder().getTotalAmount());
 
         // when
-        Pay pay = paymentService.preProcess(request);
+        Pay pay = paymentService.preProcess(finishOrderData.getMember(), request);
 
         // then
         assertThat(pay.getPaymentKey()).isEqualTo("a4CWyWY5m89PNh7xJwhk1");
-        assertThat(pay.getPayAmount()).isEqualTo(order.getTotalAmount());
+        assertThat(pay.getPayAmount()).isEqualTo(finishOrderData.getOrder().getTotalAmount());
         assertThat(pay.getOrder()).isNotNull();
         assertThat(pay.getId()).isNotNull();
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
@@ -73,13 +74,13 @@ class PaymentServiceTest {
     @Test
     void 주문_검증이_성공하지_못하면_예외가_발생한다(){
         // given
-        Order order = orderRepository.save(TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository));
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "ORDER-DEFAULT",
                 50000);
 
         // when && then
-        assertThrows(InvalidAmountException.class, () -> paymentService.preProcess(request));
+        assertThrows(InvalidAmountException.class, () -> paymentService.preProcess(finishOrderData.getMember(), request));
     }
 
     @Test
