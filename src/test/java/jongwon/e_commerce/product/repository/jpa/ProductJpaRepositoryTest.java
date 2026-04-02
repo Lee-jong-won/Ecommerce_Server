@@ -1,4 +1,4 @@
-package jongwon.e_commerce.order.product.repository.jpa;
+package jongwon.e_commerce.product.repository.jpa;
 
 import jongwon.e_commerce.product.repository.jpa.ProductEntity;
 import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest(showSql = true)
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application-test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
 class ProductJpaRepositoryTest {

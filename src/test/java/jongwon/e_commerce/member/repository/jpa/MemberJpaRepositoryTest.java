@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(showSql = true)
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application-test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class MemberJpaRepositoryTest {
 

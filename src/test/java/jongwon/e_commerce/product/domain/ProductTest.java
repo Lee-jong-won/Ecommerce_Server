@@ -1,4 +1,4 @@
-package jongwon.e_commerce.order.product.domain;
+package jongwon.e_commerce.product.domain;
 
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
