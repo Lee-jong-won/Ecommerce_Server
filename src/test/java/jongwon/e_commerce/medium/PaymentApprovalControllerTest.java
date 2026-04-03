@@ -154,7 +154,6 @@ public class PaymentApprovalControllerTest {
 
     @Test
     void 사용자에게_Conn타임아웃이_일어날_수_있다() throws Exception {
-
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,

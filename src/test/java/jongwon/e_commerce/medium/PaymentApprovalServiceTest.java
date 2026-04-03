@@ -18,6 +18,7 @@ import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
+import jongwon.e_commerce.payment.toss.PaymentApproveClient;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -55,16 +56,7 @@ public class PaymentApprovalServiceTest {
     @Test
     void 결제가_정상적으로_성공된다(){
         // given
-        payApprovalExecutor = payApprovalExecutor.builder().
-                paymentApproveClient(new StubPaymentRestApproveClientNormal()).
-                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator()).build();
-
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                payApprovalExecutor(payApprovalExecutor).
-                outcomeHandlers(outcomeHandlers).
-                build();
-
+        initPaymentApprovalService(new StubPaymentRestApproveClientNormal());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -85,21 +77,12 @@ public class PaymentApprovalServiceTest {
     @Test
     void 결제_실패가_성공적으로_처리된다(){
         // given
-        payApprovalExecutor = payApprovalExecutor.builder().
-                paymentApproveClient(new StubPaymentRestApproveClientErrorResponse()).
-                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator()).build();
-
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                payApprovalExecutor(payApprovalExecutor).
-                outcomeHandlers(outcomeHandlers).build();
-
+        initPaymentApprovalService(new StubPaymentRestApproveClientErrorResponse());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
-
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
@@ -114,21 +97,12 @@ public class PaymentApprovalServiceTest {
     @Test
     void Read_타임아웃이_성공적으로_처리된다(){
         // given
-        payApprovalExecutor = payApprovalExecutor.builder().
-                paymentApproveClient(new StubPaymentRestApproveClientReadTimeout()).
-                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator()).build();
-
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                payApprovalExecutor(payApprovalExecutor).
-                outcomeHandlers(outcomeHandlers).build();
-
+        initPaymentApprovalService(new StubPaymentRestApproveClientReadTimeout());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
-
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
@@ -144,22 +118,12 @@ public class PaymentApprovalServiceTest {
     @Test
     void Connection_타임아웃이_성공적으로_처리된다(){
         // given
-        payApprovalExecutor = payApprovalExecutor.builder().
-                paymentApproveClient(new StubPaymentRestApproveClientConnTimeout()).
-                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator()).build();
-
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                payApprovalExecutor(payApprovalExecutor).
-                outcomeHandlers(outcomeHandlers).build();
-
-
+        initPaymentApprovalService(new StubPaymentRestApproveClientConnTimeout());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
-
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
@@ -170,5 +134,16 @@ public class PaymentApprovalServiceTest {
         assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.PENDING);
         assertThat(payFailureResponse.getCode()).isEqualTo("CONNECTION_TIMEOUT");
         assertThat(payFailureResponse.getMessage()).isEqualTo("일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
+    }
+
+    private void initPaymentApprovalService(PaymentApproveClient paymentApproveClient){
+        payApprovalExecutor = payApprovalExecutor.builder().
+                paymentApproveClient(paymentApproveClient).
+                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator()).build();
+
+        paymentApprovalService = PaymentApprovalService.builder().
+                paymentService(paymentService).
+                payApprovalExecutor(payApprovalExecutor).
+                outcomeHandlers(outcomeHandlers).build();
     }
 }

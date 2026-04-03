@@ -44,7 +44,6 @@ class PayDetailSaverTest {
         orderRepository = new FakeOrderRepository();
         paymentRepository = new FakePaymentRepository();
         mpPayRepository = new FakeMPPayRepository();
-
         payDetailSaver = PayDetailSaver.builder().
                 mpPayRepository(mpPayRepository).
                 build();

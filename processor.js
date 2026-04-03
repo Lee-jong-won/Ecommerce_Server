@@ -16,8 +16,15 @@ function setOrder(context, events, done) {
     return done();
 }
 
+function setPay(context, events, done) {
+    const random = Math.random().toString(36).substring(7);
+    context.vars.paymentKey = "paymentKey-" + random;
+    return done();
+}
+
 module.exports = {
     setUser,
     setProduct,
-    setOrder
+    setOrder,
+    setPay
 };

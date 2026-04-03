@@ -3,23 +3,27 @@ config:
   processor: "./processor.js"
   phases:
     - duration: 30
-      arrivalRate: 5
-      name: Warm up
-    - duration: 30
-      arrivalRate: 5
-      rampTo: 10
-      name: Ramp up load
+      arrivalRate: 10
+      name: warmup
     - duration: 30
       arrivalRate: 10
-      rampTo: 5
-      name: End of load
+      rampTo: 40
+      name: wampup
+    - duration: 60
+      arrivalRate: 40
+      name: warmup
+    - duration: 30
+      arrivalRate: 40
+      rampTo: 10
+      name: warmup
 
 scenarios:
-  - name: "order test"
+  - name: "order and pay"
     flow:
       - function: "setUser"
       - function: "setProduct"
       - function: "setOrder"
+      - function: "setPay"
 
       - post:
           url: "/api/order"
@@ -32,3 +36,16 @@ scenarios:
             orderCreates:
               - productId: "{{ productId }}"
                 stockQuantity: 1
+          capture:
+            - json: "$.totalAmount"
+              as: "amount"
+      - post:
+          url: "/api/payment"
+          headers:
+            Content-Type: application/json
+            X-MOCK-USER-LOGINID: "{{ loginId }}"
+            x-test-phase: "{{ $phase.name }}"
+          json:
+            orderId: "{{ orderId }}"
+            paymentKey: "{{ paymentKey }}"
+            amount: "{{ amount }}"
