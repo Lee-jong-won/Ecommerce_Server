@@ -10,6 +10,8 @@ import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
+import jongwon.e_commerce.support.fixture.OrderFixture;
+import jongwon.e_commerce.support.fixture.OrderItemFixture;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -24,15 +26,15 @@ class PayTest {
     @Test
     void 결제정보가_정상적으로_생성된다() {
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
 
         // when
-        Pay pay = Pay.from(order, "paymentKey-123", 10000L);
+        Pay pay = Pay.from(order, "paymentKey-123", 250000L);
 
         // then
         assertThat(pay.getOrder()).isEqualTo(order);
         assertThat(pay.getPaymentKey()).isEqualTo("paymentKey-123");
-        assertThat(pay.getPayAmount()).isEqualTo(10000L);
+        assertThat(pay.getPayAmount()).isEqualTo(250000L);
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
     }
 
@@ -156,34 +158,8 @@ class PayTest {
         assertThat(resultPay.getApprovedAt()).isEqualTo(approvedAt);
     }
 
-    private Order createOrder() {
-        Member member = Member.createMember(
-                MemberCreate.builder()
-                        .loginId("testUser")
-                        .password("1234")
-                        .memberName("홍길동")
-                        .email("test@test.com")
-                        .addr("서울")
-                        .build()
-        );
-
-        Product product = Product.from("노트북", 100000);
-        product.setStatus(ProductStatus.SELLING);
-
-        OrderItem item = OrderItem.createOrderItem(product, 1);
-
-        Order order = Order.createOrder(
-                member,
-                LocalDateTime.now(),
-                "order-1",
-                List.of(item),
-                "테스트 주문"
-        );
-        return order;
-    }
-
     private Pay createPay(){
-        Order order = createOrder();
-        return Pay.from(order, "paymentKey", 10000L);
+        Order order = OrderFixture.createDefaultOrder();
+        return Pay.from(order, "paymentKey", 250000L);
     }
 }

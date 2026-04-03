@@ -33,12 +33,14 @@ public class PaymentService {
         String paymentKey = attempt.getPaymentKey();;
         long amount = attempt.getAmount();
 
+        // 주문ID로 주문 조회
         Order order = orderRepository.getByOrderId(orderId);
+
+        //주문 검증
         order.validateOwner(member);
+        order.validatePayAmount(amount);
 
-        if(order.getTotalAmount() != amount)
-            throw new InvalidAmountException();
-
+        // 결제 생성 후 저장
         Pay pay = Pay.from(order, paymentKey, amount);
         return paymentRepository.save(pay);
     }
@@ -49,6 +51,4 @@ public class PaymentService {
         pay = pay.reflectPaySuccess(payResultCommon);
         return paymentRepository.save(pay);
     }
-
-
 }

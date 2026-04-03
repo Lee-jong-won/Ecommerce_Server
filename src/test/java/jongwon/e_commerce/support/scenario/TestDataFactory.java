@@ -21,6 +21,7 @@ import java.util.List;
 
 public class TestDataFactory {
 
+    // 영속화 메소드
     public static PrepareOrderData prepareOrder(MemberRepository memberRepository,
                                                 ProductRepository productRepository){
         Member member = memberRepository.save(MemberFixture.builder().build().create());

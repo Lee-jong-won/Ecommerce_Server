@@ -29,4 +29,22 @@ public class ProductFixture {
                 .stockQuantity(stockQuantity)
                 .build();
     }
+
+    public static Product createLaptop(){
+        return ProductFixture.
+                builder().
+                productName("노트북").
+                productPrice(100000).
+                build().
+                create();
+    }
+
+    public static Product createMouse(){
+        return ProductFixture.
+                builder().
+                productName("마우스").
+                productPrice(50000).
+                build().
+                create();
+    }
 }

@@ -2,11 +2,13 @@ package jongwon.e_commerce.support.fixture;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.domain.OrderStatus;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -39,5 +41,17 @@ public class OrderFixture {
                 .orderStatus(orderStatus)
                 .totalAmount(totalAmount)
                 .build();
+    }
+
+    public static Order createDefaultOrder(){
+        Member member = MemberFixture.builder().build().create();
+        List<OrderItem> orderItems = OrderItemFixture.createDefaultOrderItems();
+        Order order = Order.createOrder(member,
+                LocalDateTime.now(),
+                "order-1",
+                orderItems,
+                "테스트 주문"
+        );
+        return order;
     }
 }

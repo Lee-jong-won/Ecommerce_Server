@@ -4,8 +4,12 @@ import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import jongwon.e_commerce.order.exception.NotOrderOwnerException;
+import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
+import jongwon.e_commerce.support.fixture.OrderFixture;
+import jongwon.e_commerce.support.fixture.OrderItemFixture;
+import jongwon.e_commerce.support.fixture.ProductFixture;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -20,19 +24,10 @@ class OrderTest {
     @Test
     void 주문상품들의_총금액을_정확히_계산한다() {
         // given
-        Product product1 = Product.from("노트북", 100000);
-        product1.setStatus(ProductStatus.SELLING);
-
-        Product product2 = Product.from("마우스", 50000);
-        product2.setStatus(ProductStatus.SELLING);
-
-        OrderItem item1 = OrderItem.createOrderItem(product1, 2); // 200000
-        OrderItem item2 = OrderItem.createOrderItem(product2, 1); // 50000
-
-        List<OrderItem> items = List.of(item1, item2);
+        List<OrderItem> orderItems = OrderItemFixture.createDefaultOrderItems();
 
         // when
-        int totalAmount = Order.calculateTotalAmount(items);
+        int totalAmount = Order.calculateTotalAmount(orderItems);
 
         // then
         assertThat(totalAmount).isEqualTo(250000);
@@ -50,37 +45,31 @@ class OrderTest {
                         .addr("서울")
                         .build()
         );
-
-        Product product = Product.from("노트북", 100000);
-        product.setStatus(ProductStatus.SELLING);
-
-        OrderItem orderItem = OrderItem.createOrderItem(product, 2);
-
-        List<OrderItem> items = List.of(orderItem);
+        List<OrderItem> orderItems = OrderItemFixture.createDefaultOrderItems();
 
         // when
         Order order = Order.createOrder(
                 member,
                 LocalDateTime.now(),
                 "order-1",
-                items,
+                orderItems,
                 "노트북 외 1건"
         );
 
         // then
         assertThat(order.getMember()).isEqualTo(member);
         assertThat(order.getOrderId()).isEqualTo("order-1");
-        assertThat(order.getTotalAmount()).isEqualTo(200000);
+        assertThat(order.getTotalAmount()).isEqualTo(250000);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDERED);
 
         // 연관관계 검증
-        assertThat(orderItem.getOrder()).isEqualTo(order);
+        assertThat(orderItems.get(0).getOrder()).isEqualTo(order);
     }
 
     @Test
     void ORDERED_상태에서_결제_성공_처리가_가능하다() {
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
 
         // when
         order.paid();
@@ -92,7 +81,7 @@ class OrderTest {
     @Test
     void ORDERED_상태가_아니면_결제_성공_처리시_예외가_발생한다() {
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
         order.setOrderStatus(OrderStatus.CANCEL);
 
         // when & then
@@ -103,7 +92,7 @@ class OrderTest {
     @Test
     void PAID_상태에서_주문_취소가_가능하다() {
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
         order.paid();
 
         // when
@@ -116,7 +105,7 @@ class OrderTest {
     @Test
     void PAID_상태가_아니면_취소시_예외가_발생한다() {
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
 
         // when & then
         assertThatThrownBy(order::markCancel)
@@ -126,12 +115,12 @@ class OrderTest {
     @Test
     void 주문의_소유자가_아닌_경우_예외가_발생한다(){
         // given
-        Order order = createOrder();
+        Order order = OrderFixture.createDefaultOrder();
         Member member = Member.builder().
                 memberId(2L).
-                loginId("testUser").
+                loginId("testUser2").
                 password("1234").
-                memberName("홍길동").
+                memberName("종원").
                 email("test@test.com").
                 addr("서울").
                 build();
@@ -140,28 +129,12 @@ class OrderTest {
         assertThrows(NotOrderOwnerException.class , () -> order.validateOwner(member));
     }
 
-    private Order createOrder() {
-        Member member = Member.builder().
-                memberId(1L).
-                loginId("testUser").
-                password("1234").
-                memberName("홍길동").
-                email("test@test.com").
-                addr("서울").
-                build();
+    @Test
+    void 주문_금액과_결제_금액이_다르면_예외가_발생한다(){
+        // given
+        Order order = OrderFixture.createDefaultOrder();
 
-        Product product = Product.from("노트북", 100000);
-        product.setStatus(ProductStatus.SELLING);
-
-        OrderItem item = OrderItem.createOrderItem(product, 1);
-
-        Order order = Order.createOrder(
-                member,
-                LocalDateTime.now(),
-                "order-1",
-                List.of(item),
-                "테스트 주문"
-        );
-        return order;
+        // when && then
+        assertThrows(InvalidAmountException.class, () -> order.validatePayAmount(10000L));
     }
 }

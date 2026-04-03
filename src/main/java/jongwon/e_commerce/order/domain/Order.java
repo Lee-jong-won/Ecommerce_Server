@@ -3,6 +3,7 @@ package jongwon.e_commerce.order.domain;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import jongwon.e_commerce.order.exception.NotOrderOwnerException;
+import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -41,9 +42,7 @@ public class Order {
                              String orderId,
                              List<OrderItem> orderItems,
                              String orderName){
-
         int totalAmount = calculateTotalAmount(orderItems);
-
         Order order = Order.builder().
                 member(member).
                 orderedAt(orderedAt).
@@ -52,16 +51,19 @@ public class Order {
                 orderStatus(OrderStatus.ORDERED).
                 orderedAt(orderedAt).
                 orderName(orderName).build();
-
         for(OrderItem orderItem : orderItems)
             orderItem.setOrder(order);
-
         return order;
     }
 
     public void validateOwner(Member owner){
         if(this.getMember().getMemberId() != owner.getMemberId())
             throw new NotOrderOwnerException("주문의 소유자가 일치하지 않습니다");
+    }
+
+    public void validatePayAmount(long payAmount){
+        if(this.totalAmount != payAmount)
+            throw new InvalidAmountException();
     }
 
     // PG로부터 결제 승인 성공 응답을 받을 시

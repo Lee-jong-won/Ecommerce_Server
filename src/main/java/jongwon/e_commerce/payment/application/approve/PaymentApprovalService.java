@@ -20,7 +20,8 @@ public class PaymentApprovalService {
     // 결제 승인 전 주문 정보 검증 부
     private final PaymentService paymentService;
     // 결제 승인 시도 부
-    private final PayApprovalExecutor payApprovalExecutor; // 추상화 필요
+    private final PayApprovalExecutor payApprovalExecutor;
+    // 결제 후처리 부
     private final List<PayOutcomeHandler> outcomeHandlers;
 
     public PayApproveOutcomeResponse approvePayment(Member member, PayApproveAttempt attempt){
@@ -34,8 +35,8 @@ public class PaymentApprovalService {
         PayOutcomeHandler payOutcomeHandler = outcomeHandlers.stream().
                 filter(h -> h.supports(outcome.getType()))
                 .findFirst().get();
-
         PayApproveOutcomeResponse response = payOutcomeHandler.handle(pay, outcome);
+
         return response;
     }
 }

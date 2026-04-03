@@ -1,5 +1,6 @@
 package jongwon.e_commerce.support.fixture;
 
+import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
