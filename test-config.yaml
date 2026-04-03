@@ -5,17 +5,6 @@ config:
     - duration: 30
       arrivalRate: 10
       name: warmup
-    - duration: 30
-      arrivalRate: 10
-      rampTo: 40
-      name: wampup
-    - duration: 60
-      arrivalRate: 40
-      name: warmup
-    - duration: 30
-      arrivalRate: 40
-      rampTo: 10
-      name: warmup
 
 scenarios:
   - name: "order and pay"
