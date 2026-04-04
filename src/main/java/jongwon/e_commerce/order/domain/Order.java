@@ -57,7 +57,7 @@ public class Order {
     }
 
     public void validateOwner(Member owner){
-        if(this.getMember().getMemberId() != owner.getMemberId())
+        if(this.getMember().getMemberId().longValue() != owner.getMemberId().longValue())
             throw new NotOrderOwnerException(owner.getMemberId(), this.getMember().getMemberId());
     }
 
