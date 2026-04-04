@@ -3,15 +3,14 @@ config:
   processor: "./processor.js"
   phases:
     - duration: 20
-      arrivalRate: 8
+      arrivalRate: 100
 
 scenarios:
-  - name: "order and pay"
+  - name: "order"
     flow:
       - function: "setUser"
       - function: "setProduct"
       - function: "setOrder"
-      - function: "setPay"
 
       - post:
           url: "/api/order"
@@ -27,13 +26,3 @@ scenarios:
           capture:
             - json: "$.totalAmount"
               as: "amount"
-      - think: 0.5
-      - post:
-          url: "/api/payment"
-          headers:
-            Content-Type: application/json
-            X-MOCK-USER-LOGINID: "{{ loginId }}"
-          json:
-            orderId: "{{ orderId }}"
-            paymentKey: "{{ paymentKey }}"
-            amount: "{{ amount }}"
