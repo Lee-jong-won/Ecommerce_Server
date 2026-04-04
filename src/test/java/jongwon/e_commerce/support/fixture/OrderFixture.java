@@ -44,7 +44,7 @@ public class OrderFixture {
     }
 
     public static Order createDefaultOrder(){
-        Member member = MemberFixture.builder().build().create();
+        Member member = MemberFixture.builder().memberId(1L).build().create();
         List<OrderItem> orderItems = OrderItemFixture.createDefaultOrderItems();
         Order order = Order.createOrder(member,
                 LocalDateTime.now(),

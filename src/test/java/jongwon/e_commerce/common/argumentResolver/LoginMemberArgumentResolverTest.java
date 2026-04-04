@@ -1,6 +1,7 @@
 package jongwon.e_commerce.common.argumentResolver;
 
 import jongwon.e_commerce.common.controller.ExceptionControllerAdvice;
+import jongwon.e_commerce.common.controller.TestCommonController;
 import jongwon.e_commerce.config.TestControllerConfig;
 import jongwon.e_commerce.member.application.MemberService;
 import jongwon.e_commerce.member.domain.MemberCreate;
@@ -17,14 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class LoginMemberArgumentResolverTest {
 
     MemberService memberService;
-    TestControllerConfig.TestController testController;
+    TestCommonController testCommonController;
     MockMvc mockMvc;
 
     @BeforeEach
     void init(){
         memberService = MemberService.builder().memberRepository(new FakeMemberRepository()).build();
-        testController = new TestControllerConfig.TestController();
-        mockMvc = MockMvcBuilders.standaloneSetup(testController).
+        testCommonController = new TestCommonController();
+        mockMvc = MockMvcBuilders.standaloneSetup(testCommonController).
                 setControllerAdvice(new ExceptionControllerAdvice()).
                 setCustomArgumentResolvers(new LoginMemberArgumentResolver(memberService)).
                 build();

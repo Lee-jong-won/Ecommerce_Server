@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 public class MemberFixture {
 
     @Builder.Default
+    private Long memberId = null;
+
+    @Builder.Default
     private String loginId = "testUser";
 
     @Builder.Default
@@ -30,6 +33,7 @@ public class MemberFixture {
 
     public Member create() {
         return Member.builder()
+                .memberId(memberId)
                 .loginId(loginId)
                 .password(password)
                 .memberName(memberName)

@@ -1,13 +1,10 @@
 package jongwon.e_commerce.common.config;
 
-import jakarta.persistence.EntityManagerFactory;
 import jongwon.e_commerce.common.argumentResolver.LoginMemberArgumentResolver;
-import jongwon.e_commerce.common.interceptor.TestPhaseInterceptor;
 import jongwon.e_commerce.member.application.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,7 +22,6 @@ public class WebConfig implements WebMvcConfigurer {
         /*OpenEntityManagerInViewInterceptor openEntityManagerInViewInterceptor = new OpenEntityManagerInViewInterceptor();
         openEntityManagerInViewInterceptor.setEntityManagerFactory(emf);
         registry.addWebRequestInterceptor(openEntityManagerInViewInterceptor);*/
-        registry.addInterceptor(new TestPhaseInterceptor());
     }
 
     @Override

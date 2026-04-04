@@ -1,6 +1,5 @@
 package jongwon.e_commerce.payment.controller;
 
-import jongwon.e_commerce.common.interceptor.TestPhaseContext;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +22,10 @@ public class PaymentSimulationController {
 
     @PostMapping("/test/payment/confirm")
     public ResponseEntity<TossPaymentApproveResponse> testPaymentConfirm(@RequestBody PayApproveAttempt attempt){
-        String phase = TestPhaseContext.get();
         TossPaymentApproveResponse response = restClient.post()
                 .uri("/payments/confirm")
                 .header("Idempotency-Key", UUID.randomUUID().toString())
                 .body(attempt)
-                .headers(headers -> {
-                    if (phase != null) {
-                        headers.add("x-test-phase", phase);
-                    }
-                })
                 .retrieve()
                 .body(TossPaymentApproveResponse.class);
         return ResponseEntity.status(HttpStatus.OK).body(response);

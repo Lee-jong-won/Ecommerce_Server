@@ -1,18 +1,12 @@
 package jongwon.e_commerce.common.controller;
 
 import jongwon.e_commerce.common.argumentResolver.LoginMember;
-import jongwon.e_commerce.common.interceptor.TestPhaseContext;
 import jongwon.e_commerce.member.domain.Member;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestCommonController {
-
-    @GetMapping("/test/interceptor")
-    public String testInterceptor(){
-        return TestPhaseContext.get();
-    }
 
     @GetMapping("/test/argumentResolver")
     public String testArgumentResolver(@LoginMember Member member) { return member.getLoginId();}
