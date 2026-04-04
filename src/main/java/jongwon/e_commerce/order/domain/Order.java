@@ -58,7 +58,7 @@ public class Order {
 
     public void validateOwner(Member owner){
         if(this.getMember().getMemberId() != owner.getMemberId())
-            throw new NotOrderOwnerException("주문의 소유자가 일치하지 않습니다");
+            throw new NotOrderOwnerException(owner.getMemberId(), this.getMember().getMemberId());
     }
 
     public void validatePayAmount(long payAmount){

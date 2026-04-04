@@ -6,5 +6,8 @@ public class NotOrderOwnerException extends RuntimeException {
         super(message);
     }
 
+    public NotOrderOwnerException(Long requestId, Long orderedId){
+        super("주문의 소유자: " + orderedId + "결제 요청자: " + requestId);
+    }
 
 }
