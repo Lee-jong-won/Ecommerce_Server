@@ -3,7 +3,7 @@ config:
   processor: "./processor.js"
   phases:
     - duration: 30
-      arrivalRate: 11
+      arrivalRate: 8
 
 scenarios:
   - name: "order and pay"
