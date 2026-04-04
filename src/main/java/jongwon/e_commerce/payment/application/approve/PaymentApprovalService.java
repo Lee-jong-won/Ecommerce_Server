@@ -35,6 +35,7 @@ public class PaymentApprovalService {
         PayOutcomeHandler payOutcomeHandler = outcomeHandlers.stream().
                 filter(h -> h.supports(outcome.getType()))
                 .findFirst().get();
+
         PayApproveOutcomeResponse response = payOutcomeHandler.handle(pay, outcome);
 
         return response;
