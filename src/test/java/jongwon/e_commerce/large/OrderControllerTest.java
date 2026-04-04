@@ -40,7 +40,7 @@ public class OrderControllerTest {
         baseUrl = "http://localhost:" + port;
     }
 
-    // @Test
+    @Test
     void testOrderApi(){
         // given
         PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
