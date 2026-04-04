@@ -22,11 +22,10 @@ class TossPaymentApproveResponseTest {
                         "http://receipt.url"
                 );
 
-        OffsetDateTime approvedAt = OffsetDateTime.now();
         TossPaymentApproveResponse response =
                 new TossPaymentApproveResponse(
                         "휴대폰",
-                        approvedAt,
+                        "2024-02-13T12:18:14+09:00",
                         mobilePhone
                 );
 
@@ -36,7 +35,7 @@ class TossPaymentApproveResponseTest {
 
         // then
         assertThat(payResultCommon.getPayMethod()).isEqualTo(PayMethod.MOBILE);
-        assertThat(payResultCommon.getApprovedAt()).isEqualTo(approvedAt);
+        assertThat(payResultCommon.getApprovedAt()).isEqualTo("2024-02-13T12:18:14+09:00");
         assertThat(payResult.getPaymentDetail()).isInstanceOf(MPPay.class);
     }
 
@@ -50,11 +49,10 @@ class TossPaymentApproveResponseTest {
                         "http://receipt.url"
                 );
 
-        OffsetDateTime approvedAt = OffsetDateTime.now();
         TossPaymentApproveResponse response =
                 new TossPaymentApproveResponse(
                         "휴대폰",
-                        approvedAt,
+                        "2024-02-13T12:18:14+09:00",
                         mobilePhone
                 );
 
@@ -73,7 +71,7 @@ class TossPaymentApproveResponseTest {
         TossPaymentApproveResponse response =
                 new TossPaymentApproveResponse(
                         "UNKNOWN",
-                        OffsetDateTime.now(),
+                        "2024-02-13T12:18:14+09:00",
                         null
                 );
 

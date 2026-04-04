@@ -4,7 +4,6 @@ config:
   phases:
     - duration: 30
       arrivalRate: 10
-      name: warmup
 
 scenarios:
   - name: "order and pay"
@@ -33,7 +32,6 @@ scenarios:
           headers:
             Content-Type: application/json
             X-MOCK-USER-LOGINID: "{{ loginId }}"
-            x-test-phase: "{{ $phase.name }}"
           json:
             orderId: "{{ orderId }}"
             paymentKey: "{{ paymentKey }}"

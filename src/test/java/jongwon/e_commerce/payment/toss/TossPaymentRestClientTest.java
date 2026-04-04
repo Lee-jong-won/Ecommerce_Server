@@ -69,7 +69,12 @@ class TossPaymentRestClientTest {
                         .withBody("""
                         {
                           "approvedAt": "2024-02-13T12:18:14+09:00",
-                          "method": "휴대폰"
+                          "method": "휴대폰",
+                            "mobilePhone": {
+                                "customerMobilePhone": "01012345678",
+                                "settlementStatus": "SETTLED",
+                                "receiptUrl": "http://receipt.url"
+                            }
                         }
                         """)
                 ));
@@ -78,12 +83,16 @@ class TossPaymentRestClientTest {
 
         //when
         TossPaymentApproveResponse response = tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey);
+        TossPaymentApproveResponse.MobilePhoneDto mobilePhoneDto = response.getMobilePhone();
 
         //then
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm"))
                 .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
-        assertEquals(OffsetDateTime.parse("2024-02-13T03:18:14Z"), response.getApprovedAt());
+        assertEquals("2024-02-13T12:18:14+09:00", response.getApprovedAt());
         assertEquals("휴대폰", response.getMethod());
+        assertEquals("01012345678", mobilePhoneDto.getCustomerMobilePhone());
+        assertEquals("SETTLED", mobilePhoneDto.getSettlementStatus());
+        assertEquals("http://receipt.url", mobilePhoneDto.getReceiptUrl());
     }
 
     @Test
@@ -105,6 +114,7 @@ class TossPaymentRestClientTest {
                         }
                     """)
                 ));
+
         String idempotencyKey = UUID.randomUUID().toString();
 
         //when && then

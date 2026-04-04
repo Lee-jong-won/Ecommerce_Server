@@ -35,7 +35,7 @@ public class MockServerCommunicationTest {
                         contentType(MediaType.APPLICATION_JSON).
                 content(objectMapper.writeValueAsString(request))).
                 andExpect(status().isOk()).
-                andExpect(jsonPath("$.approvedAt").value("2026-04-02T03:00:00Z")).
+                andExpect(jsonPath("$.approvedAt").value("2026-04-02T12:00:00+09:00")).
                 andExpect(jsonPath("$.method").value("휴대폰")).
                 andExpect(jsonPath("$.mobilePhone.customerMobilePhone").value("01012345678")).
                 andExpect(jsonPath("$.mobilePhone.settlementStatus").value("SETTLED")).
@@ -55,7 +55,7 @@ public class MockServerCommunicationTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(request))).
                 andExpect(status().isOk()).
-                andExpect(jsonPath("$.approvedAt").value("2026-04-02T03:00:00Z")).
+                andExpect(jsonPath("$.approvedAt").value("2026-04-02T12:00:00+09:00")).
                 andExpect(jsonPath("$.method").value("휴대폰")).
                 andExpect(jsonPath("$.mobilePhone.customerMobilePhone").value("01012345678")).
                 andExpect(jsonPath("$.mobilePhone.settlementStatus").value("SETTLED")).
@@ -75,7 +75,7 @@ public class MockServerCommunicationTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(request))).
                 andExpect(status().isOk()).
-                andExpect(jsonPath("$.approvedAt").value("2026-04-02T03:00:00Z")).
+                andExpect(jsonPath("$.approvedAt").value("2026-04-02T12:00:00+09:00")).
                 andExpect(jsonPath("$.method").value("휴대폰")).
                 andExpect(jsonPath("$.mobilePhone.customerMobilePhone").value("01012345678")).
                 andExpect(jsonPath("$.mobilePhone.settlementStatus").value("SETTLED")).
@@ -95,7 +95,7 @@ public class MockServerCommunicationTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(request))).
                 andExpect(status().isOk()).
-                andExpect(jsonPath("$.approvedAt").value("2026-04-02T03:00:00Z")).
+                andExpect(jsonPath("$.approvedAt").value("2026-04-02T12:00:00+09:00")).
                 andExpect(jsonPath("$.method").value("휴대폰")).
                 andExpect(jsonPath("$.mobilePhone.customerMobilePhone").value("01012345678")).
                 andExpect(jsonPath("$.mobilePhone.settlementStatus").value("SETTLED")).

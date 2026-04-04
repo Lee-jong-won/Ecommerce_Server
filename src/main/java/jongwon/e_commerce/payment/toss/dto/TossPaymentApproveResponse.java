@@ -15,13 +15,13 @@ import java.time.OffsetDateTime;
 public class TossPaymentApproveResponse {
 
     private String method;   // 카드
-    private OffsetDateTime approvedAt; // 결제 승인 일자
+    private String approvedAt; // 결제 승인 일자
     private MobilePhoneDto mobilePhone; // 핸드폰 결제 정보
 
     public PayResult toPayResult(){
         return PayResult.builder().
                 payResultCommon(PayResult.PayResultCommon.
-                        builder().approvedAt(approvedAt)
+                        builder().approvedAt(OffsetDateTime.parse(approvedAt))
                                 .payMethod(PayMethod.from(method)).
                         build()).
                 paymentDetail(extractPaymentDetail()).
