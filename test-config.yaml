@@ -3,7 +3,19 @@ config:
   processor: "./processor.js"
   phases:
     - duration: 30
-      arrivalRate: 10
+      arrivalRate: 2
+      name: warmup
+    - duration: 30
+      arrivalRate: 2
+      rampTo: 8
+      name: ramup
+    - duration: 30
+      arrivalRate: 8
+      name: sustained
+    - duration: 30
+      arrivalRate: 8
+      rampTo: 2
+      name: end-of-load
 
 scenarios:
   - name: "order and pay"
