@@ -3,7 +3,19 @@ config:
   processor: "./OrderAndPayProcessor.js"
   phases:
     - duration: 20
-      arrivalRate: 2
+      arrivalRate: 5
+      name : wamrup
+    - duration : 20
+      arrivalRate: 5
+      rampTo : 8
+      name : rampup
+    - duration : 20
+      arrivalRate : 8
+      name : sustained
+    - duration : 20
+      arrivalRate: 8
+      rampTo : 5
+      name : end of load
 
 scenarios:
   - name: "pay"

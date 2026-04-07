@@ -39,7 +39,7 @@ public class TestDataInitializer implements CommandLineRunner {
 
         for(int i = 1; i <= 500; i++){
             Product product = Product.from("product-" + i, 1000);
-            product.changeStock(2000);
+            product.changeStock(30000);
             product.startSelling();
             productRepository.save(product);
         }
