@@ -1,26 +1,26 @@
 {
   "aggregate": {
-    "timestamp": "2026-04-07T02:53:41.116Z",
+    "timestamp": "2026-04-07T03:04:28.265Z",
     "scenariosCreated": 40,
     "scenariosCompleted": 40,
     "requestsCompleted": 40,
     "latency": {
-      "min": 770,
-      "max": 5119,
-      "median": 916,
-      "p95": 4840.5,
-      "p99": 5119
+      "min": 741,
+      "max": 840,
+      "median": 781,
+      "p95": 830,
+      "p99": 840
     },
     "rps": {
       "count": 40,
       "mean": 1.95
     },
     "scenarioDuration": {
-      "min": 916.7,
-      "max": 5285.7,
-      "median": 1066.2,
-      "p95": 4986.9,
-      "p99": 5285.7
+      "min": 891.4,
+      "max": 982.1,
+      "median": 929.6,
+      "p95": 976.7,
+      "p99": 982.1
     },
     "scenarioCounts": {
       "pay": 40
@@ -42,114 +42,55 @@
   },
   "intermediate": [
     {
-      "timestamp": "2026-04-07T02:53:30.108Z",
+      "timestamp": "2026-04-07T03:04:17.238Z",
       "scenariosCreated": 19,
-      "scenariosCompleted": 14,
-      "requestsCompleted": 14,
+      "scenariosCompleted": 18,
+      "requestsCompleted": 18,
       "latency": {
-        "min": 2480,
-        "max": 5119,
-        "median": 3710.5,
-        "p95": 5087.4,
-        "p99": 5119
+        "min": 760,
+        "max": 830,
+        "median": 790.5,
+        "p95": 822.4,
+        "p99": 830
       },
       "rps": {
         "count": 19,
         "mean": 2
       },
       "scenarioDuration": {
-        "min": 2626.7,
-        "max": 5285.7,
-        "median": 3857.1,
-        "p95": 5250,
-        "p99": 5285.7
+        "min": 901.9,
+        "max": 972.1,
+        "median": 933.7,
+        "p95": 964.5,
+        "p99": 972.1
       },
       "scenarioCounts": {
         "pay": 19
       },
       "errors": {},
       "codes": {
-        "201": 14
+        "201": 18
       },
       "matches": 0,
       "latencies": [
-        3461000000,
-        5119000000,
-        4961000000,
-        4720000000,
-        4401000000,
-        4349000000,
-        4049000000,
-        3891000000,
-        3530000000,
-        3310000000,
-        3080000000,
-        2800000000,
-        2480000000,
-        2512000000
-      ],
-      "customStats": {},
-      "counters": {},
-      "concurrency": 5,
-      "pendingRequests": 5,
-      "scenariosAvoided": 0
-    },
-    {
-      "timestamp": "2026-04-07T02:53:40.106Z",
-      "scenariosCreated": 20,
-      "scenariosCompleted": 24,
-      "requestsCompleted": 24,
-      "latency": {
-        "min": 770,
-        "max": 2361,
-        "median": 805.5,
-        "p95": 2191.6,
-        "p99": 2361
-      },
-      "rps": {
-        "count": 20,
-        "mean": 2
-      },
-      "scenarioDuration": {
-        "min": 916.7,
-        "max": 2503.6,
-        "median": 956.7,
-        "p95": 2345.1,
-        "p99": 2503.6
-      },
-      "scenarioCounts": {
-        "pay": 20
-      },
-      "errors": {},
-      "codes": {
-        "201": 24
-      },
-      "matches": 0,
-      "latencies": [
-        2361000000,
-        2119000000,
-        1950000000,
-        1592000000,
-        1311000000,
-        921000000,
-        911000000,
+        780000000,
+        781000000,
         770000000,
-        880000000,
-        861000000,
+        801000000,
+        781000000,
         800000000,
-        820000000,
+        791000000,
         830000000,
         800000000,
-        800000000,
-        790000000,
-        771000000,
-        790000000,
-        801000000,
         791000000,
-        791000000,
-        810000000,
+        811000000,
+        760000000,
         781000000,
-        780000000
+        800000000,
+        791000000,
+        761000000,
+        790000000,
+        760000000
       ],
       "customStats": {},
       "counters": {},
@@ -158,27 +99,86 @@
       "scenariosAvoided": 0
     },
     {
-      "timestamp": "2026-04-07T02:53:41.113Z",
+      "timestamp": "2026-04-07T03:04:27.236Z",
+      "scenariosCreated": 20,
+      "scenariosCompleted": 20,
+      "requestsCompleted": 20,
+      "latency": {
+        "min": 741,
+        "max": 840,
+        "median": 780,
+        "p95": 835,
+        "p99": 840
+      },
+      "rps": {
+        "count": 20,
+        "mean": 2
+      },
+      "scenarioDuration": {
+        "min": 891.4,
+        "max": 982.1,
+        "median": 922.1,
+        "p95": 981.7,
+        "p99": 982.1
+      },
+      "scenarioCounts": {
+        "pay": 20
+      },
+      "errors": {},
+      "codes": {
+        "201": 20
+      },
+      "matches": 0,
+      "latencies": [
+        801000000,
+        764000000,
+        760000000,
+        780000000,
+        840000000,
+        830000000,
+        791000000,
+        780000000,
+        761000000,
+        771000000,
+        780000000,
+        791000000,
+        770000000,
+        791000000,
+        799000000,
+        761000000,
+        781000000,
+        771000000,
+        760000000,
+        741000000
+      ],
+      "customStats": {},
+      "counters": {},
+      "concurrency": 1,
+      "pendingRequests": 1,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-07T03:04:28.263Z",
       "scenariosCreated": 1,
       "scenariosCompleted": 2,
       "requestsCompleted": 2,
       "latency": {
-        "min": 801,
-        "max": 841,
-        "median": 821,
-        "p95": 841,
-        "p99": 841
+        "min": 770,
+        "max": 781,
+        "median": 775.5,
+        "p95": 781,
+        "p99": 781
       },
       "rps": {
         "count": 1,
-        "mean": 0.99
+        "mean": 0.97
       },
       "scenarioDuration": {
-        "min": 947.1,
-        "max": 987.3,
-        "median": 967.2,
-        "p95": 987.3,
-        "p99": 987.3
+        "min": 922,
+        "max": 922.1,
+        "median": 922,
+        "p95": 922.1,
+        "p99": 922.1
       },
       "scenarioCounts": {
         "pay": 1
@@ -189,8 +189,8 @@
       },
       "matches": 0,
       "latencies": [
-        801000000,
-        841000000
+        770000000,
+        781000000
       ],
       "customStats": {},
       "counters": {},
