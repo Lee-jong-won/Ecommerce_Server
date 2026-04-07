@@ -9,7 +9,7 @@ config:
       arrivalRate: 5
       rampTo : 8
       name : rampup
-    - duration : 20
+    - duration : 30
       arrivalRate : 8
       name : sustained
     - duration : 20
