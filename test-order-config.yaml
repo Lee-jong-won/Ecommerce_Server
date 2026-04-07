@@ -1,6 +1,6 @@
 config:
   target: "http://64.176.226.236:8080"
-  processor: "./processor.js"
+  processor: "./OrderAndPayProcessor.js"
   phases:
     - duration: 20
       arrivalRate: 100

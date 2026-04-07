@@ -1,9 +1,9 @@
 config:
   target: "http://64.176.226.236:8080"
-  processor: "./processor.js"
+  processor: "./OrderAndPayProcessor.js"
   phases:
     - duration: 20
-      arrivalRate: 8
+      arrivalRate: 2
 
 scenarios:
   - name: "order and pay"
@@ -15,6 +15,7 @@ scenarios:
 
       - post:
           url: "/api/order"
+          name: "order_api"
           headers:
             Content-Type: application/json
             X-MOCK-USER-LOGINID: "{{ loginId }}"
@@ -28,7 +29,9 @@ scenarios:
             - json: "$.totalAmount"
               as: "amount"
       - think: 0.5
+
       - post:
+          name: "payment_api"
           url: "/api/payment"
           headers:
             Content-Type: application/json

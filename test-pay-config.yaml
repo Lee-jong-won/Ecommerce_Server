@@ -1,0 +1,22 @@
+config:
+  target: "http://64.176.226.236:8080"
+  processor: "./OrderAndPayProcessor.js"
+  phases:
+    - duration: 20
+      arrivalRate: 2
+
+scenarios:
+  - name: "pay"
+    flow:
+      - function: "setSequentialIds"
+      - function: "setPay"
+      - post:
+          name: "payment_api"
+          url: "/api/payment"
+          headers:
+            Content-Type: application/json
+            X-MOCK-USER-LOGINID: "{{ loginId }}"
+          json:
+            orderId: "{{ orderId }}"
+            paymentKey: "{{ paymentKey }}"
+            amount: 1000

@@ -1,3 +1,6 @@
+let userSeq = 1;
+let orderSeq = 1;
+
 function setUser(context, events, done) {
     const n = Math.floor(Math.random() * 1000) + 1;
     context.vars.loginId = "user-" + n;
@@ -22,9 +25,16 @@ function setPay(context, events, done) {
     return done();
 }
 
+function setSequentialIds(context, events, done) {
+    context.vars.loginId = `user-${userSeq++}`;
+    context.vars.orderId = `orderId-${orderSeq++}`;
+    return done();
+}
+
 module.exports = {
     setUser,
     setProduct,
     setOrder,
-    setPay
+    setPay,
+    setSequentialIds
 };

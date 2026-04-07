@@ -25,7 +25,7 @@ public class PayEntity {
     @Column(name = "pay_id")
     private Long payId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "fk_order_id")
     private OrderEntity orderEntity;
 
