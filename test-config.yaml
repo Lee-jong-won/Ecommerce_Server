@@ -3,18 +3,18 @@ config:
   processor: "./OrderAndPayProcessor.js"
   phases:
     - duration: 20
-      arrivalRate: 5
+      arrivalRate: 10
       name : warmup
     - duration : 30
-      arrivalRate : 5
-      rampTo : 10
+      arrivalRate : 10
+      rampTo : 20
       name : rampup
     - duration : 30
-      arrivalRate : 10
+      arrivalRate : 20
       name : sustained
     - duration : 30
-      arrivalRate : 10
-      rampTo: 5
+      arrivalRate : 20
+      rampTo: 10
       name : end of -load
   plugins:
     metrics-by-endpoint:
