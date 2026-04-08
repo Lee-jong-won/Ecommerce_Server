@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface OrderItemJpaRepository extends JpaRepository<OrderItemEntity, Long> {
     @Transactional(readOnly = true)
-    @Query("select oi from OrderItemEntity oi join fetch oi.productEntity")
+    @Query("select oi from OrderItemEntity oi " +
+            "join fetch oi.productEntity " +
+            "where oi.orderEntity = :orderEntity")
     List<OrderItemEntity> findOrderItemsBy(OrderEntity orderEntity);
 }
