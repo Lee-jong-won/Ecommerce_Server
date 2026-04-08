@@ -35,6 +35,7 @@ public class OrderItemEntity {
     @Column(name = "order_quantity", nullable = false)
     private int orderQuantity;
 
+
     public static OrderItemEntity from(OrderItem orderItem){
         OrderItemEntity orderItemEntity = new OrderItemEntity();
 

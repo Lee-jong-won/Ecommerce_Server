@@ -30,8 +30,8 @@ function setSequentialIds(context, events, done) {
     context.vars.orderId = `orderId-${orderSeq}`;
 
     // 증가 + 500 넘으면 초기화
-    userSeq = userSeq >= 500 ? 1 : userSeq + 1;
-    orderSeq = orderSeq >= 500 ? 1 : orderSeq + 1;
+    userSeq = userSeq >= 50000 ? 1 : userSeq + 1;
+    orderSeq = orderSeq >= 50000 ? 1 : orderSeq + 1;
 
     return done();
 }
