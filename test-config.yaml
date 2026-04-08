@@ -28,7 +28,8 @@ scenarios:
           capture:
             - json: "$.totalAmount"
               as: "amount"
-      - think: 0.5
+
+      - think: 0.3
 
       - post:
           name: "payment_api"

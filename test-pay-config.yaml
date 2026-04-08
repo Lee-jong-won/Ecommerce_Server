@@ -32,4 +32,3 @@ scenarios:
             orderId: "{{ orderId }}"
             paymentKey: "{{ paymentKey }}"
             amount: 1000
-          afterResponse : "logResponse"

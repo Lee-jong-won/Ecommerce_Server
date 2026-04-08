@@ -2,13 +2,13 @@ let userSeq = 1;
 let orderSeq = 1;
 
 function setUser(context, events, done) {
-    const n = Math.floor(Math.random() * 500) + 1;
+    const n = Math.floor(Math.random() * 50000) + 1;
     context.vars.loginId = "user-" + n;
     return done();
 }
 
 function setProduct(context, events, done) {
-    context.vars.productId = Math.floor(Math.random() * 500) + 1;
+    context.vars.productId = Math.floor(Math.random() * 50000) + 1;
     return done();
 }
 

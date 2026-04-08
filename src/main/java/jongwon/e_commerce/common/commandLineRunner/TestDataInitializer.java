@@ -48,11 +48,6 @@ public class TestDataInitializer implements CommandLineRunner {
 
             insertProducts();
             log.info(">> Product 50,000건 삽입 완료");
-
-            // 주문과 주문 아이템은 연관 관계가 중요하므로 함께 처리
-            insertOrdersAndItems();
-            log.info(">> Order & OrderItem 각 50,000건 삽입 완료");
-
             log.info("=== 모든 테스트 데이터 준비가 완료되었습니다! ===");
         } catch (Exception e) {
             log.error("데이터 초기화 중 오류 발생: ", e);
@@ -88,52 +83,6 @@ public class TestDataInitializer implements CommandLineRunner {
             ps.setInt(3, 30000);  // 넉넉한 재고량
             ps.setString(4, "SELLING");
         });
-    }
-
-    /**
-     * 주문 및 주문 상세 삽입: 소유권 보존 (Member ID = Order ID = Product ID)
-     */
-    private void insertOrdersAndItems() {
-        String orderSql = "INSERT INTO orders (fk_member_id, order_name, order_id, order_status, ordered_at, total_amount) VALUES (?, ?, ?, ?, ?, ?)";
-        String itemSql = "INSERT INTO order_item (fk_order_id, fk_product_id, order_price, order_quantity, product_name) VALUES (?, ?, ?, ?, ?)";
-        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-
-        for (int i = 0; i < 50; i++) {
-            final int offset = i * 1000;
-
-            // 1,000개 단위 Order 배치 삽입
-            jdbcTemplate.batchUpdate(orderSql, new BatchPreparedStatementSetter() {
-                @Override
-                public void setValues(PreparedStatement ps, int j) throws SQLException {
-                    long id = (long) offset + j + 1;
-                    ps.setLong(1, id);           // 소유자: Member ID와 일치
-                    ps.setString(2, "orderName-" + id);
-                    ps.setString(3, "orderId-" + id); // Artillery 결제 요청 시 사용
-                    ps.setString(4, "ORDERED");    // 결제 대기 상태
-                    ps.setTimestamp(5, now);
-                    ps.setLong(6, 1000);
-                }
-                @Override
-                public int getBatchSize() { return 1000; }
-            });
-
-            // 1,000개 단위 OrderItem 배치 삽입 (Order와 1:1 매핑)
-            jdbcTemplate.batchUpdate(itemSql, new BatchPreparedStatementSetter() {
-                @Override
-                public void setValues(PreparedStatement ps, int j) throws SQLException {
-                    long id = (long) offset + j + 1;
-                    ps.setLong(1, id);    // FK: Order ID와 일치
-                    ps.setLong(2, id);    // FK: Product ID와 일치
-                    ps.setInt(3, 1000);   // 주문 당시 가격
-                    ps.setInt(4, 1);      // 주문 수량
-                    ps.setString(5, "product-" + id);
-                }
-                @Override
-                public int getBatchSize() { return 1000; }
-            });
-
-            if ((i + 1) % 10 == 0) log.info("진행률: {}/50,000 건...", (i + 1) * 1000);
-        }
     }
 
     private void executeInBatches(String sql, BatchSetter setter) {
