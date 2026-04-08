@@ -26,7 +26,10 @@ public class TossPaymentHttpClientConfig {
                 List.of(
                         RetryPolicy.builder().disableAutomaticRetries(true)
                                 .build(),
-                        ConnectionPolicy.builder().socketTimeout(Timeout.ofSeconds(30))
+                        ConnectionPolicy.builder().
+                                socketTimeout(Timeout.ofSeconds(30)).
+                                maxTotalConnections(100).
+                                defaultMaxPerRoute(100)
                                 .build()
                 )
         );

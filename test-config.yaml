@@ -5,7 +5,17 @@ config:
     - duration: 20
       arrivalRate: 10
       name : warmup
-
+    - duration : 30
+      arrivalRate : 10
+      rampTo : 20
+      name : rampup
+    - duration : 30
+      arrivalRate : 20
+      name : sustained
+    - duration : 30
+      arrivalRate : 20
+      rampTo: 10
+      name : end of -load
   plugins:
     metrics-by-endpoint:
       useStyles: true

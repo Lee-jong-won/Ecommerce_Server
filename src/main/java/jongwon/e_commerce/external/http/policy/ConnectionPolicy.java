@@ -17,6 +17,10 @@ public class ConnectionPolicy implements HttpClientPolicy {
      */
     private Timeout connectTimeout;
     /**
+     * 커넥션 타임아웃 시간 - 3 way handshake
+     */
+    private Integer defaultMaxPerRoute;
+    /**
      * Readtimeout 시간
      */
     private Timeout socketTimeout;
@@ -27,6 +31,10 @@ public class ConnectionPolicy implements HttpClientPolicy {
 
         if (maxTotalConnections != null) {
             manager.setMaxTotal(maxTotalConnections);
+        }
+
+        if(defaultMaxPerRoute != null){
+            manager.setDefaultMaxPerRoute(defaultMaxPerRoute);
         }
 
         ConnectionConfig.Builder connectionConfigBuilder = ConnectionConfig.custom();
