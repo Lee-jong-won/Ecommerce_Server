@@ -28,7 +28,7 @@ public class TestDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for(int i = 1; i <= 500; i++){
+        for(int i = 1; i <= 50000; i++){
             memberRepository.save(Member.createMember(MemberCreate.builder().
                     memberName("user" + i ).
                     loginId("user-" + i).
@@ -37,14 +37,14 @@ public class TestDataInitializer implements CommandLineRunner {
                     addr("Seoul").build()));
         }
 
-        for(int i = 1; i <= 500; i++){
+        for(int i = 1; i <= 50000; i++){
             Product product = Product.from("product-" + i, 1000);
             product.changeStock(30000);
             product.startSelling();
             productRepository.save(product);
         }
 
-        for(long i = 1; i <= 500L; i++){
+        for(long i = 1; i <= 50000L; i++){
             Member member = memberRepository.getById(i);
             List<OrderItemCreate> orderItemCreates = List.of(new OrderItemCreate(i, 1));
             orderExecutor.order(member, "orderName-" + i, "orderId-" + i, orderItemCreates);
