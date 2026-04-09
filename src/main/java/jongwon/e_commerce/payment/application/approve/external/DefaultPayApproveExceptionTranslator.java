@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application.approve.external;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
@@ -14,6 +15,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.net.SocketTimeoutException;
 
 @Component
+@Slf4j
 public class DefaultPayApproveExceptionTranslator implements PayApproveExceptionTranslator {
     @Override
     public PayApproveOutcome translate(RestClientException restClientException) {
@@ -27,11 +29,11 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                     "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
         }
 
-
         // Http 에러 응답
         if(restClientException instanceof RestClientResponseException)
             return translateFromResponse((RestClientResponseException) restClientException);
 
+        log.error("RestClientException occured!", restClientException);
         // 알 수 없는 예외
         return new PayApproveFail(
                 "UNKNOWN_ERROR",
