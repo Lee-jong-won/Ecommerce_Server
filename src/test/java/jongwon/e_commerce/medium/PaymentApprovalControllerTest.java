@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.test.context.ActiveProfiles;
@@ -110,7 +111,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("INVALID_CARD",
-                "정지된 카드입니다." );
+                "정지된 카드입니다.", HttpStatus.BAD_REQUEST );
         when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
 
         // when && then
@@ -119,14 +120,14 @@ public class PaymentApprovalControllerTest {
                                 .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.payStatus").value("FAILED"))
                 .andExpect(jsonPath("$.code").value("INVALID_CARD"))
                 .andExpect(jsonPath("$.message").value("정지된 카드입니다."));
     }
 
     @Test
-    void 사용자에게_Read타임아웃이_일어날_수_있다() throws Exception {
+    void PG에서_응답이_늦게와서_Read타임아웃이_일어날_수_있다() throws Exception {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
@@ -146,14 +147,42 @@ public class PaymentApprovalControllerTest {
                                 .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isGatewayTimeout())
                 .andExpect(jsonPath("$.payStatus").value("TIME_OUT"))
                 .andExpect(jsonPath("$.code").value("PAYMENT_TIMEOUT"))
                 .andExpect(jsonPath("$.message").value("결제 시도가 많습니다. 다시 시도해주세요"));
     }
 
     @Test
-    void 사용자에게_Conn타임아웃이_일어날_수_있다() throws Exception {
+    void 서버에_요청이_몰려서_RequestConnectionTimeout이_발생할_수_있다() throws Exception {
+        // given
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
+                memberRepository,
+                productRepository,
+                orderItemRepository,
+                orderRepository);
+        PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
+                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+
+        // 외부 API 호출 결과
+        PayApproveFail payApproveFail = new PayApproveFail("TOO_MANY_REQUEST",
+                "요청이 너무 많습니다", HttpStatus.TOO_MANY_REQUESTS );
+        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
+
+        // when && then
+        mockMvc.perform(
+                        post("/api/payment")
+                                .header("X-MOCK-USER-LOGINID", "testUser")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(attempt)))
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.payStatus").value("FAILED"))
+                .andExpect(jsonPath("$.code").value("TOO_MANY_REQUEST"))
+                .andExpect(jsonPath("$.message").value("요청이 너무 많습니다"));
+    }
+
+    @Test
+    void PG서버와_연결이_안돼서_Conn타임아웃이_일어날_수_있다() throws Exception {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
@@ -165,7 +194,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         PayApproveFail payApproveFail = new PayApproveFail("CONNECTION_TIMEOUT",
-                "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
+                "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요", HttpStatus.GATEWAY_TIMEOUT);
         when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
 
         // when && then
@@ -174,7 +203,7 @@ public class PaymentApprovalControllerTest {
                                 .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isGatewayTimeout())
                 .andExpect(jsonPath("$.payStatus").value("PENDING"))
                 .andExpect(jsonPath("$.code").value("CONNECTION_TIMEOUT"))
                 .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요"));

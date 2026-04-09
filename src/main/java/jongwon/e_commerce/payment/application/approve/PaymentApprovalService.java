@@ -37,7 +37,6 @@ public class PaymentApprovalService {
                 .findFirst().get();
 
         PayApproveOutcomeResponse response = payOutcomeHandler.handle(pay, outcome);
-
         return response;
     }
 }

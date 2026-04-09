@@ -14,6 +14,7 @@ import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +55,8 @@ class PayFailHandlerTest {
         );
         PayApproveFail payApproveFail = new PayApproveFail(
                 "INVALID_CARD",
-                "카드 정보 오류"
+                "카드 정보 오류",
+                HttpStatus.BAD_REQUEST
         );
 
         // when

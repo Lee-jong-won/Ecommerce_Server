@@ -5,6 +5,7 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -26,7 +27,10 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
 
             if(isConnectTimeout(restClientException.getCause()))
                 return new PayApproveFail("CONNECTION_TIMEOUT",
-                    "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
+                    "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요", HttpStatus.GATEWAY_TIMEOUT);
+
+            if(isConnectionRequestTimeout(restClientException.getCause()))
+                return new PayApproveFail("TOO_MANY_REQUEST", "요청이 너무 많습니다", HttpStatus.TOO_MANY_REQUESTS);
         }
 
         // Http 에러 응답
@@ -37,17 +41,15 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
         // 알 수 없는 예외
         return new PayApproveFail(
                 "UNKNOWN_ERROR",
-                "알 수 없는 오류가 발생했습니다"
+                "알 수 없는 오류가 발생했습니다",
+                HttpStatus.GATEWAY_TIMEOUT
         );
     }
 
     private boolean isConnectionRequestTimeout(Throwable cause){
         while (cause != null) {
             if (cause instanceof ConnectionRequestTimeoutException) {
-                String msg = cause.getMessage();
-                if (msg != null && msg.toLowerCase().contains("connection request timed out")) {
-                    return true;
-                }
+                return true;
             }
             cause = cause.getCause();
         }
@@ -88,14 +90,14 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
 
             String code = json.path("code").asText("UNKNOWN_ERROR");
             String message = json.path("message").asText("결제 처리 중 오류가 발생했습니다.");
-
-            return new PayApproveFail(code, message);
+            return new PayApproveFail(code, message, HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
             // JSON 파싱 실패 시 fallback
             return new PayApproveFail(
                     "PARSING_FAIL",
-                    "결제 처리 중 오류가 발생했습니다."
+                    "결제 처리 중 오류가 발생했습니다.",
+                    HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }

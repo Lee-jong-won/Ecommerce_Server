@@ -33,6 +33,7 @@ public class PayFailHandler implements PayOutcomeHandler {
         paymentRepository.save(pay);
 
         return new PayFailureResponse(
+                payApproveFail.getHttpStatus(),
                 pay.getPayStatus(),
                 payApproveFail.getErrorCode(),
                 payApproveFail.getMessage()

@@ -25,9 +25,9 @@ public class PaymentApprovalController {
     @PostMapping
     public ResponseEntity<PayApproveOutcomeResponse> payApprove(@LoginMember Member member,
                                                                 @RequestBody PayApproveAttempt attempt){
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(paymentApprovalService.approvePayment(member, attempt));
+        PayApproveOutcomeResponse response = paymentApprovalService.approvePayment(member, attempt);
+        return ResponseEntity.status(response.getHttpStatus())
+                .body(response);
     }
 
 }

@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application.approve.external;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -46,6 +47,7 @@ class DefaultPayApproveExceptionTranslatorTest {
 
         PayApproveFail fail = (PayApproveFail) result;
         assertThat(fail.getErrorCode()).isEqualTo("CONNECTION_TIMEOUT");
+        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
     }
 
     @Test
@@ -71,10 +73,27 @@ class DefaultPayApproveExceptionTranslatorTest {
 
         // then
         assertThat(result).isInstanceOf(PayApproveFail.class);
-
         PayApproveFail fail = (PayApproveFail) result;
         assertThat(fail.getErrorCode()).isEqualTo("INVALID_CARD");
         assertThat(fail.getMessage()).isEqualTo("카드 정보 오류");
+        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void connection_Request_timeout이_발생하면_PayApproveFail을_반환한다(){
+        // given
+        ConnectionRequestTimeoutException cause = new ConnectionRequestTimeoutException();
+        ResourceAccessException ex = new ResourceAccessException("I/O error", cause);
+
+        // when
+        PayApproveOutcome result = translator.translate(ex);
+
+        // then
+        assertThat(result).isInstanceOf(PayApproveFail.class);
+        PayApproveFail fail = (PayApproveFail) result;
+        assertThat(fail.getErrorCode()).isEqualTo("TOO_MANY_REQUEST");
+        assertThat(fail.getMessage()).isEqualTo("요청이 너무 많습니다");
+        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @Test
@@ -99,6 +118,7 @@ class DefaultPayApproveExceptionTranslatorTest {
         PayApproveFail fail = (PayApproveFail) result;
         assertThat(fail.getErrorCode()).isEqualTo("PARSING_FAIL");
         assertThat(fail.getMessage()).isEqualTo("결제 처리 중 오류가 발생했습니다.");
+        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -114,5 +134,6 @@ class DefaultPayApproveExceptionTranslatorTest {
 
         PayApproveFail fail = (PayApproveFail) result;
         assertThat(fail.getErrorCode()).isEqualTo("UNKNOWN_ERROR");
+        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
     }
 }

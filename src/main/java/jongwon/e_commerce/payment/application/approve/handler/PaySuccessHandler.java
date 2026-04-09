@@ -44,6 +44,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
 
         // 4. 응답 생성
         return new PaySuccessResponse(
+                payApproveSuccess.getHttpStatus(),
                 updatedPay.getPayStatus(),
                 updatedPay.getPayMethod(),
                 updatedPay.getPayAmount()
