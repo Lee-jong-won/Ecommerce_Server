@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Artillery report</title>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.js"></script>
+
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+  <link href='https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js" charset="utf-8"></script>
+
+  <style>
+  body, p, li {
+    font-family: sans-serif;
+    font-size: 10pt;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+  }
+
+  #errorsContainer > p {
+    color: #009900;
+  }
+
+  #footer {
+    padding: 1em;
+    font-size: 0.8em;
+    color: #999;
+    text-align: center;
+    margin-top: 1em;
+    background-color: #eee;
+  }
+  #editor {
+    font-size: 8pt;
+    height: 20em;
+  }
+  </style>
+
+  <script>
+  window.Report = {
+  "aggregate": {
+    "timestamp": "2026-04-09T03:06:37.468Z",
+    "scenariosCreated": 4568,
+    "scenariosCompleted": 4422,
+    "requestsCompleted": 8990,
+    "latency": {
+      "min": 159,
+      "max": 9850,
+      "median": 580,
+      "p95": 3645,
+      "p99": 5583.8
+    },
+    "rps": {
+      "count": 8994,
+      "mean": 35.63
+    },
+    "scenarioDuration": {
+      "min": 1169.2,
+      "max": 15238.3,
+      "median": 1248.9,
+      "p95": 5674.8,
+      "p99": 10524.9
+    },
+    "scenarioCounts": {
+      "order and pay": 4568
+    },
+    "errors": {
+      "ETIMEDOUT": 4
+    },
+    "codes": {
+      "200": 4426,
+      "201": 4374,
+      "500": 190
+    },
+    "matches": 0,
+    "customStats": {
+      "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+        "min": 159,
+        "max": 6062,
+        "median": 180,
+        "p95": 4272,
+        "p99": 5285.6
+      },
+      "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+        "min": 568,
+        "max": 9850,
+        "median": 611,
+        "p95": 3050.6,
+        "p99": 6647.8
+      }
+    },
+    "counters": {
+      "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 4426,
+      "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 4374,
+      "plugins.metrics-by-endpoint./api/order (order_api).codes.500": 142,
+      "plugins.metrics-by-endpoint./api/payment (payment_api).codes.500": 48
+    },
+    "scenariosAvoided": 0,
+    "phases": [
+      {
+        "duration": 60,
+        "arrivalRate": 2,
+        "rampTo": 10,
+        "name": "initial-warmup"
+      },
+      {
+        "duration": 60,
+        "arrivalRate": 10,
+        "rampTo": 20,
+        "name": "deep-warmup"
+      },
+      {
+        "duration": 40,
+        "arrivalRate": 20,
+        "rampTo": 30,
+        "name": "rampup"
+      },
+      {
+        "duration": 60,
+        "arrivalRate": 30,
+        "name": "sustained-peak"
+      },
+      {
+        "duration": 30,
+        "arrivalRate": 30,
+        "rampTo": 5,
+        "name": "cooldown"
+      }
+    ]
+  },
+  "intermediate": [
+    {
+      "timestamp": "2026-04-09T03:02:34.864Z",
+      "scenariosCreated": 25,
+      "scenariosCompleted": 21,
+      "requestsCompleted": 45,
+      "latency": {
+        "min": 170,
+        "max": 766,
+        "median": 250,
+        "p95": 659.5,
+        "p99": 766
+      },
+      "rps": {
+        "count": 48,
+        "mean": 4.9
+      },
+      "scenarioDuration": {
+        "min": 1224,
+        "max": 1869.9,
+        "median": 1264.6,
+        "p95": 1593.1,
+        "p99": 1869.9
+      },
+      "scenarioCounts": {
+        "order and pay": 25
+      },
+      "errors": {},
+      "codes": {
+        "200": 24,
+        "201": 21
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 170,
+          "max": 631,
+          "median": 195,
+          "p95": 364.3,
+          "p99": 631
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 591,
+          "max": 766,
+          "median": 612,
+          "p95": 709.9,
+          "p99": 766
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 24,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 21
+      },
+      "concurrency": 4,
+      "pendingRequests": 3,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:02:44.868Z",
+      "scenariosCreated": 33,
+      "scenariosCompleted": 33,
+      "requestsCompleted": 66,
+      "latency": {
+        "min": 170,
+        "max": 641,
+        "median": 405,
+        "p95": 626.2,
+        "p99": 639.7
+      },
+      "rps": {
+        "count": 67,
+        "mean": 6.7
+      },
+      "scenarioDuration": {
+        "min": 1199.6,
+        "max": 1280,
+        "median": 1240.8,
+        "p95": 1270.5,
+        "p99": 1280
+      },
+      "scenarioCounts": {
+        "order and pay": 33
+      },
+      "errors": {},
+      "codes": {
+        "200": 33,
+        "201": 33
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 170,
+          "max": 230,
+          "median": 180,
+          "p95": 210,
+          "p99": 230
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 580,
+          "max": 641,
+          "median": 596,
+          "p95": 632.1,
+          "p99": 641
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 33,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 33
+      },
+      "concurrency": 4,
+      "pendingRequests": 4,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:02:54.875Z",
+      "scenariosCreated": 51,
+      "scenariosCompleted": 46,
+      "requestsCompleted": 97,
+      "latency": {
+        "min": 169,
+        "max": 629,
+        "median": 200,
+        "p95": 610,
+        "p99": 628.5
+      },
+      "rps": {
+        "count": 99,
+        "mean": 9.89
+      },
+      "scenarioDuration": {
+        "min": 1201.9,
+        "max": 1266.2,
+        "median": 1234.5,
+        "p95": 1260.6,
+        "p99": 1266.2
+      },
+      "scenarioCounts": {
+        "order and pay": 51
+      },
+      "errors": {},
+      "codes": {
+        "200": 51,
+        "201": 46
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 241,
+          "median": 180,
+          "p95": 200,
+          "p99": 240.6
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 586,
+          "max": 629,
+          "median": 597.5,
+          "p95": 624.8,
+          "p99": 629
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 51,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 46
+      },
+      "concurrency": 9,
+      "pendingRequests": 6,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:04.874Z",
+      "scenariosCreated": 69,
+      "scenariosCompleted": 72,
+      "requestsCompleted": 140,
+      "latency": {
+        "min": 169,
+        "max": 647,
+        "median": 580.5,
+        "p95": 627,
+        "p99": 645.2
+      },
+      "rps": {
+        "count": 139,
+        "mean": 13.9
+      },
+      "scenarioDuration": {
+        "min": 1199.5,
+        "max": 1305.1,
+        "median": 1233.1,
+        "p95": 1275.1,
+        "p99": 1301.3
+      },
+      "scenarioCounts": {
+        "order and pay": 69
+      },
+      "errors": {},
+      "codes": {
+        "200": 68,
+        "201": 72
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 579,
+          "max": 647,
+          "median": 595,
+          "p95": 630.7,
+          "p99": 646.6
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 230,
+          "median": 180,
+          "p95": 210,
+          "p99": 230
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 72,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 68
+      },
+      "concurrency": 6,
+      "pendingRequests": 5,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:14.884Z",
+      "scenariosCreated": 86,
+      "scenariosCompleted": 81,
+      "requestsCompleted": 165,
+      "latency": {
+        "min": 169,
+        "max": 626,
+        "median": 201,
+        "p95": 608,
+        "p99": 619
+      },
+      "rps": {
+        "count": 167,
+        "mean": 16.9
+      },
+      "scenarioDuration": {
+        "min": 1189.8,
+        "max": 1259,
+        "median": 1219.9,
+        "p95": 1247.8,
+        "p99": 1256.3
+      },
+      "scenarioCounts": {
+        "order and pay": 86
+      },
+      "errors": {},
+      "codes": {
+        "200": 84,
+        "201": 81
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 204,
+          "median": 180,
+          "p95": 197.5,
+          "p99": 203
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 575,
+          "max": 626,
+          "median": 588,
+          "p95": 608.5,
+          "p99": 623.8
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 84,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 81
+      },
+      "concurrency": 11,
+      "pendingRequests": 7,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:24.886Z",
+      "scenariosCreated": 97,
+      "scenariosCompleted": 95,
+      "requestsCompleted": 192,
+      "latency": {
+        "min": 169,
+        "max": 658,
+        "median": 245,
+        "p95": 638,
+        "p99": 653.5
+      },
+      "rps": {
+        "count": 196,
+        "mean": 19.6
+      },
+      "scenarioDuration": {
+        "min": 1189.8,
+        "max": 1299.3,
+        "median": 1228.4,
+        "p95": 1278.8,
+        "p99": 1295.2
+      },
+      "scenarioCounts": {
+        "order and pay": 97
+      },
+      "errors": {},
+      "codes": {
+        "200": 97,
+        "201": 95
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 574,
+          "max": 658,
+          "median": 593,
+          "p95": 642,
+          "p99": 657.1
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 250,
+          "median": 179,
+          "p95": 230.7,
+          "p99": 245.3
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 95,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 97
+      },
+      "concurrency": 13,
+      "pendingRequests": 11,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:34.892Z",
+      "scenariosCreated": 103,
+      "scenariosCompleted": 103,
+      "requestsCompleted": 209,
+      "latency": {
+        "min": 163,
+        "max": 658,
+        "median": 216,
+        "p95": 611.1,
+        "p99": 635.4
+      },
+      "rps": {
+        "count": 207,
+        "mean": 20.87
+      },
+      "scenarioDuration": {
+        "min": 1173.9,
+        "max": 1302.6,
+        "median": 1216.2,
+        "p95": 1263.9,
+        "p99": 1291.1
+      },
+      "scenarioCounts": {
+        "order and pay": 103
+      },
+      "errors": {},
+      "codes": {
+        "200": 106,
+        "201": 103
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 570,
+          "max": 658,
+          "median": 586,
+          "p95": 626.1,
+          "p99": 646.3
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 163,
+          "max": 228,
+          "median": 172.5,
+          "p95": 203.2,
+          "p99": 221.3
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 103,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 106
+      },
+      "concurrency": 13,
+      "pendingRequests": 9,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:44.910Z",
+      "scenariosCreated": 121,
+      "scenariosCompleted": 117,
+      "requestsCompleted": 233,
+      "latency": {
+        "min": 169,
+        "max": 654,
+        "median": 578,
+        "p95": 619.9,
+        "p99": 647.2
+      },
+      "rps": {
+        "count": 237,
+        "mean": 23.68
+      },
+      "scenarioDuration": {
+        "min": 1194.4,
+        "max": 1384.5,
+        "median": 1229.3,
+        "p95": 1286.2,
+        "p99": 1357.8
+      },
+      "scenarioCounts": {
+        "order and pay": 121
+      },
+      "errors": {},
+      "codes": {
+        "200": 116,
+        "201": 117
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 578,
+          "max": 654,
+          "median": 590,
+          "p95": 634.2,
+          "p99": 650
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 290,
+          "median": 179,
+          "p95": 212.5,
+          "p99": 257
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 117,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 116
+      },
+      "concurrency": 17,
+      "pendingRequests": 13,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:03:54.918Z",
+      "scenariosCreated": 133,
+      "scenariosCompleted": 135,
+      "requestsCompleted": 270,
+      "latency": {
+        "min": 161,
+        "max": 653,
+        "median": 404,
+        "p95": 610,
+        "p99": 645.8
+      },
+      "rps": {
+        "count": 268,
+        "mean": 26.8
+      },
+      "scenarioDuration": {
+        "min": 1176.4,
+        "max": 1304.5,
+        "median": 1216.4,
+        "p95": 1268.7,
+        "p99": 1300.8
+      },
+      "scenarioCounts": {
+        "order and pay": 133
+      },
+      "errors": {},
+      "codes": {
+        "200": 135,
+        "201": 135
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 570,
+          "max": 653,
+          "median": 586,
+          "p95": 629.5,
+          "p99": 647.9
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 161,
+          "max": 238,
+          "median": 172,
+          "p95": 200.8,
+          "p99": 232.9
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 135,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 135
+      },
+      "concurrency": 15,
+      "pendingRequests": 11,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:04.921Z",
+      "scenariosCreated": 159,
+      "scenariosCompleted": 150,
+      "requestsCompleted": 307,
+      "latency": {
+        "min": 166,
+        "max": 659,
+        "median": 220,
+        "p95": 619,
+        "p99": 642.4
+      },
+      "rps": {
+        "count": 314,
+        "mean": 31.46
+      },
+      "scenarioDuration": {
+        "min": 1190,
+        "max": 1292.5,
+        "median": 1219.4,
+        "p95": 1273.8,
+        "p99": 1286.4
+      },
+      "scenarioCounts": {
+        "order and pay": 159
+      },
+      "errors": {},
+      "codes": {
+        "200": 157,
+        "201": 150
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 166,
+          "max": 231,
+          "median": 172,
+          "p95": 201,
+          "p99": 230.9
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 573,
+          "max": 659,
+          "median": 587,
+          "p95": 632,
+          "p99": 645
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 157,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 150
+      },
+      "concurrency": 24,
+      "pendingRequests": 18,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:14.931Z",
+      "scenariosCreated": 187,
+      "scenariosCompleted": 188,
+      "requestsCompleted": 375,
+      "latency": {
+        "min": 160,
+        "max": 653,
+        "median": 569,
+        "p95": 604.5,
+        "p99": 637.3
+      },
+      "rps": {
+        "count": 375,
+        "mean": 37.54
+      },
+      "scenarioDuration": {
+        "min": 1187.4,
+        "max": 1340.9,
+        "median": 1210.5,
+        "p95": 1248.5,
+        "p99": 1322.3
+      },
+      "scenarioCounts": {
+        "order and pay": 187
+      },
+      "errors": {},
+      "codes": {
+        "200": 187,
+        "201": 188
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 260,
+          "median": 171,
+          "p95": 190.2,
+          "p99": 240.6
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 653,
+          "median": 585,
+          "p95": 619.1,
+          "p99": 646.5
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 187,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 188
+      },
+      "concurrency": 23,
+      "pendingRequests": 18,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:24.942Z",
+      "scenariosCreated": 197,
+      "scenariosCompleted": 197,
+      "requestsCompleted": 394,
+      "latency": {
+        "min": 160,
+        "max": 709,
+        "median": 409.5,
+        "p95": 609,
+        "p99": 644.6
+      },
+      "rps": {
+        "count": 393,
+        "mean": 39.26
+      },
+      "scenarioDuration": {
+        "min": 1176.8,
+        "max": 1327.8,
+        "median": 1213.9,
+        "p95": 1260.2,
+        "p99": 1315
+      },
+      "scenarioCounts": {
+        "order and pay": 197
+      },
+      "errors": {},
+      "codes": {
+        "200": 197,
+        "201": 197
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 709,
+          "median": 587,
+          "p95": 623.3,
+          "p99": 669.1
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 250,
+          "median": 170,
+          "p95": 190.6,
+          "p99": 235.3
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 197,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 197
+      },
+      "concurrency": 23,
+      "pendingRequests": 17,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:34.939Z",
+      "scenariosCreated": 199,
+      "scenariosCompleted": 198,
+      "requestsCompleted": 396,
+      "latency": {
+        "min": 162,
+        "max": 697,
+        "median": 415,
+        "p95": 635.7,
+        "p99": 675
+      },
+      "rps": {
+        "count": 398,
+        "mean": 39.8
+      },
+      "scenarioDuration": {
+        "min": 1177.8,
+        "max": 1337.8,
+        "median": 1226.4,
+        "p95": 1297.8,
+        "p99": 1330.1
+      },
+      "scenarioCounts": {
+        "order and pay": 199
+      },
+      "errors": {},
+      "codes": {
+        "200": 198,
+        "201": 198
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 162,
+          "max": 261,
+          "median": 178,
+          "p95": 228,
+          "p99": 246.2
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 697,
+          "median": 596,
+          "p95": 659,
+          "p99": 676
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 198,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 198
+      },
+      "concurrency": 24,
+      "pendingRequests": 19,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:44.945Z",
+      "scenariosCreated": 224,
+      "scenariosCompleted": 215,
+      "requestsCompleted": 436,
+      "latency": {
+        "min": 165,
+        "max": 704,
+        "median": 256,
+        "p95": 649.7,
+        "p99": 685.6
+      },
+      "rps": {
+        "count": 443,
+        "mean": 44.34
+      },
+      "scenarioDuration": {
+        "min": 1186.8,
+        "max": 1401.7,
+        "median": 1240.7,
+        "p95": 1325.5,
+        "p99": 1373
+      },
+      "scenarioCounts": {
+        "order and pay": 224
+      },
+      "errors": {},
+      "codes": {
+        "200": 221,
+        "201": 215
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 704,
+          "median": 603,
+          "p95": 675.8,
+          "p99": 693.5
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 165,
+          "max": 279,
+          "median": 180,
+          "p95": 231,
+          "p99": 260
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 215,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 221
+      },
+      "concurrency": 33,
+      "pendingRequests": 26,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:04:54.950Z",
+      "scenariosCreated": 264,
+      "scenariosCompleted": 258,
+      "requestsCompleted": 523,
+      "latency": {
+        "min": 160,
+        "max": 774,
+        "median": 289,
+        "p95": 667.4,
+        "p99": 725.3
+      },
+      "rps": {
+        "count": 524,
+        "mean": 52.4
+      },
+      "scenarioDuration": {
+        "min": 1174.9,
+        "max": 1432.4,
+        "median": 1257.3,
+        "p95": 1353.3,
+        "p99": 1409.7
+      },
+      "scenarioCounts": {
+        "order and pay": 264
+      },
+      "errors": {},
+      "codes": {
+        "200": 265,
+        "201": 258
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 309,
+          "median": 180,
+          "p95": 250.3,
+          "p99": 289.9
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 568,
+          "max": 774,
+          "median": 616.5,
+          "p95": 686.6,
+          "p99": 739.8
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 265,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 258
+      },
+      "concurrency": 39,
+      "pendingRequests": 27,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:04.962Z",
+      "scenariosCreated": 282,
+      "scenariosCompleted": 152,
+      "requestsCompleted": 312,
+      "latency": {
+        "min": 164,
+        "max": 4638,
+        "median": 589,
+        "p95": 3556.7,
+        "p99": 4435
+      },
+      "rps": {
+        "count": 445,
+        "mean": 44.54
+      },
+      "scenarioDuration": {
+        "min": 1185.4,
+        "max": 5355.5,
+        "median": 1249.5,
+        "p95": 2775.3,
+        "p99": 5167
+      },
+      "scenarioCounts": {
+        "order and pay": 282
+      },
+      "errors": {},
+      "codes": {
+        "200": 160,
+        "201": 152
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 574,
+          "max": 4638,
+          "median": 610,
+          "p95": 2148.5,
+          "p99": 4476.4
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 164,
+          "max": 4598,
+          "median": 189.5,
+          "p95": 3657.5,
+          "p99": 4405.2
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 152,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 160
+      },
+      "concurrency": 169,
+      "pendingRequests": 160,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:14.966Z",
+      "scenariosCreated": 299,
+      "scenariosCompleted": 84,
+      "requestsCompleted": 463,
+      "latency": {
+        "min": 283,
+        "max": 9554,
+        "median": 4770,
+        "p95": 5868.8,
+        "p99": 8711.8
+      },
+      "rps": {
+        "count": 544,
+        "mean": 54.45
+      },
+      "scenarioDuration": {
+        "min": 4832.5,
+        "max": 12788.7,
+        "median": 9210.4,
+        "p95": 11421.9,
+        "p99": 12436
+      },
+      "scenarioCounts": {
+        "order and pay": 299
+      },
+      "errors": {
+        "ETIMEDOUT": 3
+      },
+      "codes": {
+        "200": 246,
+        "201": 52,
+        "500": 165
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 283,
+          "max": 6062,
+          "median": 4644,
+          "p95": 5492.5,
+          "p99": 5738.8
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 1849,
+          "max": 9554,
+          "median": 5141,
+          "p95": 8779.2,
+          "p99": 9546.2
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 246,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.500": 133,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.500": 32,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 52
+      },
+      "concurrency": 248,
+      "pendingRequests": 241,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:24.968Z",
+      "scenariosCreated": 300,
+      "scenariosCompleted": 501,
+      "requestsCompleted": 842,
+      "latency": {
+        "min": 159,
+        "max": 9850,
+        "median": 746,
+        "p95": 5953,
+        "p99": 7925.4
+      },
+      "rps": {
+        "count": 634,
+        "mean": 63.4
+      },
+      "scenarioDuration": {
+        "min": 1186,
+        "max": 15238.3,
+        "median": 2769.4,
+        "p95": 10441,
+        "p99": 14552.5
+      },
+      "scenarioCounts": {
+        "order and pay": 300
+      },
+      "errors": {
+        "ETIMEDOUT": 1
+      },
+      "codes": {
+        "200": 332,
+        "201": 485,
+        "500": 25
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 159,
+          "max": 5257,
+          "median": 371,
+          "p95": 4465.1,
+          "p99": 5152.4
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 576,
+          "max": 9850,
+          "median": 1437,
+          "p95": 6748.8,
+          "p99": 8689.3
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 332,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 485,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.500": 16,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.500": 9
+      },
+      "concurrency": 37,
+      "pendingRequests": 33,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:34.965Z",
+      "scenariosCreated": 300,
+      "scenariosCompleted": 300,
+      "requestsCompleted": 599,
+      "latency": {
+        "min": 160,
+        "max": 769,
+        "median": 588,
+        "p95": 719.6,
+        "p99": 744.5
+      },
+      "rps": {
+        "count": 598,
+        "mean": 59.86
+      },
+      "scenarioDuration": {
+        "min": 1195.5,
+        "max": 1522.5,
+        "median": 1303.3,
+        "p95": 1439.9,
+        "p99": 1482.6
+      },
+      "scenarioCounts": {
+        "order and pay": 300
+      },
+      "errors": {},
+      "codes": {
+        "200": 299,
+        "201": 300
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 588,
+          "max": 769,
+          "median": 654.5,
+          "p95": 736.5,
+          "p99": 749.5
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 330,
+          "median": 192,
+          "p95": 290.6,
+          "p99": 311
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 300,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 299
+      },
+      "concurrency": 37,
+      "pendingRequests": 32,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:44.965Z",
+      "scenariosCreated": 300,
+      "scenariosCompleted": 301,
+      "requestsCompleted": 603,
+      "latency": {
+        "min": 159,
+        "max": 759,
+        "median": 281,
+        "p95": 670,
+        "p99": 709.3
+      },
+      "rps": {
+        "count": 602,
+        "mean": 60.26
+      },
+      "scenarioDuration": {
+        "min": 1169.2,
+        "max": 1456.1,
+        "median": 1255.6,
+        "p95": 1351,
+        "p99": 1412.6
+      },
+      "scenarioCounts": {
+        "order and pay": 300
+      },
+      "errors": {},
+      "codes": {
+        "200": 302,
+        "201": 301
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 159,
+          "max": 281,
+          "median": 179,
+          "p95": 242.2,
+          "p99": 280.5
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 759,
+          "median": 620,
+          "p95": 688,
+          "p99": 737.5
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 302,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 301
+      },
+      "concurrency": 36,
+      "pendingRequests": 31,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:05:54.965Z",
+      "scenariosCreated": 300,
+      "scenariosCompleted": 300,
+      "requestsCompleted": 599,
+      "latency": {
+        "min": 160,
+        "max": 866,
+        "median": 579,
+        "p95": 739,
+        "p99": 810
+      },
+      "rps": {
+        "count": 598,
+        "mean": 59.86
+      },
+      "scenarioDuration": {
+        "min": 1195.8,
+        "max": 1611.7,
+        "median": 1306.5,
+        "p95": 1466.8,
+        "p99": 1548.4
+      },
+      "scenarioCounts": {
+        "order and pay": 300
+      },
+      "errors": {},
+      "codes": {
+        "200": 299,
+        "201": 300
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 401,
+          "median": 180,
+          "p95": 307.2,
+          "p99": 335.6
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 579,
+          "max": 866,
+          "median": 660,
+          "p95": 764.5,
+          "p99": 823.5
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 299,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 300
+      },
+      "concurrency": 36,
+      "pendingRequests": 30,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:06:04.965Z",
+      "scenariosCreated": 300,
+      "scenariosCompleted": 298,
+      "requestsCompleted": 599,
+      "latency": {
+        "min": 161,
+        "max": 980,
+        "median": 439,
+        "p95": 731.1,
+        "p99": 811
+      },
+      "rps": {
+        "count": 600,
+        "mean": 60.06
+      },
+      "scenarioDuration": {
+        "min": 1177.3,
+        "max": 1640.7,
+        "median": 1294.3,
+        "p95": 1474.6,
+        "p99": 1592.2
+      },
+      "scenarioCounts": {
+        "order and pay": 300
+      },
+      "errors": {},
+      "codes": {
+        "200": 301,
+        "201": 298
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 980,
+          "median": 646.5,
+          "p95": 773.2,
+          "p99": 846
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 161,
+          "max": 480,
+          "median": 189,
+          "p95": 290,
+          "p99": 391.5
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 298,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 301
+      },
+      "concurrency": 38,
+      "pendingRequests": 31,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:06:14.975Z",
+      "scenariosCreated": 274,
+      "scenariosCompleted": 281,
+      "requestsCompleted": 555,
+      "latency": {
+        "min": 159,
+        "max": 918,
+        "median": 576,
+        "p95": 719,
+        "p99": 810
+      },
+      "rps": {
+        "count": 553,
+        "mean": 55.3
+      },
+      "scenarioDuration": {
+        "min": 1186.2,
+        "max": 1648.6,
+        "median": 1258.3,
+        "p95": 1480.1,
+        "p99": 1559
+      },
+      "scenarioCounts": {
+        "order and pay": 274
+      },
+      "errors": {},
+      "codes": {
+        "200": 274,
+        "201": 281
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 571,
+          "max": 918,
+          "median": 621,
+          "p95": 753.4,
+          "p99": 855
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 159,
+          "max": 400,
+          "median": 180,
+          "p95": 277.2,
+          "p99": 365.2
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 281,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 274
+      },
+      "concurrency": 31,
+      "pendingRequests": 29,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:06:24.989Z",
+      "scenariosCreated": 169,
+      "scenariosCompleted": 180,
+      "requestsCompleted": 354,
+      "latency": {
+        "min": 159,
+        "max": 660,
+        "median": 571,
+        "p95": 621.8,
+        "p99": 647.8
+      },
+      "rps": {
+        "count": 343,
+        "mean": 34.27
+      },
+      "scenarioDuration": {
+        "min": 1174.3,
+        "max": 1306.5,
+        "median": 1215.6,
+        "p95": 1270.1,
+        "p99": 1302.4
+      },
+      "scenarioCounts": {
+        "order and pay": 169
+      },
+      "errors": {},
+      "codes": {
+        "200": 174,
+        "201": 180
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 660,
+          "median": 588,
+          "p95": 632.5,
+          "p99": 654.6
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 159,
+          "max": 240,
+          "median": 171,
+          "p95": 203.2,
+          "p99": 221.8
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 180,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 174
+      },
+      "concurrency": 20,
+      "pendingRequests": 18,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:06:34.995Z",
+      "scenariosCreated": 93,
+      "scenariosCompleted": 106,
+      "requestsCompleted": 200,
+      "latency": {
+        "min": 160,
+        "max": 672,
+        "median": 572.5,
+        "p95": 612.5,
+        "p99": 660
+      },
+      "rps": {
+        "count": 192,
+        "mean": 19.2
+      },
+      "scenarioDuration": {
+        "min": 1177.7,
+        "max": 2197,
+        "median": 1214.8,
+        "p95": 1263.3,
+        "p99": 1695.3
+      },
+      "scenarioCounts": {
+        "order and pay": 93
+      },
+      "errors": {},
+      "codes": {
+        "200": 94,
+        "201": 106
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 569,
+          "max": 672,
+          "median": 589,
+          "p95": 626.4,
+          "p99": 668.1
+        },
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 160,
+          "max": 246,
+          "median": 171,
+          "p95": 208,
+          "p99": 242.9
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 106,
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 94
+      },
+      "concurrency": 7,
+      "pendingRequests": 10,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2026-04-09T03:06:37.421Z",
+      "scenariosCreated": 3,
+      "scenariosCompleted": 10,
+      "requestsCompleted": 16,
+      "latency": {
+        "min": 169,
+        "max": 604,
+        "median": 579.5,
+        "p95": 600.1,
+        "p99": 604
+      },
+      "rps": {
+        "count": 10,
+        "mean": 4.31
+      },
+      "scenarioDuration": {
+        "min": 1192.1,
+        "max": 1229.5,
+        "median": 1211.6,
+        "p95": 1229.5,
+        "p99": 1229.5
+      },
+      "scenarioCounts": {
+        "order and pay": 3
+      },
+      "errors": {},
+      "codes": {
+        "200": 6,
+        "201": 10
+      },
+      "matches": 0,
+      "customStats": {
+        "plugins.metrics-by-endpoint.response_time./api/order (order_api)": {
+          "min": 169,
+          "max": 181,
+          "median": 171,
+          "p95": 181,
+          "p99": 181
+        },
+        "plugins.metrics-by-endpoint.response_time./api/payment (payment_api)": {
+          "min": 576,
+          "max": 604,
+          "median": 584,
+          "p95": 604,
+          "p99": 604
+        }
+      },
+      "counters": {
+        "plugins.metrics-by-endpoint./api/order (order_api).codes.200": 6,
+        "plugins.metrics-by-endpoint./api/payment (payment_api).codes.201": 10
+      },
+      "concurrency": 0,
+      "pendingRequests": 4,
+      "scenariosAvoided": 0
+    }
+  ]
+};
+  </script>
+
+  <style>
+      h1 {
+        line-height: 200%;
+      }
+
+      body {
+          background-color: #fcfcfc;
+      }
+
+      .container {
+          width: 100%;
+          min-width: 960px;
+      }
+  </style>
+
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="row" id="header">
+  <div class="col-lg-4 col-lg-offset-4">
+    <pre style="font-size: 5pt; background-color: #fcfcfc; border: none;">
+            _   _ _ _                                                _
+  __ _ _ __| |_(_) | | ___ _ __ _   _      _ __ ___ _ __   ___  _ __| |_
+ / _` | '__| __| | | |/ _ \ '__| | | |    | '__/ _ \ '_ \ / _ \| '__| __|
+| (_| | |  | |_| | | |  __/ |  | |_| |    | | |  __/ |_) | (_) | |  | |_
+ \__,_|_|   \__|_|_|_|\___|_|   \__, |    |_|  \___| .__/ \___/|_|   \__|
+                                |___/              |_|
+
+    </pre>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="text-center" id="page-title">Test run on <span id="timestamp">date</span></h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-3">
+    <p><strong>Summary</strong></p>
+    <table class="table table-bordered table-hover table-condensed">
+      <tbody>
+        <tr>
+          <td>Test duration</td>
+          <td><span id="testDuration">0</span> sec</td>
+        </tr>
+        <tr>
+          <td>Scenarios created</td>
+          <td><span id="scenariosCreated">0</span></td>
+        </tr>
+
+        <tr>
+          <td>Scenarios completed</td>
+          <td><span id="scenariosCompleted">0</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-lg-5" id="scenarioCountsContainer">
+    <div>
+      <strong>Scenario counts:</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="scenarioCounts">
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-1">
+    <div id="codesContainer">
+      <strong>Codes</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="codes">
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-3">
+    <div id="errorsContainer">
+      <strong>Errors</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="errors">
+      </table>
+    </div>
+  </div>
+</div> <!-- /.row -->
+
+<div class="row">
+  <div class="text-center col-lg-12">
+    <h2>Charts</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="latency-histogram text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="latency text-center col-lg-12"></div>
+</div>
+
+<div class="latency-legend"></div>
+
+<div class="row">
+
+</div>
+
+<div class="row">
+  <div class="concurrency text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="rps-mean text-center col-lg-12"></div>
+</div>
+<div class="row">
+  <div class="rps-count text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="codes-line text-center col-lg-12"></div>
+</div>
+<div class="row">
+  <div class="errors-line text-center col-lg-12"></div>
+</div>
+
+
+  
+    
+    <div class="row">
+      <div class="id_362 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['plugins.metrics-by-endpoint.response_time./api/order (order_api)'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'plugins.metrics-by-endpoint.response_time./api/order (order_api) distribution',
+        description: 'Distribution of plugins.metrics-by-endpoint.response_time./api/order (order_api)',
+        target: '.id_362',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_4476 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['plugins.metrics-by-endpoint.response_time./api/payment (payment_api)'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'plugins.metrics-by-endpoint.response_time./api/payment (payment_api) distribution',
+        description: 'Distribution of plugins.metrics-by-endpoint.response_time./api/payment (payment_api)',
+        target: '.id_4476',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+
+
+</div>
+
+<div class="row">
+  <div class="col-lg-8 col-lg-offset-2">
+    <h3 class="text-center">Raw report data</h3>
+    <p>This is the raw JSON stats output that the report was generated from.</p>
+    <div id="editor">
+    </div>
+  </div>
+</div>
+
+<script>
+var editor = ace.edit("editor");
+editor.getSession().setMode("ace/mode/javascript");
+editor.setValue(JSON.stringify(Report, null, 2));
+editor.gotoLine(1);editor.setHighlightActiveLine(false);
+
+var l = _;
+
+$('#timestamp').html(moment(Report.aggregate.timestamp).format('DD MMM YYYY HH:mm:SS'));
+$('#testDuration').html(l.size(Report.intermediate) * 10);
+$('#scenariosCompleted').html(Report.aggregate.scenariosCompleted);
+$('#scenariosCreated').html(Report.aggregate.scenariosCreated);
+
+var markers = [];
+if(l.size(Report.phases) > 0) {
+  markers = l.foldl(Report.phases, function(acc, phase, index) {
+    var label = phase.name || 'Phase ' + (index + 1);
+    var timestamp = (index === 0) ? 0 : Report.phases[index - 1].duration + acc[index - 1].timestamp;
+
+    acc.push({
+      timestamp: timestamp,
+      label: label
+    });
+
+    return acc;
+  }, []);
+}
+
+if (l.size(Report.aggregate.scenarioCounts) > 0) {
+  l.each(Report.aggregate.scenarioCounts, function(count, name) {
+    var $tdName = $('<td>' + name + '</td>');
+    var percentage = Math.round(count / Report.aggregate.scenariosCreated * 100 * 1000) / 1000;
+    var $tdCount = $('<td>' + count + ' (' + percentage + '%)' + '</td>');
+    var $el = $('<tr></tr>')
+      .append($tdName)
+      .append($tdCount)
+      .appendTo($('#scenarioCounts'));
+  });
+} else {
+  $('#scenarioCountsContainer').hide();
+}
+
+if (l.size(Report.aggregate.codes) > 0) {
+  l.each(Report.aggregate.codes, function(count, code) {
+    var anchor = '';
+    if (code >= 100 && code < 200) {
+      anchor = '#1xx_Informational';
+    } else if (code >= 200 && code < 300) {
+      anchor = '#2xx_Success';
+    } else if (code >= 300 && code < 400) {
+      anchor = '#3xx_Redirection';
+    } else if (code >= 400 && code < 500) {
+      anchor = '#4xx_Client_Error';
+    } else if (code >= 500 && code < 600) {
+      anchor = '#5xx_Server_Error';
+    }
+
+    var $a = $('<a>' + code + '</a>').attr('href', 'https://en.wikipedia.org/wiki/List_of_HTTP_status_codes' + anchor);
+    var $td = $('<td></td>').append($a);
+    var $el = $('<tr></tr>')
+      .append($td)
+      .append($('<td>' + count + '</td>'))
+      .appendTo($('#codes'));
+  });
+} else {
+  $('#codesContainer').hide();
+}
+
+if (l.size(Report.aggregate.errors) > 0) {
+  l.each(Report.aggregate.errors, function(count, code) {
+    var $el = $('<tr></tr>')
+      .append($('<td>' + code + '</td>'))
+      .append($('<td>' + count + '</td>'))
+      .appendTo($('#errors'));
+  });
+} else {
+  $('#errorsContainer > p').html('&#10004; Test completed without network or OS errors.');
+}
+
+var histogramData = l.map(Report.aggregate.latency, function(v, k) { return {bin: k, value: v} });
+
+MG.data_graphic({
+  chart_type: 'bar',
+  x_label: 'Percentile',
+  y_label: '(ms)',
+  animate_on_load: true,
+  title: 'Overall Latency Distribution',
+  description: 'Distribution of all observed response latencies',
+  target: '.latency-histogram',
+  data: histogramData,
+  x_accessor: 'bin',
+  y_accessor: 'value',
+  binned: true,
+  height: 250,
+  interpolate: 'monotone',
+  padding_percentage: 0,
+  bar_orientation: 'vertical',
+  width: 450
+});
+
+var chartData = l.map(
+  window.Report.intermediate,
+  function(o,i) {
+    return {
+      timestamp: i*10+10,
+
+      rpsMean: o.rps.mean,
+      rpsCount: o.rps.count,
+      concurrency: o.concurrency,
+      latencyMax: o.latency.max,
+      latencyp99: o.latency.p99,
+      latencyp95: o.latency.p95,
+      latencyMedian: o.latency.median,
+      latencyMin: o.latency.min
+    }
+  });
+
+//
+// Response codes
+//
+
+if (l.size(Report.aggregate.codes) > 0) {
+  var codesData = l.foldl(Report.intermediate, function(acc, o, i) {
+    var res = {};
+    res.timestamp = i*10+10;
+    l.each(o.codes, function(count, code) {
+      res[code] = count;
+    });
+    acc.push(res);
+    return acc;
+  }, []);
+  var uniqueCodes = l.foldl(Report.intermediate, function(acc, o) {
+    l.each(o.codes, function(count, code) {
+      if (l.indexOf(acc, code) === -1) {
+        acc.push(code);
+      }
+    });
+    return acc;
+  }, []);
+
+  MG.data_graphic({
+    x_label: 'Time',
+    y_label: 'Count',
+    title: 'HTTP codes',
+    description: 'Occurence of HTTP response codes',
+    target: '.codes-line',
+    data: codesData,
+    x_accessor: 'timestamp',
+    y_accessor: uniqueCodes,
+    legend: uniqueCodes,
+    right: 50,
+    chart_type: 'line',
+    area: false,
+    markers: markers,
+    width: 900
+  });
+}
+
+//
+// Errors
+//
+
+if (l.size(Report.aggregate.errors) > 0) {
+  var errorData = l.foldl(Report.intermediate, function(acc, o, i) {
+    var res = {};
+    res.timestamp = i*10+10;
+    l.each(o.errors, function(count, name) {
+      res[name] = count;
+    });
+    acc.push(res);
+    return acc;
+  }, []);
+  var uniqueErrors = l.foldl(Report.intermediate, function(acc, o) {
+    l.each(o.errors, function(count, name) {
+      if (l.indexOf(acc, name) === -1) {
+        acc.push(name);
+      }
+    });
+    return acc;
+  }, []);
+
+  MG.data_graphic({
+    title: 'Error Codes',
+    description: 'Occurence of error codes',
+    target: '.errors-line',
+    data: errorData,
+    x_accessor: 'timestamp',
+    y_accessor: uniqueErrors,
+    chart_type: 'line',
+    area: false,
+    markers: markers
+  });
+
+}
+
+//
+// Latency
+//
+MG.data_graphic({
+  chart_type: 'line',
+  x_label: 'Time',
+  y_label: '(ms)',
+  animate_on_load: true,
+  area: false,
+  title: "Latency At Intervals",
+  description: "Latency values at different points during the test run",
+  data: chartData,
+  target: '.latency',
+  width: 900,
+  x_accessor: 'timestamp',
+  y_accessor: ['latencyMin', 'latencyMedian', 'latencyp95', 'latencyMax'],
+  legend: ['min', 'p50', 'p95', 'max'],
+  //legend_target: '.latency-legend',
+  right: 50,
+  interpolate: 'monotone',
+  mouseover: function(d, i) {
+  },
+  markers: markers
+        });
+
+            MG.data_graphic({
+            animate_on_load: true,
+            area: false,
+            y_label: 'Count',
+            x_label: 'Time',
+            title: 'Concurrent users',
+            description: 'Concurrent users',
+            data: chartData,
+            target: '.concurrency',
+            x_accessor: 'timestamp',
+            y_accessor: ['concurrency'],
+            interpolate: 'monotone',
+            markers: markers,
+            width: 900
+            });
+
+MG.data_graphic({
+  animate_on_load: true,
+  area: false,
+  y_label: 'Count',
+  x_label: 'Time',
+  title: 'Mean RPS',
+  description: 'Mean requests per second',
+  data: chartData,
+  target: '.rps-mean',
+  x_accessor: 'timestamp',
+  y_accessor: ['rpsMean'],
+  interpolate: 'monotone',
+  markers: markers,
+  width: 900
+});
+
+MG.data_graphic({
+  animate_on_load: true,
+  area: false,
+  y_label: 'Count',
+  x_label: 'Time',
+  title: 'RPS Count',
+  description: 'Count of requests per second',
+  data: chartData,
+  target: '.rps-count',
+  x_accessor: 'timestamp',
+  y_accessor: ['rpsCount'],
+  interpolate: 'monotone',
+  markers: markers,
+  width: 900
+});
+</script>
+<div id="footer">
+  <footer>This report was created with <a href="https://artillery.io">Artillery</a> - free open-source load-testing for HTTP and WebSockets</footer>
+</div>
+</body>
+</html>

@@ -1,6 +1,3 @@
-let userSeq = 1;
-let orderSeq = 1;
-
 function setUser(context, events, done) {
     const n = Math.floor(Math.random() * 50000) + 1;
     context.vars.loginId = "user-" + n;
@@ -13,26 +10,15 @@ function setProduct(context, events, done) {
 }
 
 function setOrder(context, events, done) {
-    const random = Math.random().toString(36).substring(7);
-    context.vars.orderName = "order-" + random;
-    context.vars.orderId = "order-" + random;
+    const uniqueId = context.vars.$uuid;
+    context.vars.orderName = "order-" + uniqueId;
+    context.vars.orderId = "order-" + uniqueId;
     return done();
 }
 
 function setPay(context, events, done) {
-    const random = Math.random().toString(36).substring(7);
+    const random = context.vars.$uuid;
     context.vars.paymentKey = "paymentKey-" + random;
-    return done();
-}
-
-function setSequentialIds(context, events, done) {
-    context.vars.loginId = `user-${userSeq}`;
-    context.vars.orderId = `orderId-${orderSeq}`;
-
-    // 증가 + 500 넘으면 초기화
-    userSeq = userSeq >= 1000 ? 1 : userSeq + 1;
-    orderSeq = orderSeq >= 1000 ? 1 : orderSeq + 1;
-
     return done();
 }
 
@@ -48,6 +34,5 @@ module.exports = {
     setProduct,
     setOrder,
     setPay,
-    setSequentialIds,
     logResponse
 };

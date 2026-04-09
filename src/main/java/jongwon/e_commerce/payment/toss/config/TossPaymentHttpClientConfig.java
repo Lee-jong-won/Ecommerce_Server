@@ -28,8 +28,8 @@ public class TossPaymentHttpClientConfig {
                                 .build(),
                         ConnectionPolicy.builder().
                                 socketTimeout(Timeout.ofSeconds(30)).
-                                maxTotalConnections(100).
-                                defaultMaxPerRoute(100)
+                                maxTotalConnections(200).
+                                defaultMaxPerRoute(200)
                                 .build()
                 )
         );
