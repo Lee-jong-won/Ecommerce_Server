@@ -1,7 +1,5 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
-import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
@@ -24,19 +22,10 @@ public class PayFailHandler implements PayOutcomeHandler {
 
     @Override
     @Transactional
-    public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
-
+    public void handle(Pay pay, PayApproveOutcome outcome) {
         PayApproveFail payApproveFail = (PayApproveFail) outcome;
-        if(!payApproveFail.getErrorCode().equals("CONNECTION_TIMEOUT"))
+        if(payApproveFail.getPayErrorCode().shouldPayFail())
             pay.failed();
-
         paymentRepository.save(pay);
-
-        return new PayFailureResponse(
-                payApproveFail.getHttpStatus(),
-                pay.getPayStatus(),
-                payApproveFail.getErrorCode(),
-                payApproveFail.getMessage()
-        );
     }
 }

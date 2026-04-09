@@ -3,8 +3,6 @@ package jongwon.e_commerce.payment.application.approve.handler;
 import jongwon.e_commerce.order.application.OrderStockProcessor;
 import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
-import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.dto.PaySuccessResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
@@ -29,7 +27,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
 
     @Override
     @Transactional
-    public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
+    public void handle(Pay pay, PayApproveOutcome outcome) {
         PayApproveSuccess payApproveSuccess = (PayApproveSuccess)outcome;
         PayResult payResult = payApproveSuccess.getPayResult();
 
@@ -41,13 +39,5 @@ public class PaySuccessHandler implements PayOutcomeHandler {
 
         // 3. 재고 감소
         orderStockProcessor.deductStockOf(pay.getOrder());
-
-        // 4. 응답 생성
-        return new PaySuccessResponse(
-                payApproveSuccess.getHttpStatus(),
-                updatedPay.getPayStatus(),
-                updatedPay.getPayMethod(),
-                updatedPay.getPayAmount()
-        );
     }
 }

@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.application.approve.external;
 
+import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
@@ -26,11 +27,11 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                 return new PayApproveTimeout();
 
             if(isConnectTimeout(restClientException.getCause()))
-                return new PayApproveFail("CONNECTION_TIMEOUT",
-                    "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요", HttpStatus.GATEWAY_TIMEOUT);
+                return new PayApproveFail(PayErrorCode.CONNECTION_TIMEOUT,
+                    "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
 
             if(isConnectionRequestTimeout(restClientException.getCause()))
-                return new PayApproveFail("TOO_MANY_REQUEST", "요청이 너무 많습니다", HttpStatus.TOO_MANY_REQUESTS);
+                return new PayApproveFail(PayErrorCode.HTTP_CLIENT_POOL_TIMEOUT, "요청이 너무 많습니다");
         }
 
         // Http 에러 응답
@@ -40,9 +41,8 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
         log.error("RestClientException occured!", restClientException);
         // 알 수 없는 예외
         return new PayApproveFail(
-                "UNKNOWN_ERROR",
-                "알 수 없는 오류가 발생했습니다",
-                HttpStatus.GATEWAY_TIMEOUT
+                PayErrorCode.UNKNOWN,
+                "알 수 없는 오류가 발생했습니다"
         );
     }
 
@@ -90,14 +90,13 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
 
             String code = json.path("code").asText("UNKNOWN_ERROR");
             String message = json.path("message").asText("결제 처리 중 오류가 발생했습니다.");
-            return new PayApproveFail(code, message, HttpStatus.BAD_REQUEST);
+            return new PayApproveFail(PayErrorCode.from(code), message);
 
         } catch (Exception e) {
             // JSON 파싱 실패 시 fallback
             return new PayApproveFail(
-                    "PARSING_FAIL",
-                    "결제 처리 중 오류가 발생했습니다.",
-                    HttpStatus.INTERNAL_SERVER_ERROR
+                    PayErrorCode.UNKNOWN,
+                    "결제 처리 중 오류가 발생했습니다."
             );
         }
     }

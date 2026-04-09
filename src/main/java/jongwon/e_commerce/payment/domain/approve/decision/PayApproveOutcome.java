@@ -1,14 +1,14 @@
 package jongwon.e_commerce.payment.domain.approve.decision;
 
+import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 public abstract class PayApproveOutcome {
     private final PayApproveOutcomeType type;
-    private final HttpStatus httpStatus;
-    protected PayApproveOutcome(PayApproveOutcomeType type, HttpStatus httpStatus) {
+    protected PayApproveOutcome(PayApproveOutcomeType type) {
         this.type = type;
-        this.httpStatus = httpStatus;
     }
+    abstract PayApproveOutcomeResponse toPayApproveOutcomeResponse(HttpStatus httpStatus);
 }

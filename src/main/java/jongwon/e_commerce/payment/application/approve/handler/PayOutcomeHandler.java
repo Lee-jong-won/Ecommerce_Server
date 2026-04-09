@@ -7,5 +7,5 @@ import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 
 public interface PayOutcomeHandler {
     boolean supports(PayApproveOutcomeType type);
-    PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome);
+    void handle(Pay pay, PayApproveOutcome outcome);
 }

@@ -12,8 +12,6 @@ import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.external.DefaultPayApproveExceptionTranslator;
 import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
-import jongwon.e_commerce.payment.controller.dto.PaySuccessResponse;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;

@@ -46,8 +46,8 @@ class DefaultPayApproveExceptionTranslatorTest {
         assertThat(result).isInstanceOf(PayApproveFail.class);
 
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("CONNECTION_TIMEOUT");
-        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+        assertThat(fail.getPayErrorCode()).isEqualTo(PayErrorCode.CONNECTION_TIMEOUT);
+        assertThat(fail.getMessage()).isEqualTo("일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
     }
 
     @Test
@@ -74,9 +74,8 @@ class DefaultPayApproveExceptionTranslatorTest {
         // then
         assertThat(result).isInstanceOf(PayApproveFail.class);
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("INVALID_CARD");
+        assertThat(fail.getPayErrorCode()).isEqualTo(PayErrorCode.INVALID_CARD);
         assertThat(fail.getMessage()).isEqualTo("카드 정보 오류");
-        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -91,9 +90,8 @@ class DefaultPayApproveExceptionTranslatorTest {
         // then
         assertThat(result).isInstanceOf(PayApproveFail.class);
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("TOO_MANY_REQUEST");
+        assertThat(fail.getPayErrorCode()).isEqualTo(PayErrorCode.HTTP_CLIENT_POOL_TIMEOUT);
         assertThat(fail.getMessage()).isEqualTo("요청이 너무 많습니다");
-        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
     }
 
     @Test
@@ -116,9 +114,8 @@ class DefaultPayApproveExceptionTranslatorTest {
         assertThat(result).isInstanceOf(PayApproveFail.class);
 
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("PARSING_FAIL");
+        assertThat(fail.getPayErrorCode()).isEqualTo(PayErrorCode.UNKNOWN);
         assertThat(fail.getMessage()).isEqualTo("결제 처리 중 오류가 발생했습니다.");
-        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -133,7 +130,6 @@ class DefaultPayApproveExceptionTranslatorTest {
         assertThat(result).isInstanceOf(PayApproveFail.class);
 
         PayApproveFail fail = (PayApproveFail) result;
-        assertThat(fail.getErrorCode()).isEqualTo("UNKNOWN_ERROR");
-        assertThat(fail.getHttpStatus()).isEqualTo(HttpStatus.GATEWAY_TIMEOUT);
+        assertThat(fail.getPayErrorCode()).isEqualTo(PayErrorCode.UNKNOWN);
     }
 }

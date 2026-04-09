@@ -24,7 +24,7 @@ public class PaymentApprovalService {
     // 결제 후처리 부
     private final List<PayOutcomeHandler> outcomeHandlers;
 
-    public PayApproveOutcomeResponse approvePayment(Member member, PayApproveAttempt attempt){
+    public PayApproveOutcome approvePayment(Member member, PayApproveAttempt attempt){
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
         Pay pay = paymentService.preProcess(member, attempt);
 
@@ -36,7 +36,7 @@ public class PaymentApprovalService {
                 filter(h -> h.supports(outcome.getType()))
                 .findFirst().get();
 
-        PayApproveOutcomeResponse response = payOutcomeHandler.handle(pay, outcome);
-        return response;
+        payOutcomeHandler.handle(pay, outcome);
+        return outcome;
     }
 }

@@ -1,9 +1,7 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
@@ -23,16 +21,8 @@ public class PayTimeoutHandler implements PayOutcomeHandler {
 
     @Override
     @Transactional
-    public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
+    public void handle(Pay pay, PayApproveOutcome outcome) {
         pay.timeout();
         paymentRepository.save(pay);
-
-        PayApproveTimeout payApproveTimeout = (PayApproveTimeout) outcome;
-        return new PayFailureResponse(
-                payApproveTimeout.getHttpStatus(),
-                pay.getPayStatus(),
-                "PAYMENT_TIMEOUT",
-                "결제 시도가 많습니다. 다시 시도해주세요"
-        );
     }
 }
