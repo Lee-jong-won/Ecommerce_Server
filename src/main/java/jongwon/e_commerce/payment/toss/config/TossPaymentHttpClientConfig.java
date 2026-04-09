@@ -2,6 +2,7 @@ package jongwon.e_commerce.payment.toss.config;
 
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
+import jongwon.e_commerce.external.http.policy.RequestConfigPolicy;
 import jongwon.e_commerce.external.http.policy.RetryPolicy;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.util.Timeout;
@@ -29,8 +30,10 @@ public class TossPaymentHttpClientConfig {
                         ConnectionPolicy.builder().
                                 socketTimeout(Timeout.ofSeconds(5)).
                                 maxTotalConnections(200).
-                                defaultMaxPerRoute(200)
-                                .build()
+                                defaultMaxPerRoute(200).
+                                build(),
+                        RequestConfigPolicy.builder().
+                                connectionRequestTimeout(Timeout.ofSeconds(5)).build()
                 )
         );
     }

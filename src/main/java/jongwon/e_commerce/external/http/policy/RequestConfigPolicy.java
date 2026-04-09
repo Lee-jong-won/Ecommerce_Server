@@ -1,9 +1,14 @@
 package jongwon.e_commerce.external.http.policy;
 
+import lombok.Builder;
+import lombok.Getter;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.apache.hc.core5.util.Timeout;
 
+@Builder
+@Getter
 public class RequestConfigPolicy implements HttpClientPolicy {
     /**
      * 서버 응답 대기 타임아웃 (seconds)

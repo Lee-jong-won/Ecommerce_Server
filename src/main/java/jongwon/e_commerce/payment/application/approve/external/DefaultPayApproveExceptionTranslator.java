@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application.approve.external;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
@@ -26,6 +27,7 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                     "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요");
         }
 
+
         // Http 에러 응답
         if(restClientException instanceof RestClientResponseException)
             return translateFromResponse((RestClientResponseException) restClientException);
@@ -35,6 +37,19 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                 "UNKNOWN_ERROR",
                 "알 수 없는 오류가 발생했습니다"
         );
+    }
+
+    private boolean isConnectionRequestTimeout(Throwable cause){
+        while (cause != null) {
+            if (cause instanceof ConnectionRequestTimeoutException) {
+                String msg = cause.getMessage();
+                if (msg != null && msg.toLowerCase().contains("connection request timed out")) {
+                    return true;
+                }
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     private boolean isReadTimeout(Throwable cause) {
