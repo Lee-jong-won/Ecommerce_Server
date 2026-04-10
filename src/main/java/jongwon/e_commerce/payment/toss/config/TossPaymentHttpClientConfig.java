@@ -29,8 +29,8 @@ public class TossPaymentHttpClientConfig {
                                 .build(),
                         ConnectionPolicy.builder().
                                 socketTimeout(Timeout.ofSeconds(5)).
-                                maxTotalConnections(10).
-                                defaultMaxPerRoute(10).
+                                maxTotalConnections(150).
+                                defaultMaxPerRoute(150).
                                 build(),
                         RequestConfigPolicy.builder().
                                 connectionRequestTimeout(Timeout.ofSeconds(5)).build()
