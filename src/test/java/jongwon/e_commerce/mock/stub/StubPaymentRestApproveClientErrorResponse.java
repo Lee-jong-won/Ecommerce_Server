@@ -14,16 +14,16 @@ public class StubPaymentRestApproveClientErrorResponse implements PaymentApprove
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
         String body = """
         {
-            "code" : "FAILED_INTERNAL_SYSTEM_PROCESSING",
-            "message" : "내부 시스템 처리 작업이 실패했습니다. 잠시 후 다시 시도해주세요."
+            "code" : "INVALID_REJECT_CARD",
+            "message" : "잘못된 카드 정보입니다."
         }
         """;
 
         RestClientResponseException exception =
                 new RestClientResponseException(
-                        "Internal Server Error",   // message
-                        500,                      // rawStatusCode
-                        "Internal Server Error",  // statusText
+                        "BAD_REQUEST",   // message
+                        400,                      // rawStatusCode
+                        "BAD_REQUEST",  // statusText
                         HttpHeaders.EMPTY,        // headers
                         body.getBytes(StandardCharsets.UTF_8), // response body
                         StandardCharsets.UTF_8    // charset

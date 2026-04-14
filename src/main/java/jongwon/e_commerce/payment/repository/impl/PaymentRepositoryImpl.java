@@ -38,4 +38,16 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         );
     }
 
+    @Override
+    public Optional<Pay> findByPaymentKey(String paymentKey) {
+        return paymentJpaRepository.findByPaymentKey(paymentKey).map(PayEntity::toModel);
+    }
+
+    @Override
+    public Pay getByPaymentKey(String paymentKey) {
+        return findByPaymentKey(paymentKey).orElseThrow(
+                () -> new ResourceNotFoundException("Pay", paymentKey)
+        );
+    }
+
 }

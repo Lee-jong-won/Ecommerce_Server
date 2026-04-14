@@ -4,10 +4,9 @@ import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PayTimeoutHandler;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -52,15 +51,14 @@ class PayTimeoutHandlerTest {
                 orderRepository,
                 paymentRepository
         );
-        PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
+        ReadTimeout readTimeout = new ReadTimeout();
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, payApproveTimeout);
+        payTimeoutHandler.handle(pay, readTimeout);
 
         // then
-        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
-        assertThat(payFailureResponse.getCode()).isEqualTo("PAYMENT_TIMEOUT");
-        assertThat(payFailureResponse.getMessage()).isEqualTo("결제 시도가 많습니다. 다시 시도해주세요");
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
     }
 
 

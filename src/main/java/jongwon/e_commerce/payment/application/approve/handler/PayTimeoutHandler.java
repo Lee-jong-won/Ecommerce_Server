@@ -1,12 +1,8 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
-import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,22 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayTimeoutHandler implements PayOutcomeHandler {
     private final PaymentRepository paymentRepository;
     @Override
-    public boolean supports(PayApproveOutcomeType type) {
-        return type == PayApproveOutcomeType.TIMEOUT;
+    public boolean supports(PayApproveOutcome outcome) {
+        return outcome instanceof ReadTimeout;
     }
 
     @Override
     @Transactional
-    public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
+    public void handle(Pay pay, PayApproveOutcome outcome) {
         pay.timeout();
         paymentRepository.save(pay);
-
-        PayApproveTimeout payApproveTimeout = (PayApproveTimeout) outcome;
-        return new PayFailureResponse(
-                payApproveTimeout.getHttpStatus(),
-                pay.getPayStatus(),
-                "PAYMENT_TIMEOUT",
-                "결제 시도가 많습니다. 다시 시도해주세요"
-        );
     }
 }

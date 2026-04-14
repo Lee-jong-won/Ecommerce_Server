@@ -1,11 +1,8 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
-import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
+import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,25 +15,14 @@ public class PayFailHandler implements PayOutcomeHandler {
     private final PaymentRepository paymentRepository;
 
     @Override
-    public boolean supports(PayApproveOutcomeType type) {
-        return type == PayApproveOutcomeType.FAIL;
+    public boolean supports(PayApproveOutcome outcome) {
+        return outcome instanceof PayApproveFail;
     }
 
     @Override
     @Transactional
-    public PayApproveOutcomeResponse handle(Pay pay, PayApproveOutcome outcome) {
-
-        PayApproveFail payApproveFail = (PayApproveFail) outcome;
-        if(!payApproveFail.getErrorCode().equals("CONNECTION_TIMEOUT"))
-            pay.failed();
-
+    public void handle(Pay pay, PayApproveOutcome outcome) {
+        pay.failed();
         paymentRepository.save(pay);
-
-        return new PayFailureResponse(
-                payApproveFail.getHttpStatus(),
-                pay.getPayStatus(),
-                payApproveFail.getErrorCode(),
-                payApproveFail.getMessage()
-        );
     }
 }

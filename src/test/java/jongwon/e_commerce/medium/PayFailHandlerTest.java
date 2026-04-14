@@ -4,13 +4,13 @@ import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
-import jongwon.e_commerce.payment.controller.dto.PayFailureResponse;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.result.fail.*;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,30 +42,82 @@ class PayFailHandlerTest {
 
     @Autowired
     PaymentRepository paymentRepository;
+    Pay pay;
 
-    @Test
-    void 결제_실패가_성공적으로_반영된다(){
-        // given
-        Pay pay = TestDataFactory.finishPayPreProcess(
+    @BeforeEach
+    void init(){
+        pay = TestDataFactory.finishPayPreProcess(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository,
                 paymentRepository
         );
-        PayApproveFail payApproveFail = new PayApproveFail(
-                "INVALID_CARD",
-                "카드 정보 오류",
-                HttpStatus.BAD_REQUEST
-        );
+    }
+
+    @Test
+    void InvalidCard는_결제실패로_처리한다(){
+        // given
+        InvalidCard invalidCard = new InvalidCard();
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payFailHandler.handle(pay, payApproveFail);
+        payFailHandler.handle(pay, invalidCard);
 
         // then
-        assertThat(payFailureResponse.getCode()).isEqualTo("INVALID_CARD");
-        assertThat(payFailureResponse.getMessage()).isEqualTo("카드 정보 오류");
-        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+    }
+
+    @Test
+    void InsufficientBalance는_결제실패로_처리한다(){
+        // given
+        InsufficientBalance insufficientBalance = new InsufficientBalance();
+
+        // when
+        payFailHandler.handle(pay, insufficientBalance);
+
+        // then
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+    }
+
+    @Test
+    void InvalidErrorResponse는_결제실패로_처리한다(){
+        // given
+        InsufficientBalance insufficientBalance = new InsufficientBalance();
+
+        // when
+        payFailHandler.handle(pay, insufficientBalance);
+
+        // then
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+    }
+
+    @Test
+    void JsonParsingError는_결제실패로_처리한다(){
+        // given
+        JsonParsingError jsonParsingError = new JsonParsingError();
+
+        // when
+        payFailHandler.handle(pay, jsonParsingError);
+
+        // then
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+    }
+
+    @Test
+    void UnknownErrorCode는_결제실패로_처리한다(){
+        // given
+        UnknownErrorCode unknownErrorCode = new UnknownErrorCode();
+
+        // when
+        payFailHandler.handle(pay, unknownErrorCode);
+
+        // then
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.FAILED);
     }
 
 }

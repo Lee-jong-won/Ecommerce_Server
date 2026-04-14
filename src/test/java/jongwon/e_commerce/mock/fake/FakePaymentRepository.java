@@ -45,4 +45,17 @@ public class FakePaymentRepository implements PaymentRepository {
                 () -> new ResourceNotFoundException("Pay", id)
         );
     }
+
+    @Override
+    public Optional<Pay> findByPaymentKey(String paymentKey) {
+        return data.stream().filter(pay -> Objects.equals(pay.getPaymentKey(), paymentKey))
+                .findAny();
+    }
+
+    @Override
+    public Pay getByPaymentKey(String paymentKey) {
+        return findByPaymentKey(paymentKey).orElseThrow(
+                () -> new ResourceNotFoundException("Pay", paymentKey)
+        );
+    }
 }
