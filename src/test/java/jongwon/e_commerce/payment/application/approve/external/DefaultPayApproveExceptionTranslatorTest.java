@@ -2,7 +2,7 @@ package jongwon.e_commerce.payment.application.approve.external;
 
 import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -30,7 +30,7 @@ class DefaultPayApproveExceptionTranslatorTest {
         PayApproveOutcome result = translator.translate(ex);
 
         // then
-        assertThat(result).isInstanceOf(PayApproveTimeout.class);
+        assertThat(result).isInstanceOf(ReadTimeout.class);
     }
 
     @Test

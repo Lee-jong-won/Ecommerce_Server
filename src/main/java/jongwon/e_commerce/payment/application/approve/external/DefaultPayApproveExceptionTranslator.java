@@ -4,7 +4,7 @@ import jongwon.e_commerce.payment.domain.approve.result.fail.*;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.exception.ExceptionUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
 
             Throwable cause = e.getCause();
             if (ExceptionUtils.isReadTimeout(cause)) {
-                return new PayApproveTimeout();
+                return new ReadTimeout();
             }
 
             if (ExceptionUtils.isConnectTimeout(cause)) {

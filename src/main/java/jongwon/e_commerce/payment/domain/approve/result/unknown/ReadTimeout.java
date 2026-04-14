@@ -4,4 +4,4 @@ import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import lombok.Getter;
 
 @Getter
-public class PayApproveTimeout implements PayApproveOutcome { }
+public class ReadTimeout implements PayApproveOutcome { }

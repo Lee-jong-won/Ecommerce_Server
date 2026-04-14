@@ -6,7 +6,7 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PayTimeoutHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -51,10 +51,10 @@ class PayTimeoutHandlerTest {
                 orderRepository,
                 paymentRepository
         );
-        PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
+        ReadTimeout readTimeout = new ReadTimeout();
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, payApproveTimeout);
+        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, readTimeout);
 
         // then
         assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);

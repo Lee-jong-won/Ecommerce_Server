@@ -2,7 +2,7 @@ package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ public class PayTimeoutHandler implements PayOutcomeHandler {
     private final PaymentRepository paymentRepository;
     @Override
     public boolean supports(PayApproveOutcome outcome) {
-        return outcome instanceof PayApproveTimeout;
+        return outcome instanceof ReadTimeout;
     }
 
     @Override

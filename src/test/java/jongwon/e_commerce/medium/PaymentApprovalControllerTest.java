@@ -9,7 +9,7 @@ import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
@@ -129,8 +129,8 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        PayApproveTimeout payApproveTimeout = new PayApproveTimeout();
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveTimeout);
+        ReadTimeout readTimeout = new ReadTimeout();
+        when(payApprovalExecutor.executePayApprove(any())).thenReturn(readTimeout);
 
         // when && then
         mockMvc.perform(

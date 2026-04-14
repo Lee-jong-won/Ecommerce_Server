@@ -7,7 +7,7 @@ import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +61,7 @@ class PayApprovalExecutorTest {
         PayApproveOutcome payApproveOutcome = payApprovalExecutor.executePayApprove(request);
 
         // then
-        assertInstanceOf(PayApproveTimeout.class, payApproveOutcome);
+        assertInstanceOf(ReadTimeout.class, payApproveOutcome);
     }
 
 }
