@@ -4,10 +4,10 @@ import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientErrorResponse;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientNormal;
 import jongwon.e_commerce.mock.stub.StubPaymentRestApproveClientReadTimeout;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

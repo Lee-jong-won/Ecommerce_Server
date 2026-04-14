@@ -3,9 +3,8 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecutor;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
-import jongwon.e_commerce.payment.controller.dto.PayApproveOutcomeResponse;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +23,18 @@ public class PaymentApprovalService {
     // 결제 후처리 부
     private final List<PayOutcomeHandler> outcomeHandlers;
 
-    public PayApproveOutcome approvePayment(Member member, PayApproveAttempt attempt){
+    public PayApproveOutcome approvePayment(Member member,
+                                            PayApproveAttempt attempt,
+                                            String idempotencyKey){
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
         Pay pay = paymentService.preProcess(member, attempt);
 
         //2. 결제 승인 요청
-        PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt);
+        PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt, idempotencyKey);
 
         //3.handler를 통해, 승인 요청 결과를 결제에 반영
         PayOutcomeHandler payOutcomeHandler = outcomeHandlers.stream().
-                filter(h -> h.supports(outcome.getType()))
+                filter(h -> h.supports(outcome))
                 .findFirst().get();
 
         payOutcomeHandler.handle(pay, outcome);

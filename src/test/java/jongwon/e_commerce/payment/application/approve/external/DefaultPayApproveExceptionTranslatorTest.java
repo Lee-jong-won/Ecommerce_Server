@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.application.approve.external;
 
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.result.unknown.PayApproveTimeout;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

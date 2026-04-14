@@ -5,9 +5,8 @@ import jongwon.e_commerce.payment.application.approve.PaymentService;
 import jongwon.e_commerce.payment.application.approve.PayDetailSaver;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveOutcomeType;
-import jongwon.e_commerce.payment.domain.approve.decision.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +20,8 @@ public class PaySuccessHandler implements PayOutcomeHandler {
     private final PayDetailSaver payDetailSaver;
 
     @Override
-    public boolean supports(PayApproveOutcomeType type) {
-        return type == PayApproveOutcomeType.SUCCESS;
+    public boolean supports(PayApproveOutcome outcome) {
+        return outcome instanceof PayApproveSuccess;
     }
 
     @Override
