@@ -10,6 +10,7 @@ import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout
 import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class PayOutcomeHttpMapper {
@@ -18,24 +19,24 @@ public class PayOutcomeHttpMapper {
             PayResult result = s.getPayResult();
             Pay pay = result.getPaymentDetail().getPay();
             Order order = pay.getOrder();
-            return ResponseEntity.ok(
+            return ResponseEntity.status(HttpStatus.CREATED).body(
                     PayApproveSuccessResponse.builder().
                     payAmount(pay.getPayAmount()).
                     orderPrice(order.getTotalAmount()).
-                    orderName(order.getOrderName()));
+                    orderName(order.getOrderName()).build());
         }
 
         if(payApproveOutcome instanceof PayApproveFail f){
             return ResponseEntity.badRequest().body(PayApproveFailResponse.builder().
                     code(f.errorCode().name()).
-                    message(MessageResolver.resolve(f.errorCode())));
+                    message(MessageResolver.resolve(f.errorCode())).build());
         }
 
         if(payApproveOutcome instanceof ConnectionTimeout ||
                 payApproveOutcome instanceof ReadTimeout ||
                     payApproveOutcome instanceof UnknownRestClientError){
             return ResponseEntity.status(504).body(PayApproveFailResponse.builder().
-                    code("NETWORK_ERROR").message("일시적인 네트워크 오류입니다.").build());
+                    code("NETWORK_ERROR").message("일시적인 네트워크 오류입니다").build());
         }
 
         if(payApproveOutcome instanceof ConnectionRequestTimeout){

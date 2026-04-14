@@ -10,6 +10,7 @@ import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
+import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @SpringBootTest
@@ -47,6 +49,9 @@ class PaySuccessHandlerTest {
     @Autowired
     PaymentRepository paymentRepository;
 
+    @Autowired
+    MPPayRepository mpPayRepository;
+
     @Test
     void 결제_성공_핸들러가_성공적으로_동작한다(){
         // given
@@ -56,6 +61,7 @@ class PaySuccessHandlerTest {
                 orderItemRepository,
                 orderRepository,
                 paymentRepository);
+        OffsetDateTime approvedAt = OffsetDateTime.now();
 
         // 결제 성공 결과
         PayApproveSuccess payApproveSuccess = new PayApproveSuccess(
@@ -63,7 +69,7 @@ class PaySuccessHandlerTest {
                     payResultCommon(
                         PayResult.PayResultCommon.builder().
                                 payMethod(PayMethod.MOBILE).
-                                approvedAt(OffsetDateTime.now()).
+                                approvedAt(approvedAt).
                                 build()).
                     paymentDetail(
                         MPPay.builder().
@@ -75,12 +81,18 @@ class PaySuccessHandlerTest {
 
 
         // when
-        PaySuccessResponse response = (PaySuccessResponse) paySuccessHandler.handle(pay, payApproveSuccess);
+        paySuccessHandler.handle(pay, payApproveSuccess);
 
         // then
-        assertThat(response.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
-        assertThat(response.getPayAmount()).isEqualTo(pay.getPayAmount());
-        assertThat(response.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        MPPay mpPay = mpPayRepository.getByPay(pay);
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+
+        assertThat(updatedPay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        assertThat(updatedPay.getApprovedAt()).isEqualTo(approvedAt);
+
+        assertThat(mpPay.getReceiptUrl()).isEqualTo("naver");
+        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("010-1234-5678");
+        assertThat(mpPay.getSettlementStatus()).isEqualTo("DONE");
     }
 
 }

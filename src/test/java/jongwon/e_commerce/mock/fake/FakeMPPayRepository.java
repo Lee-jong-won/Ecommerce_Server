@@ -1,12 +1,11 @@
 package jongwon.e_commerce.mock.fake;
 
+import jongwon.e_commerce.common.exception.ResourceNotFoundException;
+import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.repository.MPPayRepository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FakeMPPayRepository implements MPPayRepository {
@@ -29,5 +28,20 @@ public class FakeMPPayRepository implements MPPayRepository {
             data.add(mpPay);
             return mpPay;
         }
+    }
+
+    @Override
+    public Optional<MPPay> findByPay(Pay pay) {
+        return data.stream()
+                .filter(item -> item.getPay() != null)
+                .filter(item -> Objects.equals(item.getPay().getId(), pay.getId()))
+                .findAny();
+    }
+
+    @Override
+    public MPPay getByPay(Pay pay) {
+        return findByPay(pay).orElseThrow(
+                () -> new ResourceNotFoundException("Does not Exist mpPay of PayId:", pay.getId())
+        );
     }
 }

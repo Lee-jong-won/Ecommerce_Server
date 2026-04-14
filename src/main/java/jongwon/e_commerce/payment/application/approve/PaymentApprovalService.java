@@ -33,11 +33,14 @@ public class PaymentApprovalService {
         PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt, idempotencyKey);
 
         //3.handler를 통해, 승인 요청 결과를 결제에 반영
-        PayOutcomeHandler payOutcomeHandler = outcomeHandlers.stream().
-                filter(h -> h.supports(outcome))
-                .findFirst().get();
+        outcomeHandlers.stream()
+                .filter(h -> h.supports(outcome))
+                .findFirst()
+                .ifPresentOrElse(
+                        h -> h.handle(pay, outcome),
+                        () -> log.debug("No handler for outcome: {}", outcome.getClass().getSimpleName())
+                );
 
-        payOutcomeHandler.handle(pay, outcome);
         return outcome;
     }
 }

@@ -54,12 +54,11 @@ class PayTimeoutHandlerTest {
         ReadTimeout readTimeout = new ReadTimeout();
 
         // when
-        PayFailureResponse payFailureResponse = (PayFailureResponse) payTimeoutHandler.handle(pay, readTimeout);
+        payTimeoutHandler.handle(pay, readTimeout);
 
         // then
-        assertThat(payFailureResponse.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
-        assertThat(payFailureResponse.getCode()).isEqualTo("PAYMENT_TIMEOUT");
-        assertThat(payFailureResponse.getMessage()).isEqualTo("결제 시도가 많습니다. 다시 시도해주세요");
+        Pay updatedPay = paymentRepository.getById(pay.getId());
+        assertThat(updatedPay.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
     }
 
 

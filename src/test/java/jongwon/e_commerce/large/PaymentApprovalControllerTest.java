@@ -46,7 +46,7 @@ public class PaymentApprovalControllerTest {
     }
 
     // @Test
-    void testPaymentApprovalApi(){
+   /* void testPaymentApprovalApi(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository,
                 productRepository,
@@ -73,5 +73,5 @@ public class PaymentApprovalControllerTest {
         // then
         assertEquals(order.getTotalAmount(), paySuccessResponse.getPayAmount());
         assertEquals(PayMethod.MOBILE, paySuccessResponse.getPayMethod());
-    }
+    }*/
 }

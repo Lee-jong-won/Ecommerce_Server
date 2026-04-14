@@ -27,6 +27,7 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
     @Override
     public PayApproveOutcome translate(RestClientException e) {
         // 1. 네트워크 계열
+        log.error("RestClientException occurred", e);
         if (e instanceof ResourceAccessException) {
 
             Throwable cause = e.getCause();
@@ -49,7 +50,6 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
         }
 
         // 3. 알 수 없는 경우
-        log.error("RestClientException occurred", e);
         return new UnknownRestClientError();
     }
 

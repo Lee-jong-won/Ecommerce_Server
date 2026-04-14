@@ -7,7 +7,10 @@ import jongwon.e_commerce.payment.application.approve.external.PayApprovalExecut
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.domain.approve.result.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
@@ -75,18 +78,19 @@ public class PaymentApprovalControllerTest {
                         receiptUrl("naver")
                         .build()).
                 build());
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
+        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(payApproveSuccess);
 
         // when && then
         mockMvc.perform(
                 post("/api/payment")
                         .header("X-MOCK-USER-LOGINID", "testUser")
+                                .header("Idempotency-Key", "test-key-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.payStatus").value("COMPLETE"))
-                .andExpect(jsonPath("$.payMethod").value("MOBILE"))
-                .andExpect(jsonPath("$.payAmount").isNumber());
+                .andExpect(jsonPath("$.orderPrice").value(15000))
+                .andExpect(jsonPath("$.payAmount").value(15000))
+                .andExpect(jsonPath("$.orderName").value("기본 주문"));
     }
 
     @Test
@@ -101,20 +105,19 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        PayApproveFail payApproveFail = new PayApproveFail("INVALID_CARD",
-                "정지된 카드입니다.", HttpStatus.BAD_REQUEST );
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
+        InvalidCard invalidCard = new InvalidCard();
+        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(invalidCard);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
+                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.payStatus").value("FAILED"))
                 .andExpect(jsonPath("$.code").value("INVALID_CARD"))
-                .andExpect(jsonPath("$.message").value("정지된 카드입니다."));
+                .andExpect(jsonPath("$.message").value("카드 정보가 잘못 되었습니다"));
     }
 
     @Test
@@ -130,18 +133,18 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         ReadTimeout readTimeout = new ReadTimeout();
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(readTimeout);
+        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(readTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
+                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isGatewayTimeout())
-                .andExpect(jsonPath("$.payStatus").value("TIME_OUT"))
-                .andExpect(jsonPath("$.code").value("PAYMENT_TIMEOUT"))
-                .andExpect(jsonPath("$.message").value("결제 시도가 많습니다. 다시 시도해주세요"));
+                .andExpect(jsonPath("$.code").value("NETWORK_ERROR"))
+                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류입니다"));
     }
 
     @Test
@@ -156,20 +159,19 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        PayApproveFail payApproveFail = new PayApproveFail("TOO_MANY_REQUEST",
-                "요청이 너무 많습니다", HttpStatus.TOO_MANY_REQUESTS );
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
+        ConnectionRequestTimeout connectionRequestTimeout = new ConnectionRequestTimeout();
+        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(connectionRequestTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
+                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isTooManyRequests())
-                .andExpect(jsonPath("$.payStatus").value("FAILED"))
-                .andExpect(jsonPath("$.code").value("TOO_MANY_REQUEST"))
-                .andExpect(jsonPath("$.message").value("요청이 너무 많습니다"));
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.code").value("NO_CONNECTION_TO_USE"))
+                .andExpect(jsonPath("$.message").value("서버 리소스 자원이 부족합니다."));
     }
 
     @Test
@@ -184,19 +186,18 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        PayApproveFail payApproveFail = new PayApproveFail("CONNECTION_TIMEOUT",
-                "일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요", HttpStatus.GATEWAY_TIMEOUT);
-        when(payApprovalExecutor.executePayApprove(any())).thenReturn(payApproveFail);
+        ConnectionTimeout connectionTimeout = new ConnectionTimeout();
+        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(connectionTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
+                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isGatewayTimeout())
-                .andExpect(jsonPath("$.payStatus").value("PENDING"))
-                .andExpect(jsonPath("$.code").value("CONNECTION_TIMEOUT"))
-                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류가 발생했습니다. 다시 시도해주세요"));
+                .andExpect(jsonPath("$.code").value("NETWORK_ERROR"))
+                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류입니다"));
     }
 }

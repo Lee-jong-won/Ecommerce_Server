@@ -21,7 +21,7 @@ public class PaymentApprovalController {
     @PostMapping
     public ResponseEntity<?> payApprove(@LoginMember Member member,
                                                       @RequestBody PayApproveAttempt attempt,
-                                                      @RequestHeader String idempotencyKey){
+                                                      @RequestHeader("Idempotency-Key") String idempotencyKey){
         PayApproveOutcome outcome = paymentApprovalService.approvePayment(member, attempt, idempotencyKey);
         ResponseEntity<?> responseEntity = PayOutcomeHttpMapper.toResponse(outcome);
         return responseEntity;
