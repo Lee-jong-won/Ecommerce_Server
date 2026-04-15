@@ -19,6 +19,7 @@ function setOrder(context, events, done) {
 function setPay(context, events, done) {
     const random = context.vars.$uuid;
     context.vars.paymentKey = "paymentKey-" + random;
+    context.vars.idempotencyKey = random
     return done();
 }
 

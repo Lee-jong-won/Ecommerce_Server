@@ -61,6 +61,7 @@ scenarios:
           headers:
             Content-Type: application/json
             X-MOCK-USER-LOGINID: "{{ loginId }}"
+            Idempotency-Key: "{{ idempotencyKey }}"
           json:
             orderId: "{{ orderId }}"
             paymentKey: "{{ paymentKey }}"
