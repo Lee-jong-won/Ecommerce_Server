@@ -8,10 +8,12 @@ import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaySuccessHandler implements PayOutcomeHandler {
 
@@ -30,6 +32,8 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         PayApproveSuccess payApproveSuccess = (PayApproveSuccess)outcome;
         PayResult payResult = payApproveSuccess.getPayResult();
 
+        log.info("SuccessHandler 작업 시작");
+
         // 1. 결제 공통 정보 업데이트
         Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResult.getPayResultCommon());
 
@@ -38,5 +42,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
 
         // 3. 재고 감소
         orderStockProcessor.deductStockOf(pay.getOrder());
+
+        log.info("SuccessHandler 작업 종료");
     }
 }

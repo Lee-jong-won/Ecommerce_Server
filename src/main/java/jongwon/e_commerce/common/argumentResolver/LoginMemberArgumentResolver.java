@@ -24,7 +24,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        log.info("supportsParameter 실행");
         boolean hasLoginAnnotation =
                 parameter.hasParameterAnnotation(LoginMember.class);
         boolean hasMemberType =
@@ -36,17 +35,22 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public @Nullable Object resolveArgument(MethodParameter parameter,
                                             @Nullable ModelAndViewContainer mavContainer,
                                             NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
+
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         if (request == null) {
             throw new BadRequestException("잘못된 요청입니다.");
         }
 
         String loginId = request.getHeader("X-MOCK-USER-LOGINID");
+        log.info("loginId = {}, 인증 시작", loginId);
+
         if (loginId == null || loginId.equals("")) {
             throw new BadRequestException("Login id is needed");
         }
 
         Member member = memberService.getByLoginId(loginId);
+
+        log.info("loginId = {}, 인증 성공", loginId);
         return member;
     }
 }

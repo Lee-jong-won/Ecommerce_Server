@@ -5,11 +5,13 @@ import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PayFailHandler implements PayOutcomeHandler {
 
     private final PaymentRepository paymentRepository;
@@ -22,7 +24,11 @@ public class PayFailHandler implements PayOutcomeHandler {
     @Override
     @Transactional
     public void handle(Pay pay, PayApproveOutcome outcome) {
+        log.info("Fail Handler 작업 시작");
+
         pay.failed();
         paymentRepository.save(pay);
+
+        log.info("Fail Handler 작업 종료");
     }
 }

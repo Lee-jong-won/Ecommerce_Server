@@ -11,10 +11,12 @@ import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @Builder
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,6 +31,10 @@ public class PaymentService {
 
     @Transactional
     public Pay preProcess(Member member, PayApproveAttempt attempt){
+
+        log.info("event = PAYMENT_PREPROCESS_START " + "paymentKey = {} " + "amount = {} ",
+                attempt.getPaymentKey(), attempt.getAmount());
+
         String orderId = attempt.getOrderId();;
         String paymentKey = attempt.getPaymentKey();;
         long amount = attempt.getAmount();
@@ -41,8 +47,12 @@ public class PaymentService {
         order.validatePayAmount(amount);
 
         // 결제 생성 후 저장
-        Pay pay = Pay.from(order, paymentKey, amount);
-        return paymentRepository.save(pay);
+        Pay pay = paymentRepository.save(Pay.from(order, paymentKey, amount));
+
+        log.info("event = PAYMENT_PREPROCESS_FINISHED " + "paymentKey = {} " + "amount = {} ",
+                attempt.getPaymentKey(), attempt.getAmount());
+
+        return pay;
     }
 
     @Transactional

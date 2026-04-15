@@ -10,6 +10,7 @@ import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Builder
+@Slf4j
 public class OrderExecutor {
 
     private final OrderRepository orderRepository;
@@ -32,6 +34,9 @@ public class OrderExecutor {
                        String orderName,
                        String orderId,
                        List<OrderItemCreate> requests){
+
+        log.info("주문 절차 시작, orderId = {}", orderId);
+
         //주문 - 상품 만들기
         List<OrderItem> orderItems = new ArrayList<>();
         for(int i = 0; i < requests.size(); i++){
@@ -60,6 +65,9 @@ public class OrderExecutor {
             orderItem.setOrder(savedOrder);
             orderItemRepository.save(orderItem);
         }
+
+        log.info("주문절차 완료, orderId = {}", orderId);
+
         return savedOrder;
     }
 }

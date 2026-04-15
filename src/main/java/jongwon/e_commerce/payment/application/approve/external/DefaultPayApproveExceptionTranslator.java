@@ -27,8 +27,9 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
     @Override
     public PayApproveOutcome translate(RestClientException e) {
         // 1. 네트워크 계열
-        log.error("RestClientException occurred", e);
         if (e instanceof ResourceAccessException) {
+
+            log.error("ResourceAccessException occurred", e);
 
             Throwable cause = e.getCause();
             if (ExceptionUtils.isReadTimeout(cause)) {
@@ -46,10 +47,12 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
 
         // 2. HTTP 응답 기반
         if (e instanceof RestClientResponseException) {
+            log.warn("ErrorResponse occurred", e);
             return translateFromErrorResponse((RestClientResponseException) e);
         }
 
         // 3. 알 수 없는 경우
+        log.error("UnKnown RestClientException occured", e);
         return new UnknownRestClientError();
     }
 
@@ -63,6 +66,7 @@ public class DefaultPayApproveExceptionTranslator implements PayApproveException
                     : "INVALID_ERROR_RESPONSE";
             return mapToOutcome(code);
         } catch (JacksonException e) {
+            log.error("포맷 변화로 PG 응답 파싱 실패");
             return new JsonParsingError();
         }
     }

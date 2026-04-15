@@ -26,6 +26,10 @@ public class PaymentApprovalService {
     public PayApproveOutcome approvePayment(Member member,
                                             PayApproveAttempt attempt,
                                             String idempotencyKey){
+
+        log.info("event = PAYMENT_START " + "paymentKey = {} " + "amount = {} ",
+                attempt.getPaymentKey(), attempt.getAmount());
+
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
         Pay pay = paymentService.preProcess(member, attempt);
 
@@ -38,8 +42,11 @@ public class PaymentApprovalService {
                 .findFirst()
                 .ifPresentOrElse(
                         h -> h.handle(pay, outcome),
-                        () -> log.debug("No handler for outcome: {}", outcome.getClass().getSimpleName())
+                        () -> log.info("No handler for outcome: {}", outcome.getClass().getSimpleName())
                 );
+
+        log.info("event = PAYMENT_FINISHED " + "paymentKey = {} " + "amount = {} ",
+                attempt.getPaymentKey(), attempt.getAmount());
 
         return outcome;
     }
