@@ -39,7 +39,6 @@ public class ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(SQLTransientConnectionException.class)
     public String serviceUnavailableException(SQLTransientConnectionException exception) {
-        log.error("DB Connection Exception = {}", exception);
         return exception.toString();
     }
 
