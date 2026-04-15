@@ -2,29 +2,23 @@ config:
   target: "http://64.176.226.236:8080"
   processor: "./OrderAndPayProcessor.js"
   phases:
-    - duration: 60
-      arrivalRate: 2
-      rampTo: 10
-      name: "initial-warmup"
-
-    - duration: 60
+    - duration: 30
       arrivalRate: 10
-      rampTo: 20
-      name: "deep-warmup"
+      name: "warmup"
 
-    - duration : 40
-      arrivalRate : 20
-      rampTo: 30
-      name : "rampup"
+    - duration: 30
+      arrivalRate: 10
+      rampTo: 50
+      name: "rampup"
 
-    - duration : 60
-      arrivalRate : 30
-      name : "sustained-peak"
+    - duration : 20
+      arrivalRate : 50
+      name : "sustained"
 
     - duration : 30
-      arrivalRate : 30
-      rampTo: 5
-      name : "cooldown"
+      arrivalRate : 50
+      rampTo: 20
+      name : "end of load"
   plugins:
     metrics-by-endpoint:
       useStyles: true
