@@ -38,7 +38,8 @@ public class ExceptionControllerAdvice {
     @ResponseBody
     @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler(SQLTransientConnectionException.class)
-    public String serviceUnavailableException(SQLTransientConnectionException exception) {
+    public String connectionUnavailableException(SQLTransientConnectionException exception) {
+        log.error("Connection unavilable = {}", exception.getMessage());
         return exception.toString();
     }
 
