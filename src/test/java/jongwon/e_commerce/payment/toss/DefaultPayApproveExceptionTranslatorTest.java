@@ -1,14 +1,14 @@
-package jongwon.e_commerce.payment.application.approve.external;
+package jongwon.e_commerce.payment.toss;
 
 import jongwon.e_commerce.payment.domain.approve.result.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.result.fail.JsonParsingError;
-import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.result.fail.UnknownErrorCode;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.toss.DefaultPayApproveExceptionTranslator;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve.external;
+package jongwon.e_commerce.payment.toss;
 
 import jongwon.e_commerce.payment.domain.approve.result.fail.*;
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;

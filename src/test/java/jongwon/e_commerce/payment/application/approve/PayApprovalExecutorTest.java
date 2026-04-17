@@ -1,6 +1,7 @@
-package jongwon.e_commerce.payment.application.approve.external;
+package jongwon.e_commerce.payment.application.approve;
 
 import jongwon.e_commerce.mock.stub.*;
+import jongwon.e_commerce.payment.application.approve.PayApprovalExecutor;
 import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.result.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
@@ -8,6 +9,8 @@ import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequest
 import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.toss.DefaultPayApproveExceptionTranslator;
+import jongwon.e_commerce.payment.toss.PayApproveExceptionTranslator;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
