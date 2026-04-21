@@ -1,22 +1,12 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.support.fixture.OrderFixture;
-import jongwon.e_commerce.support.fixture.OrderItemFixture;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

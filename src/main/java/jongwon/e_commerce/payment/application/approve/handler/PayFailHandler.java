@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.application.approve.handler;
 
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

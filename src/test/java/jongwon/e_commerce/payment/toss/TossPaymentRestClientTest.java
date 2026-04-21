@@ -2,25 +2,18 @@ package jongwon.e_commerce.payment.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
-import jongwon.e_commerce.external.http.client.HttpClientFactory;
-import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
-import jongwon.e_commerce.payment.toss.config.TossPaymentHttpClientConfig;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.config.TossPaymentRetryConfig;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.core5.util.Timeout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
-import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;

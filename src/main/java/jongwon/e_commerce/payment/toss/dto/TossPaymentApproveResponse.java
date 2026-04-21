@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.toss.dto;
 
 import jongwon.e_commerce.payment.domain.*;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import lombok.AllArgsConstructor;

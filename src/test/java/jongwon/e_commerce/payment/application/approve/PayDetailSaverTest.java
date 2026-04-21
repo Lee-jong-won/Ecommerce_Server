@@ -1,29 +1,19 @@
 package jongwon.e_commerce.payment.application.approve;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.mock.fake.*;
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.payment.application.approve.handler.success.PayDetailSaver;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

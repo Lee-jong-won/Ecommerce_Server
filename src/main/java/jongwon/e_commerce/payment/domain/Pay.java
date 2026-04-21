@@ -1,8 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Builder;
 import lombok.Getter;

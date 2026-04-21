@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.domain.approve;
+package jongwon.e_commerce.payment.toss.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;

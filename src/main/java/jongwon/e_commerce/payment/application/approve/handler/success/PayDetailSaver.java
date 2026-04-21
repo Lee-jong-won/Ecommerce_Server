@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.application.approve;
+package jongwon.e_commerce.payment.application.approve.handler.success;
 
 
 import jongwon.e_commerce.payment.domain.Pay;

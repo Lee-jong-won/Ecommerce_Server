@@ -1,22 +1,14 @@
 package jongwon.e_commerce.large;
 
 
-import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.MemberRepository;
-import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
 import jongwon.e_commerce.product.repository.ProductRepository;
-import jongwon.e_commerce.support.scenario.FinishOrderData;
-import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
 

@@ -3,8 +3,8 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class PaymentApprovalService {
         //2. 결제 승인 요청
         PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt, idempotencyKey);
 
-        //3.handler를 통해, 승인 요청 결과를 결제에 반영
+        //3. handler를 통해, 승인 요청 결과를 결제 데이터에 반영
         outcomeHandlers.stream()
                 .filter(h -> h.supports(outcome))
                 .findFirst()

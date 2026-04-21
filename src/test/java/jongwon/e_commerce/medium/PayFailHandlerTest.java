@@ -6,7 +6,7 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.handler.PayFailHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.result.fail.*;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.*;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 

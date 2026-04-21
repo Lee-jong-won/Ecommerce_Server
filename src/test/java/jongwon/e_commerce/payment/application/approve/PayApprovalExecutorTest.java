@@ -1,14 +1,13 @@
 package jongwon.e_commerce.payment.application.approve;
 
 import jongwon.e_commerce.mock.stub.*;
-import jongwon.e_commerce.payment.application.approve.PayApprovalExecutor;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.result.fail.InvalidCard;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.toss.DefaultPayApproveExceptionTranslator;
 import jongwon.e_commerce.payment.toss.PayApproveExceptionTranslator;
 import org.junit.jupiter.api.Test;

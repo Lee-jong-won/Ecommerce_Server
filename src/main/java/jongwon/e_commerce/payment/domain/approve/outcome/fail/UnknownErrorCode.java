@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.domain.approve.result.fail;
+package jongwon.e_commerce.payment.domain.approve.outcome.fail;
 
 public class UnknownErrorCode implements PayApproveFail{
     @Override

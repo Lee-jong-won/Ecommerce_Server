@@ -1,12 +1,10 @@
 package jongwon.e_commerce.payment.toss.dto;
 
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import org.junit.jupiter.api.Test;
-
-import java.time.OffsetDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

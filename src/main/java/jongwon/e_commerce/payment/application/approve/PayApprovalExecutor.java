@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.application.approve;
 
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.toss.PayApproveExceptionTranslator;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import jongwon.e_commerce.payment.toss.PaymentApproveClient;

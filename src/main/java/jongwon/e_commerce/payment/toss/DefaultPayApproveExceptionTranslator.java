@@ -1,11 +1,11 @@
 package jongwon.e_commerce.payment.toss;
 
-import jongwon.e_commerce.payment.domain.approve.result.fail.*;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.*;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.exception.ExceptionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

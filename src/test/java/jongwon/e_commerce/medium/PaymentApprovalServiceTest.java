@@ -12,7 +12,7 @@ import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;

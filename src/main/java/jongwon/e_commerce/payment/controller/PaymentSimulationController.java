@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.controller;
 
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.controller.response;
 
-import jongwon.e_commerce.payment.domain.approve.result.fail.PayErrorCode;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.PayErrorCode;
 
 public class MessageResolver {
     public static String resolve(PayErrorCode payErrorCode){

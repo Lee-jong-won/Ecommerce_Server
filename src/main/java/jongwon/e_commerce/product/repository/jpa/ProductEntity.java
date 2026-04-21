@@ -31,6 +31,12 @@ public class ProductEntity {
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
 
+    @Version
+    private Long version;
+
+    @Column(name = "original_product_id")
+    private Long originalProductId;
+
     public static ProductEntity from(Product product){
         ProductEntity productEntity = new ProductEntity();
 
@@ -39,6 +45,7 @@ public class ProductEntity {
         productEntity.productPrice = product.getProductPrice();
         productEntity.productStatus = product.getProductStatus();
         productEntity.stockQuantity = product.getStockQuantity();
+        productEntity.originalProductId = product.getOriginalProductId();
 
         return productEntity;
     }
@@ -49,6 +56,8 @@ public class ProductEntity {
                 productName(productName).
                 productPrice(productPrice).
                 productStatus(productStatus).
-                stockQuantity(stockQuantity).build();
+                stockQuantity(stockQuantity).
+                originalProductId(originalProductId).
+                build();
     }
 }

@@ -33,4 +33,14 @@ public class ProductRepositoryImpl implements ProductRepository {
                 () -> new ResourceNotFoundException("Product", id)
         );
     }
+
+    @Override
+    public int decreaseStock(Long id, int quantity, Long version) {
+        return 0;
+    }
+
+    @Override
+    public int increaseStock(Long id, int quantity, Long version) {
+        return 0;
+    }
 }

@@ -2,7 +2,6 @@ package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.application.OrderStockProcessor;
-import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
@@ -13,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

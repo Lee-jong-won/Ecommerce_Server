@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.toss;
 
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import org.springframework.web.client.RestClientException;
 
 public interface PayApproveExceptionTranslator {

@@ -1,18 +1,15 @@
 package jongwon.e_commerce.order.application;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.mock.fake.FakeMemberRepository;
 import jongwon.e_commerce.mock.fake.FakeOrderItemRepository;
 import jongwon.e_commerce.mock.fake.FakeOrderRepository;
 import jongwon.e_commerce.mock.fake.FakeProductRepository;
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.product.application.GeneralItemStockService;
+import jongwon.e_commerce.product.application.StockService;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -40,8 +37,10 @@ class OrderStockProcessorTest {
         orderItemRepository = new FakeOrderItemRepository();
 
         this.orderStockProcessor = OrderStockProcessor.builder().
-                orderItemRepository(orderItemRepository).
-                productRepository(productRepository).build();
+                orderItemRepository(orderItemRepository).stockServices(List.of(GeneralItemStockService.
+                        builder().
+                        productRepository(productRepository).
+                        build())).build();
     }
 
     @Test

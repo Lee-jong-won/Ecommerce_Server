@@ -17,6 +17,8 @@ public class Product {
     private int productPrice;
     private ProductStatus productStatus;
     private int stockQuantity;
+    private Long version;
+    private Long originalProductId;
 
     // 새로운 상품 생성은 항상 이 메소드를 통해서만
     public static Product from(String productName, int productPrice) {
@@ -26,6 +28,15 @@ public class Product {
                 productPrice(productPrice).build();
     }
 
+    public Product createPopularProduct(){
+        return Product.builder().
+                productName(productName).
+                productStatus(productStatus).
+                productPrice(productPrice).
+                stockQuantity(stockQuantity).
+                originalProductId(productId).
+                build();
+    }
 
     // 재고 추가
     public void addStock(int quantity){
@@ -37,19 +48,25 @@ public class Product {
 
     // 재고 감소
     public void removeStock(int quantity){
-        if (this.productStatus != ProductStatus.SELLING) {
+        if (!isSellingAvailable()) {
             throw new InvalidProductStatusException("판매중인 상품만 재고 차감 가능");
         }
 
-        int restStock = this.stockQuantity - quantity;
-        if(restStock < 0)
+        if(!hasSufficientStock(quantity))
             throw new NotEnoughStockException("재고가 충분하지 않습니다");
-        this.stockQuantity = restStock;
+        this.stockQuantity = this.stockQuantity - quantity;
 
         if(stockQuantity == 0)
             stopSelling();
     }
 
+    public boolean hasSufficientStock(int quantity){
+        return this.stockQuantity >= quantity;
+    }
+
+    public boolean isSellingAvailable(){
+        return this.productStatus == ProductStatus.SELLING;
+    }
     // 재고 변경
     public void changeStock(int stockQuantity) {
         if (this.productStatus != ProductStatus.READY && this.productStatus != ProductStatus.STOPPED) {

@@ -1,6 +1,6 @@
 package jongwon.e_commerce.mock.stub;
 
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.toss.PaymentApproveClient;
 import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;

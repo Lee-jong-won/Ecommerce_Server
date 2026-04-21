@@ -2,14 +2,14 @@ package jongwon.e_commerce.payment.controller.response;
 
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
-import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
