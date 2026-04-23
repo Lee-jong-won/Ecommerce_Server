@@ -15,12 +15,12 @@ public class HotItemStockService implements StockService{
     }
 
     @Override
-    public Product increaseStock(Product product, int quantity) {
+    public Product increaseStock(Long productId, int quantity) {
         return null;
     }
 
     @Override
-    public Product decreaseStock(Product product, int quantity) {
+    public Product decreaseStock(Long productId, int quantity) {
         return null;
     }
 }

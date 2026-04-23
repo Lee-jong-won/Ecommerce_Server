@@ -1,7 +1,7 @@
 package jongwon.e_commerce.product.repository.jpa;
 
-import jongwon.e_commerce.product.repository.jpa.ProductEntity;
-import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
+import jongwon.e_commerce.product.infrastructure.jpa.ProductEntity;
+import jongwon.e_commerce.product.infrastructure.jpa.ProductJpaRepository;
 import jongwon.e_commerce.support.fixture.ProductFixture;
 import jongwon.e_commerce.product.domain.Product;
 import org.junit.jupiter.api.Test;

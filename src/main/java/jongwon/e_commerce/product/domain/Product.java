@@ -17,7 +17,7 @@ public class Product {
     private int productPrice;
     private ProductStatus productStatus;
     private int stockQuantity;
-    private Long version;
+    private Integer version;
     private Long originalProductId;
 
     // 새로운 상품 생성은 항상 이 메소드를 통해서만

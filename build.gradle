@@ -37,6 +37,8 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry:2.0.12'
 	implementation 'org.springframework:spring-aspects'
 
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 

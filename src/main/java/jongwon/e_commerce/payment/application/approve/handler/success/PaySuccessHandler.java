@@ -41,7 +41,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         payDetailSaver.save(updatedPay, payResult.getPaymentDetail());
 
         // 3. 재고 감소
-        orderStockProcessor.deductStockOf(pay.getOrder());
+        orderStockProcessor.deductStockOf(pay.getOrder().getId());
 
         log.info("SuccessHandler 작업 종료");
     }

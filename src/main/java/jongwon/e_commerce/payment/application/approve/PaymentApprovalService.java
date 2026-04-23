@@ -25,17 +25,19 @@ public class PaymentApprovalService {
     public PayApproveOutcome approvePayment(Member member,
                                             PayApproveAttempt attempt,
                                             String idempotencyKey){
-
         log.info("event = PAYMENT_START " + "paymentKey = {} " + "amount = {} ",
                 attempt.getPaymentKey(), attempt.getAmount());
 
         //1. 결제 승인 요청 전 주문 정보 검증 후, 결제 생성
         Pay pay = paymentService.preProcess(member, attempt);
 
-        //2. 결제 승인 요청
+        //2. 결제 상태 진행중으로 상태 변경 (todo)
+
+
+        //3. 결제 승인 요청
         PayApproveOutcome outcome = payApprovalExecutor.executePayApprove(attempt, idempotencyKey);
 
-        //3. handler를 통해, 승인 요청 결과를 결제 데이터에 반영
+        //4. handler를 통해, 승인 요청 결과를 결제 데이터에 반영
         outcomeHandlers.stream()
                 .filter(h -> h.supports(outcome))
                 .findFirst()

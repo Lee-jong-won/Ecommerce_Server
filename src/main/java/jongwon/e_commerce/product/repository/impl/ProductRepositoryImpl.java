@@ -2,8 +2,8 @@ package jongwon.e_commerce.product.repository.impl;
 
 import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.repository.jpa.ProductEntity;
-import jongwon.e_commerce.product.repository.jpa.ProductJpaRepository;
+import jongwon.e_commerce.product.infrastructure.jpa.ProductEntity;
+import jongwon.e_commerce.product.infrastructure.jpa.ProductJpaRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
@@ -19,7 +19,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final ProductJpaRepository productJpaRepository;
     @Override
     public Product save(Product product) {
-        return productJpaRepository.save(ProductEntity.from(product)).toModel();
+        return productJpaRepository.saveAndFlush(ProductEntity.from(product)).toModel();
     }
 
     @Override
@@ -34,13 +34,4 @@ public class ProductRepositoryImpl implements ProductRepository {
         );
     }
 
-    @Override
-    public int decreaseStock(Long id, int quantity, Long version) {
-        return 0;
-    }
-
-    @Override
-    public int increaseStock(Long id, int quantity, Long version) {
-        return 0;
-    }
 }

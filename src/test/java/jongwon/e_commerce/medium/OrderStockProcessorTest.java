@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 public class OrderStockProcessorTest {
 
     @Autowired
@@ -44,7 +44,8 @@ public class OrderStockProcessorTest {
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.deductStockOf(finishOrderData.getOrder());
+        List<Product> products = orderStockProcessor.
+                deductStockOf(finishOrderData.getOrder().getId());
 
         // then
         Product product1 = products.get(0);
@@ -64,7 +65,7 @@ public class OrderStockProcessorTest {
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder());
+        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder().getId());
 
         // then
         Product product1 = products.get(0);

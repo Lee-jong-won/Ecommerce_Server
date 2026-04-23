@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface OrderItemRepository {
     OrderItem save(OrderItem orderItem);
-    List<OrderItem> findByOrder(Order order);
+    List<OrderItem> findByOrderId(Long orderId);
 }

@@ -1,4 +1,4 @@
-package jongwon.e_commerce.product.repository.jpa;
+package jongwon.e_commerce.product.infrastructure.jpa;
 
 import jakarta.persistence.*;
 import jongwon.e_commerce.product.domain.Product;
@@ -32,7 +32,7 @@ public class ProductEntity {
     private int stockQuantity;
 
     @Version
-    private Long version;
+    private Integer version;
 
     @Column(name = "original_product_id")
     private Long originalProductId;
@@ -45,6 +45,7 @@ public class ProductEntity {
         productEntity.productPrice = product.getProductPrice();
         productEntity.productStatus = product.getProductStatus();
         productEntity.stockQuantity = product.getStockQuantity();
+        productEntity.version = product.getVersion();
         productEntity.originalProductId = product.getOriginalProductId();
 
         return productEntity;
@@ -57,6 +58,7 @@ public class ProductEntity {
                 productPrice(productPrice).
                 productStatus(productStatus).
                 stockQuantity(stockQuantity).
+                version(version).
                 originalProductId(originalProductId).
                 build();
     }

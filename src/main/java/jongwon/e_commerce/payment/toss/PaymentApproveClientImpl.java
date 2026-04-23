@@ -11,11 +11,17 @@ import org.springframework.web.client.RestClient;
 
 @Component
 @Primary
-@RequiredArgsConstructor
 public class PaymentApproveClientImpl implements PaymentApproveClient {
 
-    @Qualifier("tossRestClient")private final RestClient restClient;
-    @Qualifier("tossRetryTemplate")private final RetryOperations payApproveRetryOperation;
+    private final RestClient restClient;
+    private final RetryOperations payApproveRetryOperation;
+
+    public PaymentApproveClientImpl(@Qualifier("tossRestClient")RestClient restClient,
+                                    @Qualifier("tossRetryTemplate")RetryOperations retryOperations){
+        this.restClient = restClient;
+        this.payApproveRetryOperation = retryOperations;
+    }
+
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
         return payApproveRetryOperation.execute(context -> {

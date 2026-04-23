@@ -2,8 +2,7 @@ package jongwon.e_commerce.order.repository.jpa.entity;
 
 import jakarta.persistence.*;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.repository.jpa.ProductEntity;
+import jongwon.e_commerce.product.infrastructure.jpa.ProductEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,11 +17,11 @@ public class OrderItemEntity {
     @Column(name = "order_item_id")
     private Long orderItemId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_order_id")
     private OrderEntity orderEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_product_id")
     private ProductEntity productEntity;
 
@@ -53,6 +52,16 @@ public class OrderItemEntity {
         return OrderItem.builder().
                 orderItemId(orderItemId).
                 order(orderEntity.toModel()).
+                product(productEntity.toModel())
+                .productName(productName)
+                .orderPrice(orderPrice)
+                .orderQuantity(orderQuantity)
+                .build();
+    }
+
+    public OrderItem toModelWithoutOrder(){
+        return OrderItem.builder().
+                orderItemId(orderItemId).
                 product(productEntity.toModel())
                 .productName(productName)
                 .orderPrice(orderPrice)

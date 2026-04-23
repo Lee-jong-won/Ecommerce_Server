@@ -26,11 +26,11 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
     }
 
     @Override
-    public List<OrderItem> findByOrder(Order order) {
-        List<OrderItemEntity> orderItemEntities = orderItemJpaRepository.findOrderItemsBy(OrderEntity.from(order));
+    public List<OrderItem> findByOrderId(Long orderId) {
+        List<OrderItemEntity> orderItemEntities = orderItemJpaRepository.findByOrderId(orderId);
         List<OrderItem> orderItems = new ArrayList<>();
         for(OrderItemEntity orderItemEntity : orderItemEntities){
-            OrderItem orderItem = orderItemEntity.toModel();
+            OrderItem orderItem = orderItemEntity.toModelWithoutOrder();
             orderItems.add(orderItem);
         }
         return orderItems;

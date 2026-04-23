@@ -8,6 +8,4 @@ public interface ProductRepository {
     Product save(Product product);
     Optional<Product> findById(Long id);
     Product getById(Long id);
-    int decreaseStock(Long id, int quantity, Long version);
-    int increaseStock(Long id, int quantity, Long version);
 }

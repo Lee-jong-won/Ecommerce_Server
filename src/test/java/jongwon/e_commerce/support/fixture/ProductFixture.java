@@ -21,12 +21,16 @@ public class ProductFixture {
     @Builder.Default
     private int stockQuantity = 100;
 
+    @Builder.Default
+    private Integer version = 0;
+
     public Product create() {
         return Product.builder()
                 .productName(productName)
                 .productPrice(productPrice)
                 .productStatus(productStatus)
                 .stockQuantity(stockQuantity)
+                .version(version)
                 .build();
     }
 

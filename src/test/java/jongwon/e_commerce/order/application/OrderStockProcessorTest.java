@@ -8,6 +8,7 @@ import jongwon.e_commerce.mock.fake.FakeProductRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.application.GeneralItemStockService;
+import jongwon.e_commerce.product.application.GeneralItemStockServiceTx;
 import jongwon.e_commerce.product.application.StockService;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductRepository;
@@ -36,10 +37,12 @@ class OrderStockProcessorTest {
         orderRepository = new FakeOrderRepository();
         orderItemRepository = new FakeOrderItemRepository();
 
+
         this.orderStockProcessor = OrderStockProcessor.builder().
                 orderItemRepository(orderItemRepository).stockServices(List.of(GeneralItemStockService.
                         builder().
-                        productRepository(productRepository).
+                        generalItemStockServiceTx(GeneralItemStockServiceTx.builder().
+                                productRepository(productRepository).build()).
                         build())).build();
     }
 
@@ -53,7 +56,7 @@ class OrderStockProcessorTest {
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.deductStockOf(finishOrderData.getOrder());
+        List<Product> products = orderStockProcessor.deductStockOf(finishOrderData.getOrder().getId());
 
         // then
         Product product1 = products.get(0);
@@ -73,7 +76,7 @@ class OrderStockProcessorTest {
                 orderRepository);
 
         // when
-        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder());
+        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder().getId());
 
         // then
         Product product1 = products.get(0);

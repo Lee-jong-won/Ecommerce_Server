@@ -56,10 +56,10 @@ class OrderExecutorTest {
                 "order1",
                 "order1",
                 prepareOrderData.getOrderItemCreates());
-        orderItemRepository.findByOrder(order).size();
+        orderItemRepository.findByOrderId(order.getId()).size();
 
         // then
-        assertThat(orderItemRepository.findByOrder(order).size()).isEqualTo(2);
+        assertThat(orderItemRepository.findByOrderId(order.getId()).size()).isEqualTo(2);
         assertThat(order.getTotalAmount()).isEqualTo(15000);
         assertThat(order.getOrderName()).isEqualTo("order1");
     }

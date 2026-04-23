@@ -37,10 +37,10 @@ public class FakeOrderItemRepository implements OrderItemRepository {
     }
 
     @Override
-    public List<OrderItem> findByOrder(Order order) {
+    public List<OrderItem> findByOrderId(Long orderId) {
         return data.stream()
                 .filter(item -> item.getOrder() != null)
-                .filter(item -> Objects.equals(item.getOrder().getId(), order.getId()))
+                .filter(item -> Objects.equals(item.getOrder().getId(), orderId))
                 .toList();
     }
 
