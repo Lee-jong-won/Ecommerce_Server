@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.toss.config;
+package jongwon.e_commerce.payment.gateway.toss.config;
 
 import jongwon.e_commerce.external.http.client.HttpClientFactory;
 import jongwon.e_commerce.external.http.policy.ConnectionPolicy;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;

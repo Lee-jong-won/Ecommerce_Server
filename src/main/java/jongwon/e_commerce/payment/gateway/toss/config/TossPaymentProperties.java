@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.toss.config;
+package jongwon.e_commerce.payment.gateway.toss.config;
 
 import lombok.Getter;
 import lombok.Setter;

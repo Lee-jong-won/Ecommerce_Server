@@ -11,6 +11,7 @@ import jongwon.e_commerce.product.application.GeneralItemStockService;
 import jongwon.e_commerce.product.application.GeneralItemStockServiceTx;
 import jongwon.e_commerce.product.application.StockService;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.infrastructure.config.RetryConfig;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -43,6 +44,7 @@ class OrderStockProcessorTest {
                         builder().
                         generalItemStockServiceTx(GeneralItemStockServiceTx.builder().
                                 productRepository(productRepository).build()).
+                        retryOperations(new RetryConfig().retryTemplate()).
                         build())).build();
     }
 

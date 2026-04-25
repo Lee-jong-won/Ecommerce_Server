@@ -2,9 +2,10 @@ package jongwon.e_commerce.payment.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.toss.config.TossPaymentRetryConfig;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.gateway.toss.PaymentApproveClientImpl;
+import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.toss.config.TossPaymentRetryConfig;
+import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +14,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
-
-import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
@@ -72,15 +71,12 @@ class TossPaymentRestClientTest {
                         """)
                 ));
 
-        String idempotencyKey = UUID.randomUUID().toString();
-
         //when
-        TossPaymentApproveResponse response = tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey);
+        TossPaymentApproveResponse response = tossPaymentHttpClient.callPayApprovalApi(request);
         TossPaymentApproveResponse.MobilePhoneDto mobilePhoneDto = response.getMobilePhone();
 
         //then
-        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm"))
-                .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm")));
         assertEquals("2024-02-13T12:18:14+09:00", response.getApprovedAt());
         assertEquals("휴대폰", response.getMethod());
         assertEquals("01012345678", mobilePhoneDto.getCustomerMobilePhone());
@@ -108,13 +104,10 @@ class TossPaymentRestClientTest {
                     """)
                 ));
 
-        String idempotencyKey = UUID.randomUUID().toString();
-
         //when && then
         assertThrows(RestClientResponseException.class,
-                () -> tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey));
-        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm"))
-                .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
+                () -> tossPaymentHttpClient.callPayApprovalApi(request));
+        wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm")));
     }
 
     @Test
@@ -137,13 +130,10 @@ class TossPaymentRestClientTest {
                     """)
                 ));
 
-        String idempotencyKey = UUID.randomUUID().toString();
-
         // when && then
         assertThrows(RestClientResponseException.class,
-                () -> tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey));
-        wireMockServer.verify(3, postRequestedFor(urlPathEqualTo("/payments/confirm"))
-                .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
+                () -> tossPaymentHttpClient.callPayApprovalApi(request));
+        wireMockServer.verify(3, postRequestedFor(urlPathEqualTo("/payments/confirm")));
     }
 
     @Test
@@ -183,12 +173,9 @@ class TossPaymentRestClientTest {
                         """)
                 ));
 
-        String idempotencyKey = UUID.randomUUID().toString();
-
         // when && then
-        assertNotNull(tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey));
-        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/payments/confirm"))
-                .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
+        assertNotNull(tossPaymentHttpClient.callPayApprovalApi(request));
+        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/payments/confirm")));
     }
 
     @Test
@@ -208,7 +195,7 @@ class TossPaymentRestClientTest {
         );
 
         //when && then
-        assertThrows(ResourceAccessException.class, () -> tossPaymentHttpClient.callPayApprovalApi(request, UUID.randomUUID().toString()));
+        assertThrows(ResourceAccessException.class, () -> tossPaymentHttpClient.callPayApprovalApi(request));
     }
 
     @Test
@@ -237,12 +224,10 @@ class TossPaymentRestClientTest {
           "method": "휴대폰"
         }
         """)));
-        String idempotencyKey = UUID.randomUUID().toString();
 
         // when && then
-        assertNotNull(tossPaymentHttpClient.callPayApprovalApi(request, idempotencyKey));
-        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/payments/confirm"))
-                .withHeader("Idempotency-Key", equalTo(idempotencyKey)));
+        assertNotNull(tossPaymentHttpClient.callPayApprovalApi(request));
+        wireMockServer.verify(2, postRequestedFor(urlPathEqualTo("/payments/confirm")));
     }
 
 }

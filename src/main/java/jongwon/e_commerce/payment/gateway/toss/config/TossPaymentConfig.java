@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.toss.config;
+package jongwon.e_commerce.payment.gateway.toss.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

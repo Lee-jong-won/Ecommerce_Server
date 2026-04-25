@@ -8,6 +8,7 @@ import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionReques
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.gateway.toss.DefaultPayApproveExceptionTranslator;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

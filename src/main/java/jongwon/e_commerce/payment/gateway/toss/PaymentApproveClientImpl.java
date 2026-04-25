@@ -1,8 +1,9 @@
-package jongwon.e_commerce.payment.toss;
+package jongwon.e_commerce.payment.gateway.toss;
 
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
-import lombok.RequiredArgsConstructor;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.PaymentApproveClient;
+import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.retry.RetryOperations;
@@ -23,14 +24,19 @@ public class PaymentApproveClientImpl implements PaymentApproveClient {
     }
 
     @Override
-    public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
-        return payApproveRetryOperation.execute(context -> {
+    public PayResult callPayApprovalApi(PayApproveAttempt request) {
+        TossPaymentApproveResponse tossPaymentApproveResponse = payApproveRetryOperation.execute(context -> {
             return restClient.post()
                     .uri("/payments/confirm")
-                    .header("Idempotency-Key", idempotencyKey)
+                    .header("Idempotency-Key", generateIdempotencyKey(request.getOrderId()))
                     .body(request)
                     .retrieve()
                     .body(TossPaymentApproveResponse.class);
         });
+        return tossPaymentApproveResponse.toPayResult();
+    }
+
+    private String generateIdempotencyKey(String baseKey){
+        return baseKey;
     }
 }

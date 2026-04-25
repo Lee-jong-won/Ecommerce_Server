@@ -4,6 +4,7 @@ import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
+import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

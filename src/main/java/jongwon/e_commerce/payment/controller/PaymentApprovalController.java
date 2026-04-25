@@ -4,7 +4,7 @@ import jongwon.e_commerce.common.argumentResolver.LoginMember;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.controller.response.PayOutcomeHttpMapper;
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;

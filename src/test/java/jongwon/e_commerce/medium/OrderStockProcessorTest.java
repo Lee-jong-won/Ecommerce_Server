@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-//@Transactional
+@Transactional
 public class OrderStockProcessorTest {
 
     @Autowired

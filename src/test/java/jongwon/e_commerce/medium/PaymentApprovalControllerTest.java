@@ -3,9 +3,9 @@ package jongwon.e_commerce.medium;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.approve.PayApprovalExecutor;
+import jongwon.e_commerce.payment.gateway.toss.TossPaymentApprovalExecutor;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
@@ -53,7 +53,7 @@ public class PaymentApprovalControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
-    PayApprovalExecutor payApprovalExecutor;
+    TossPaymentApprovalExecutor tossPaymentApprovalExecutor;
 
     @Test
     void 사용자에게_결제성공이_일어날_수_있다() throws Exception {
@@ -76,7 +76,7 @@ public class PaymentApprovalControllerTest {
                         receiptUrl("naver")
                         .build()).
                 build());
-        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(payApproveSuccess);
+        when(tossPaymentApprovalExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
 
         // when && then
         mockMvc.perform(
@@ -104,7 +104,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         InvalidCard invalidCard = new InvalidCard();
-        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(invalidCard);
+        when(tossPaymentApprovalExecutor.executePayApprove(any())).thenReturn(invalidCard);
 
         // when && then
         mockMvc.perform(
@@ -131,7 +131,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         ReadTimeout readTimeout = new ReadTimeout();
-        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(readTimeout);
+        when(tossPaymentApprovalExecutor.executePayApprove(any())).thenReturn(readTimeout);
 
         // when && then
         mockMvc.perform(
@@ -158,7 +158,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         ConnectionRequestTimeout connectionRequestTimeout = new ConnectionRequestTimeout();
-        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(connectionRequestTimeout);
+        when(tossPaymentApprovalExecutor.executePayApprove(any())).thenReturn(connectionRequestTimeout);
 
         // when && then
         mockMvc.perform(
@@ -185,7 +185,7 @@ public class PaymentApprovalControllerTest {
 
         // 외부 API 호출 결과
         ConnectionTimeout connectionTimeout = new ConnectionTimeout();
-        when(payApprovalExecutor.executePayApprove(any(), any())).thenReturn(connectionTimeout);
+        when(tossPaymentApprovalExecutor.executePayApprove(any())).thenReturn(connectionTimeout);
 
         // when && then
         mockMvc.perform(

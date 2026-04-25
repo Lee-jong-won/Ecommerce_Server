@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.toss.dto;
+package jongwon.e_commerce.payment.gateway.toss.dto;
 
 import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
 
