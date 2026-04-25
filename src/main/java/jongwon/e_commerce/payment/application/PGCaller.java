@@ -1,8 +1,8 @@
-package jongwon.e_commerce.payment.gateway;
+package jongwon.e_commerce.payment.application;
 
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.gateway.PaymentApprovalExecutor;
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,5 @@ public class PGCaller {
                 .findFirst().orElseThrow();
         return paymentApprovalExecutor.executePayApprove(payApproveAttempt);
     }
-
 
 }

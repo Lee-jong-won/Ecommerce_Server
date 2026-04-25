@@ -1,10 +1,10 @@
 package jongwon.e_commerce.mock.stub;
 
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.gateway.PaymentApproveClient;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.PaymentClient;
 import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 
-public class StubPaymentRestApproveClientNormal implements PaymentApproveClient {
+public class StubPaymentRestApproveClientNormal implements PaymentClient {
 
     @Override
     public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request) {

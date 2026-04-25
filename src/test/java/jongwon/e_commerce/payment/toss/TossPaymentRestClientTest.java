@@ -2,8 +2,8 @@ package jongwon.e_commerce.payment.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
-import jongwon.e_commerce.payment.gateway.toss.PaymentApproveClientImpl;
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.toss.TossPayClient;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.gateway.toss.config.TossPaymentRetryConfig;
 import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 import org.apache.hc.client5.http.classic.HttpClient;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TossPaymentRestClientTest {
 
     WireMockServer wireMockServer;
-    PaymentApproveClientImpl tossPaymentHttpClient;
+    TossPayClient tossPaymentHttpClient;
     TossPaymentHttpClientConfigForTest tossPaymentHttpClientConfig = new TossPaymentHttpClientConfigForTest();
 
     @BeforeEach
@@ -38,7 +38,7 @@ class TossPaymentRestClientTest {
         TossPaymentRetryConfig tossPaymentRetryConfig = new TossPaymentRetryConfig();
         RetryTemplate tossPaymentRetryTemplate = tossPaymentRetryConfig.paymentApproveRetryTemplate();
 
-        tossPaymentHttpClient = new PaymentApproveClientImpl(restClient, tossPaymentRetryTemplate);
+        tossPaymentHttpClient = new TossPayClient(restClient, tossPaymentRetryTemplate);
     }
 
     @AfterEach

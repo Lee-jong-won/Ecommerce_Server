@@ -7,7 +7,7 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.controller.response.PayApproveSuccessResponse;
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;

@@ -7,7 +7,7 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;

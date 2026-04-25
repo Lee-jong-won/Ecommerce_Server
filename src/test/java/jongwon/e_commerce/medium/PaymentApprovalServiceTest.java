@@ -6,17 +6,17 @@ import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.application.approve.PaymentService;
-import jongwon.e_commerce.payment.gateway.toss.DefaultPayApproveExceptionTranslator;
-import jongwon.e_commerce.payment.gateway.toss.TossPaymentApprovalExecutor;
+import jongwon.e_commerce.payment.gateway.toss.TossExceptionTranslator;
+import jongwon.e_commerce.payment.gateway.toss.TossPaymentExecutor;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.gateway.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.payment.gateway.PaymentApproveClient;
+import jongwon.e_commerce.payment.gateway.PaymentClient;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -53,7 +53,7 @@ public class PaymentApprovalServiceTest {
     @Autowired
     MPPayRepository mpPayRepository;
     PaymentApprovalService paymentApprovalService;
-    TossPaymentApprovalExecutor tossPaymentApprovalExecutor;
+    TossPaymentExecutor tossPaymentExecutor;
 
     @Test
     void 결제가_정상적으로_성공된다(){
@@ -163,14 +163,14 @@ public class PaymentApprovalServiceTest {
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
     }
 
-    private void initPaymentApprovalService(PaymentApproveClient paymentApproveClient){
-        tossPaymentApprovalExecutor = tossPaymentApprovalExecutor.builder().
+    private void initPaymentApprovalService(PaymentClient paymentApproveClient){
+        tossPaymentExecutor = tossPaymentExecutor.builder().
                 paymentApproveClient(paymentApproveClient).
-                payApproveExceptionTranslator(new DefaultPayApproveExceptionTranslator(new ObjectMapper())).build();
+                payApproveExceptionTranslator(new TossExceptionTranslator(new ObjectMapper())).build();
 
         paymentApprovalService = PaymentApprovalService.builder().
                 paymentService(paymentService).
-                tossPaymentApprovalExecutor(tossPaymentApprovalExecutor).
+                tossPaymentApprovalExecutor(tossPaymentExecutor).
                 outcomeHandlers(outcomeHandlers).build();
     }
 }

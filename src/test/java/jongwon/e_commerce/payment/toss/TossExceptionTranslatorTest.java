@@ -8,7 +8,7 @@ import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionReques
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
-import jongwon.e_commerce.payment.gateway.toss.DefaultPayApproveExceptionTranslator;
+import jongwon.e_commerce.payment.gateway.toss.TossExceptionTranslator;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -23,9 +23,9 @@ import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultPayApproveExceptionTranslatorTest {
-    private final DefaultPayApproveExceptionTranslator translator =
-            new DefaultPayApproveExceptionTranslator(new ObjectMapper());
+class TossExceptionTranslatorTest {
+    private final TossExceptionTranslator translator =
+            new TossExceptionTranslator(new ObjectMapper());
 
     @Test
     void read_timeout이면_PayApproveTimeout을_반환한다() {
