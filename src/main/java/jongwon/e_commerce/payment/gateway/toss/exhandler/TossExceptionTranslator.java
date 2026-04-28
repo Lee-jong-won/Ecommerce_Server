@@ -12,16 +12,19 @@ import java.util.List;
 @Component
 @Slf4j
 public class TossExceptionTranslator extends AbstractPayExceptionTranslator {
-    private final List<PaymentExceptionHandler> handlers;
+
+    private final PaymentExceptionHandler tossErrorResponseHandler;
+
     public TossExceptionTranslator(
             @Qualifier("networkExceptionHandler") NetworkExceptionHandler networkHandler,
-            @Qualifier("tossErrorResponseHandler") TossErrorResponseHandler tossHandler) {
-        this.handlers = List.of(networkHandler, tossHandler);
+            @Qualifier("tossErrorResponseHandler") TossErrorResponseHandler tossErrorResponseHandler) {
+        super(networkHandler); // 모든 PG사와 통신 시 발생할 수 있는 네트워크 예외 처리를 담당하는 핸들러
+        this.tossErrorResponseHandler = tossErrorResponseHandler;
     }
 
     @Override
-    protected List<PaymentExceptionHandler> getHandlers() {
-        return this.handlers;
+    protected PaymentExceptionHandler getErrorResponseHandler() {
+        return this.tossErrorResponseHandler;
     }
 
 }

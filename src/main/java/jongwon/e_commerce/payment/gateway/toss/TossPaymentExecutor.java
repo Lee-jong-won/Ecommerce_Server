@@ -22,7 +22,8 @@ public class TossPaymentExecutor implements PaymentExecutor {
     private final PaymentClient tossPaymentClient;
     private final TossExceptionTranslator tossExceptionTranslator;
 
-    public TossPaymentExecutor(@Qualifier("tossPaymentClient")PaymentClient paymentClient, TossExceptionTranslator tossExceptionTranslator){
+    public TossPaymentExecutor(@Qualifier("tossPaymentClient")PaymentClient paymentClient,
+                               TossExceptionTranslator tossExceptionTranslator){
         this.tossPaymentClient = paymentClient;
         this.tossExceptionTranslator = tossExceptionTranslator;
     }

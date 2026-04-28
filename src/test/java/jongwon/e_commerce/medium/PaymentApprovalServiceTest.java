@@ -3,7 +3,6 @@ package jongwon.e_commerce.medium;
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.PGCaller;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;

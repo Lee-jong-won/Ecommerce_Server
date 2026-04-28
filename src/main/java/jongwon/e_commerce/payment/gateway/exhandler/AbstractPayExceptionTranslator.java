@@ -1,5 +1,6 @@
 package jongwon.e_commerce.payment.gateway.exhandler;
 
+import jakarta.annotation.PostConstruct;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
 import lombok.RequiredArgsConstructor;
@@ -8,20 +9,22 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractPayExceptionTranslator implements PayExceptionTranslator {
+public abstract class AbstractPayExceptionTranslator {
 
-    protected abstract List<PaymentExceptionHandler> getHandlers();
-
-    @Override
+    private final NetworkExceptionHandler networkExceptionHandler;
+    protected abstract PaymentExceptionHandler getErrorResponseHandler();
     public PayApproveOutcome translate(RestClientException restClientException) {
-        return getHandlers().stream()
-                .filter(handler -> handler.supports(restClientException))
-                .findFirst()
-                .map(handler -> handler.handle(restClientException))
-                .orElse(new UnknownRestClientError());
+        // 1. I/O 에러는, networkExceptionHandler를 통해 처리
+        if(restClientException instanceof ResourceAccessException)
+            return networkExceptionHandler.handle(restClientException);
+
+        // 2. 에러 응답은 ErrorResponseHandler를 통해 처리
+        return getErrorResponseHandler().handle(restClientException);
     }
 }

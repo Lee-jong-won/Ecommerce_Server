@@ -18,12 +18,6 @@ import tools.jackson.databind.ObjectMapper;
 public class TossErrorResponseHandler implements PaymentExceptionHandler {
 
     private final ObjectMapper mapper;
-
-    @Override
-    public boolean supports(RestClientException e) {
-        return e instanceof RestClientResponseException;
-    }
-
     @Override
     public PayApproveOutcome handle(RestClientException e) {
         String body = ((RestClientResponseException) e).getResponseBodyAsString();

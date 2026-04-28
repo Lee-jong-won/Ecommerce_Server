@@ -2,7 +2,6 @@ package jongwon.e_commerce.payment.gateway.toss;
 
 import jongwon.e_commerce.mock.stub.*;
 import jongwon.e_commerce.payment.gateway.exhandler.NetworkExceptionHandler;
-import jongwon.e_commerce.payment.gateway.toss.TossPaymentExecutor;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
@@ -12,7 +11,6 @@ import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSucce
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.gateway.toss.exhandler.TossErrorResponseHandler;
 import jongwon.e_commerce.payment.gateway.toss.exhandler.TossExceptionTranslator;
-import jongwon.e_commerce.payment.gateway.exhandler.PayExceptionTranslator;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
