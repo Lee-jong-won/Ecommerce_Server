@@ -1,12 +1,12 @@
 package jongwon.e_commerce.payment.gateway.toss;
 
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.gateway.PaymentClient;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.gateway.dto.PayResultResponseMapper;
 import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveRequest;
 import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.retry.RetryOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -41,7 +41,8 @@ public class TossPayClient implements PaymentClient {
                     .retrieve()
                     .body(TossPaymentApproveResponse.class);
         });
-        return tossPaymentApproveResponse.toPayResult();
+
+        return PayResultResponseMapper.from(tossPaymentApproveResponse);
     }
 
     private String generateIdempotencyKey(String baseKey){

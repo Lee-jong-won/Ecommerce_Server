@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.application.approve;
 
 import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;

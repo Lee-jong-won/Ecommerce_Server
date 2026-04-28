@@ -1,39 +1,41 @@
 package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
-import jongwon.e_commerce.mock.stub.*;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.payment.application.PGCaller;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
-import jongwon.e_commerce.payment.application.approve.PaymentService;
-import jongwon.e_commerce.payment.gateway.toss.TossExceptionTranslator;
-import jongwon.e_commerce.payment.gateway.toss.TossPaymentExecutor;
+import jongwon.e_commerce.payment.application.PaymentService;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.repository.MPPayRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.payment.gateway.PaymentClient;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 @Transactional
 public class PaymentApprovalServiceTest {
     @Autowired
@@ -50,15 +52,13 @@ public class PaymentApprovalServiceTest {
     OrderItemRepository orderItemRepository;
     @Autowired
     PaymentRepository paymentRepository;
+    @MockitoBean
+    PGCaller pgCaller;
     @Autowired
-    MPPayRepository mpPayRepository;
     PaymentApprovalService paymentApprovalService;
-    TossPaymentExecutor tossPaymentExecutor;
-
     @Test
     void 결제가_정상적으로_성공된다(){
         // given
-        initPaymentApprovalService(new StubPaymentRestApproveClientNormal());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -67,26 +67,23 @@ public class PaymentApprovalServiceTest {
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", 15000);
 
+        when(pgCaller.processPayApprove(any(), any())).
+                thenReturn(new PayApproveSuccess(PayResult.builder().build()));
+
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, UUID.randomUUID().toString());
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, "TOSS");
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
-        MPPay mpPay = mpPayRepository.getByPay(pay);
 
         // then
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
-
-        assertThat(mpPay.getReceiptUrl()).isEqualTo("http://receipt.url");
-        assertThat(mpPay.getCustomerMobilePhone()).isEqualTo("01012345678");
-        assertThat(mpPay.getSettlementStatus()).isEqualTo("SETTLED");
     }
 
     @Test
     void 결제_실패가_성공적으로_처리된다(){
         // given
-        initPaymentApprovalService(new StubPaymentRestApproveClientErrorResponse());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -106,7 +103,6 @@ public class PaymentApprovalServiceTest {
     @Test
     void Read_타임아웃이_성공적으로_처리된다(){
         // given
-        initPaymentApprovalService(new StubPaymentRestApproveClientReadTimeout());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -126,7 +122,6 @@ public class PaymentApprovalServiceTest {
     @Test
     void Connection_타임아웃은_아무처리도_하지_않는다(){
         // given
-        initPaymentApprovalService(new StubPaymentRestApproveClientConnTimeout());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -146,7 +141,6 @@ public class PaymentApprovalServiceTest {
     @Test
     void ConnectionRequestTimeout은_아무처리도_하지_않는다(){
         // given
-        initPaymentApprovalService(new StubPaymentRestApproveClientConnRequestTimeout());
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
@@ -161,16 +155,5 @@ public class PaymentApprovalServiceTest {
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
-    }
-
-    private void initPaymentApprovalService(PaymentClient paymentApproveClient){
-        tossPaymentExecutor = tossPaymentExecutor.builder().
-                paymentApproveClient(paymentApproveClient).
-                payApproveExceptionTranslator(new TossExceptionTranslator(new ObjectMapper())).build();
-
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                tossPaymentApprovalExecutor(tossPaymentExecutor).
-                outcomeHandlers(outcomeHandlers).build();
     }
 }

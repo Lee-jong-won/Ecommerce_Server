@@ -1,21 +1,25 @@
 package jongwon.e_commerce.mock.stub;
 
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.gateway.PaymentClient;
+import jongwon.e_commerce.payment.gateway.dto.PayResultResponseMapper;
 import jongwon.e_commerce.payment.gateway.toss.dto.TossPaymentApproveResponse;
 
 public class StubPaymentRestApproveClientNormal implements PaymentClient {
 
     @Override
-    public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request) {
-        return new TossPaymentApproveResponse(
-                "휴대폰", "2024-02-13T12:18:14+09:00",
-                new TossPaymentApproveResponse.MobilePhoneDto(
+    public PayResult callPayApprovalApi(PayApproveAttempt request) {
+        return PayResultResponseMapper.from(TossPaymentApproveResponse.builder().
+                method("휴대폰").
+                approvedAt("2024-02-13T12:18:14+09:00").
+                orderName("주문-1").
+                amount(10000L).
+                mobilePhone(new TossPaymentApproveResponse.MobilePhoneDto(
                         "01012345678",
                         "SETTLED",
                         "http://receipt.url"
-                )
-        );
+                )).build());
     }
 
 

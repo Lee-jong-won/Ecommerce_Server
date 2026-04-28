@@ -2,15 +2,11 @@ package jongwon.e_commerce.product.application;
 
 import jongwon.e_commerce.mock.fake.FakeProductRepository;
 import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.infrastructure.config.RetryConfig;
+import jongwon.e_commerce.product.infrastructure.config.StockServiceRetryConfig;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,10 +22,10 @@ class GeneralItemStockServiceTest {
         GeneralItemStockServiceTx generalItemStockServiceTx = GeneralItemStockServiceTx.builder().
                 productRepository(productRepository).
                 build();
-        RetryConfig retryConfig = new RetryConfig();
+        StockServiceRetryConfig stockServiceRetryConfig = new StockServiceRetryConfig();
         generalItemStockService = GeneralItemStockService.builder().
                 generalItemStockServiceTx(generalItemStockServiceTx).
-                retryOperations(retryConfig.retryTemplate()).
+                retryOperations(stockServiceRetryConfig.retryTemplate()).
                 build();
     }
 

@@ -6,13 +6,12 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.gateway.toss.TossPaymentExecutor;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -70,11 +69,6 @@ public class PaymentApprovalControllerTest {
                         payMethod(PayMethod.MOBILE).
                         approvedAt(OffsetDateTime.now()).
                         build()).
-                paymentDetail(MPPay.builder().
-                        customerMobilePhone("010-1234-5678").
-                        settlementStatus("DONE").
-                        receiptUrl("naver")
-                        .build()).
                 build());
         when(tossPaymentExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
 

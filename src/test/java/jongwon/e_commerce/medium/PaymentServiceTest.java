@@ -4,12 +4,12 @@ import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.application.approve.PaymentService;
+import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,7 +47,6 @@ public class PaymentServiceTest {
     @Test
     void 주문이_정상적으로_검증된_후_결제_데이터가_정상적으로_생성된다(){
         // given
-
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "ORDER-DEFAULT",
@@ -95,14 +95,24 @@ public class PaymentServiceTest {
                 payMethod(method).
                 approvedAt(approvedAt).
                 build();
+        Map<String, Object> paymentDetail = Map.of("customerMobilePhone", "010-1234-5678",
+                "settlementStatus", "DONE", "receiptUrl", "https://naver.com");
+        PayResult payResult = PayResult.builder().
+                payResultCommon(payResultCommon).
+                paymentDetail(paymentDetail).build();
 
         // when
-        Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResultCommon);
+        Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResult);
 
         // then
+        Map<String, Object> savedPaymentDetail = updatedPay.getPaymentDetail();
+
         assertThat(updatedPay.getId()).isEqualTo(pay.getId());
         assertThat(updatedPay.getPayMethod()).isEqualTo(method);
         assertThat(updatedPay.getApprovedAt()).isEqualTo(approvedAt);
+        assertThat(savedPaymentDetail.get("customerMobilePhone")).isEqualTo("010-1234-5678");
+        assertThat(savedPaymentDetail.get("settlementStatus")).isEqualTo("DONE");
+        assertThat(savedPaymentDetail.get("receiptUrl")).isEqualTo("https://naver.com");
     }
 
 }

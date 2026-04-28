@@ -9,7 +9,7 @@ import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
@@ -18,6 +18,7 @@ import jongwon.e_commerce.support.fixture.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class TestDataFactory {
 
@@ -110,7 +111,7 @@ public class TestDataFactory {
         return pay;
     }
 
-    public static Pay reflectPayCommonResultAfterCallingApi(MemberRepository memberRepository,
+    public static Pay reflectPayResultAfterCallingApi(MemberRepository memberRepository,
                                                             ProductRepository productRepository,
                                                             OrderItemRepository orderItemRepository,
                                                             OrderRepository orderRepository,
@@ -127,7 +128,12 @@ public class TestDataFactory {
                 approvedAt(OffsetDateTime.now()).
                 build();
 
-        pay.reflectPaySuccess(payResultCommon);
+
+        Map<String, Object> detailMap = Map.of("mobilePhone", "010-1234-5678",
+                "settlementStatus", "DONE",
+                "receiptUrl", "http://naver.com");
+
+        pay.reflectPaySuccess(payResultCommon, detailMap);
 
         Pay updatedPay = paymentRepository.save(pay);
 

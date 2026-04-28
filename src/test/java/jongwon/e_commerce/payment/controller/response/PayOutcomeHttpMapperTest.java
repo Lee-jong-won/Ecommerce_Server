@@ -1,16 +1,13 @@
 package jongwon.e_commerce.payment.controller.response;
 
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -32,18 +29,9 @@ class PayOutcomeHttpMapperTest {
                         payResultCommon(
                                 PayResult.PayResultCommon.builder().
                                         payMethod(PayMethod.MOBILE).
+                                        amount(1000L).
                                         approvedAt(approvedAt).
-                                        build()).
-                        paymentDetail(
-                                MPPay.builder().
-                                        customerMobilePhone("010-1234-5678").
-                                        settlementStatus("DONE").
-                                        receiptUrl("naver").
-                                        pay(Pay.builder().payAmount(1000).
-                                                order(Order.builder().orderName("주문1").
-                                                        totalAmount(1000).
-                                                        build()).
-                                                build()).
+                                        orderName("주문1").
                                         build()
                         ).build());
 
@@ -53,8 +41,7 @@ class PayOutcomeHttpMapperTest {
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         PayApproveSuccessResponse body = (PayApproveSuccessResponse) response.getBody();
-        assertThat(body.getPayAmount()).isEqualTo(1000);
-        assertThat(body.getOrderPrice()).isEqualTo(1000);
+        assertThat(body.getPayAmount()).isEqualTo(1000L);
         assertThat(body.getOrderName()).isEqualTo("주문1");
     }
 

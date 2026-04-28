@@ -9,11 +9,18 @@ import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 
-@Component
-public class NetworkExceptionHandler {
+@Component("networkExceptionHandler")
+public class NetworkExceptionHandler implements PaymentExceptionHandler {
 
-    public PayApproveOutcome handle(ResourceAccessException e) {
+    @Override
+    public boolean supports(RestClientException e) {
+        return e instanceof ResourceAccessException;
+    }
+
+    @Override
+    public PayApproveOutcome handle(RestClientException e) {
         Throwable cause = e.getCause();
 
         if (ExceptionUtils.isReadTimeout(cause)) {
@@ -28,5 +35,4 @@ public class NetworkExceptionHandler {
 
         return new UnknownRestClientError();
     }
-
 }

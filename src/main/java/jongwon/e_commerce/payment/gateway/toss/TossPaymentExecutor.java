@@ -1,13 +1,13 @@
 package jongwon.e_commerce.payment.gateway.toss;
 
-import jongwon.e_commerce.payment.gateway.PaymentApprovalExecutor;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
+import jongwon.e_commerce.payment.gateway.PaymentExecutor;
+import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.gateway.PaymentClient;
 import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.gateway.toss.exhandler.TossExceptionTranslator;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.web.client.RestClientException;
 @Service
 @Builder
 @Slf4j
-public class TossPaymentExecutor implements PaymentApprovalExecutor {
+public class TossPaymentExecutor implements PaymentExecutor {
 
     private final PaymentClient tossPaymentClient;
     private final TossExceptionTranslator tossExceptionTranslator;

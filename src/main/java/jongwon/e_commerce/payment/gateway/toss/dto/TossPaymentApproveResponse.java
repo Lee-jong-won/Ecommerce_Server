@@ -1,54 +1,26 @@
 package jongwon.e_commerce.payment.gateway.toss.dto;
 
-import jongwon.e_commerce.payment.domain.*;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayResult;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
-import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-
-import java.time.OffsetDateTime;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class TossPaymentApproveResponse {
 
     private String method;   // 카드
     private String approvedAt; // 결제 승인 일자
+    private String orderName; // 주문 이름
+    private long amount; // 결제 금액
     private MobilePhoneDto mobilePhone; // 핸드폰 결제 정보
-
-    public PayResult toPayResult(){
-        return PayResult.builder().
-                payResultCommon(PayResult.PayResultCommon.
-                        builder().approvedAt(OffsetDateTime.parse(approvedAt))
-                                .payMethod(PayMethod.from(method)).
-                        build()).
-                paymentDetail(extractPaymentDetail()).
-                build();
-    }
-
-    public PaymentDetail extractPaymentDetail() {
-        PayMethod payMethod = PayMethod.from(this.method);
-        switch (payMethod) {
-            case MOBILE -> {
-                return mobilePhone.toPaymentDetail();
-            }
-            default -> {
-                throw new UnsupportedPayMethodException("지원하지 않는 결제 수단입니다.");
-            }
-        }
-    }
 
     @Getter
     @AllArgsConstructor
-    public static class MobilePhoneDto implements TossPaymentDetail {
+    public static class MobilePhoneDto {
         public String customerMobilePhone;
         public String settlementStatus;
         public String receiptUrl;
-        public PaymentDetail toPaymentDetail(){
-            return MPPay.createMPPay(customerMobilePhone, settlementStatus, receiptUrl);
-        }
     }
 }
 
