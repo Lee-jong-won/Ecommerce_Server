@@ -32,6 +32,7 @@ public class ProductEntity {
     private int stockQuantity;
 
     @Version
+    @Column(name = "version", nullable = false)
     private Integer version;
 
     @Column(name = "original_product_id")

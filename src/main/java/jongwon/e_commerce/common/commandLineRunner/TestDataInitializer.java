@@ -64,12 +64,13 @@ public class TestDataInitializer implements CommandLineRunner {
      * 상품 데이터 삽입: product-1 ~ product-50000
      */
     private void insertProducts() {
-        String sql = "INSERT INTO product (product_name, product_price, stock_quantity, product_status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO product (product_name, product_price, stock_quantity, product_status, version) VALUES (?, ?, ?, ?, ?)";
         executeInBatches(sql, (ps, id) -> {
             ps.setString(1, "product-" + id);
             ps.setLong(2, 1000L); // 기본 가격 1000원
             ps.setInt(3, 30000);  // 넉넉한 재고량
             ps.setString(4, "SELLING");
+            ps.setInt(5, 0);
         });
     }
 

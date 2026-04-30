@@ -1,4 +1,4 @@
-package jongwon.e_commerce.payment.domain.approve.outcome.ignore;
+package jongwon.e_commerce.payment.domain.approve.outcome.none;
 
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 

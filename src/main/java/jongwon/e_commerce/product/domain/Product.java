@@ -25,6 +25,7 @@ public class Product {
         return Product.builder().
                 productName(productName).
                 productStatus(ProductStatus.READY).
+                version(0).
                 productPrice(productPrice).build();
     }
 
