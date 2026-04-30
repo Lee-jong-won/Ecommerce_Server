@@ -4,7 +4,8 @@ import jongwon.e_commerce.common.argumentResolver.LoginMember;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.controller.response.PayOutcomeHttpMapper;
-import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.domain.PGType;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,8 @@ public class PaymentApprovalController {
     private final PaymentApprovalService paymentApprovalService;
     @PostMapping
     public ResponseEntity<?> payApprove(@LoginMember Member member,
-                                                      @RequestBody PayApproveAttempt attempt,
-                                                      @RequestHeader("PG-TYPE") String pgType){
-        PayApproveOutcome outcome = paymentApprovalService.approvePayment(member, attempt, pgType);
+                                        @RequestBody PayApproveAttempt attempt){
+        PayApproveOutcome outcome = paymentApprovalService.approvePayment(member, attempt);
         ResponseEntity<?> responseEntity = PayOutcomeHttpMapper.toResponse(outcome);
         return responseEntity;
     }

@@ -1,8 +1,5 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.payment.exception.UnsupportedPayMethodException;
-import java.util.Arrays;
-
 public enum PayMethod {
     CARD("카드"),               // 카드
     TRANSFER("계좌이체"),           // 계좌이체

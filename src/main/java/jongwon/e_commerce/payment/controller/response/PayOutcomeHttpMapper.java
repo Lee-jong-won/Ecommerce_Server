@@ -1,6 +1,6 @@
 package jongwon.e_commerce.payment.controller.response;
 
-import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.PayApproveFail;
 import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;

@@ -1,7 +1,7 @@
 package jongwon.e_commerce.payment.domain.approve.outcome.success;
 
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import lombok.Getter;
 
 @Getter

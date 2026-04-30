@@ -3,10 +3,11 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
+import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.gateway.PaymentExecutor;
-import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,9 +25,7 @@ public class PaymentApprovalService {
     // 결제 후처리 부
     private final List<PayOutcomeHandler> outcomeHandlers;
 
-    public PayApproveOutcome approvePayment(Member member,
-                                            PayApproveAttempt attempt,
-                                            String pgType){
+    public PayApproveOutcome approvePayment(Member member, PayApproveAttempt attempt){
         log.info("event = PAYMENT_START " + "paymentKey = {} " + "amount = {} ",
                 attempt.getPaymentKey(), attempt.getAmount());
 
@@ -36,6 +35,7 @@ public class PaymentApprovalService {
         //2. 결제 상태 진행중으로 상태 변경 (todo)
 
         //3. 결제 승인 요청
+        PGType pgType = PGType.from(attempt.getPgType());
         PayApproveOutcome outcome = paymentExecutors.stream()
                 .filter(h -> h.supports(pgType))
                 .findFirst()

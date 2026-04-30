@@ -6,12 +6,13 @@ import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
-import jongwon.e_commerce.payment.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
@@ -51,9 +52,6 @@ public class PaymentApprovalServiceTest {
     OrderItemRepository orderItemRepository;
     @Autowired
     PaymentRepository paymentRepository;
-    @MockitoBean
-    PGCaller pgCaller;
-    @Autowired
     PaymentApprovalService paymentApprovalService;
     @Test
     void 결제가_정상적으로_성공된다(){
@@ -64,13 +62,13 @@ public class PaymentApprovalServiceTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", 15000);
+                "ORDER-DEFAULT", "TOSS", 15000);
 
         when(pgCaller.processPayApprove(any(), any())).
                 thenReturn(new PayApproveSuccess(PayResult.builder().build()));
 
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, "TOSS");
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
@@ -89,10 +87,10 @@ public class PaymentApprovalServiceTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", 15000);
+                "ORDER-DEFAULT", "TOSS", 15000);
 
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, UUID.randomUUID().toString());
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
@@ -108,10 +106,10 @@ public class PaymentApprovalServiceTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", 15000);
+                "ORDER-DEFAULT", "TOSS", 15000);
 
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, UUID.randomUUID().toString());
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
@@ -127,10 +125,10 @@ public class PaymentApprovalServiceTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", 15000);
+                "ORDER-DEFAULT", "TOSS", 15000);
 
         // when
-       paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, UUID.randomUUID().toString());
+       paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
@@ -146,13 +144,19 @@ public class PaymentApprovalServiceTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", 15000);
+                "ORDER-DEFAULT", "TOSS", 15000);
 
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt, UUID.randomUUID().toString());
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
+    }
+
+    void createPaymentService(PaymentExecutor paymentExecutor){
+        paymentApprovalService = PaymentApprovalService.builder().
+                paymentService(paymentService).
+                outcomeHandlers(outcomeHandlers).paymentExecutors(List.of(paymentExecutor)).build();
     }
 }

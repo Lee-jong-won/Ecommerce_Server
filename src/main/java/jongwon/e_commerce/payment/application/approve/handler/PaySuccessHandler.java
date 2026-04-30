@@ -3,7 +3,7 @@ package jongwon.e_commerce.payment.application.approve.handler;
 import jongwon.e_commerce.order.application.OrderStockProcessor;
 import jongwon.e_commerce.payment.application.PaymentService;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
 import lombok.RequiredArgsConstructor;
