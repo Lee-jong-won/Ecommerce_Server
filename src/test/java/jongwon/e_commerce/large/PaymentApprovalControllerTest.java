@@ -60,7 +60,7 @@ public class PaymentApprovalControllerTest {
 
 
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                order.getOrderId(), order.getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // when
         ResponseEntity<PayApproveSuccessResponse> response = restClient.post()

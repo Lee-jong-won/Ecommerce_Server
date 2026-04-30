@@ -87,7 +87,7 @@ public class TestDataFactory {
                 order(order).
                 product(product2).
                 build().create());
-        return new FinishOrderData(member, order);
+        return new FinishOrderData(member, order, List.of(orderItem1, orderItem2));
     }
 
     public static Pay finishPayPreProcess(MemberRepository memberRepository,
@@ -110,34 +110,4 @@ public class TestDataFactory {
 
         return pay;
     }
-
-    public static Pay reflectPayResultAfterCallingApi(MemberRepository memberRepository,
-                                                            ProductRepository productRepository,
-                                                            OrderItemRepository orderItemRepository,
-                                                            OrderRepository orderRepository,
-                                                            PaymentRepository paymentRepository){
-        Pay pay = finishPayPreProcess(
-                memberRepository,
-                productRepository,
-                orderItemRepository,
-                orderRepository,
-                paymentRepository);
-
-        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
-                payMethod(PayMethod.CARD).
-                approvedAt(OffsetDateTime.now()).
-                build();
-
-
-        Map<String, Object> detailMap = Map.of("mobilePhone", "010-1234-5678",
-                "settlementStatus", "DONE",
-                "receiptUrl", "http://naver.com");
-
-        pay.reflectPaySuccess(payResultCommon, detailMap);
-
-        Pay updatedPay = paymentRepository.save(pay);
-
-        return updatedPay;
-    }
-
 }

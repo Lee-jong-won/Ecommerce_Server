@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TossExceptionTranslatorTest {
     TossExceptionTranslator tossExceptionTranslator = new TossExceptionTranslator(
-            new IOExceptionHandler(), new TossErrorResponseHandler(new ObjectMapper()));
+            new TossErrorResponseHandler(new ObjectMapper()));
 
     @Test
     void read_timeout이면_PayApproveTimeout을_반환한다() {

@@ -1,10 +1,12 @@
 package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.infrastructure.gateway.CommonPaymentExecutor;
+import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -52,7 +55,7 @@ public class PaymentApprovalControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
-    CommonPaymentExecutor commonPaymentExecutor;
+    private PaymentExecutor mockExecutor;
 
     @Test
     void 사용자에게_결제성공이_일어날_수_있다() throws Exception {
@@ -62,27 +65,35 @@ public class PaymentApprovalControllerTest {
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+
+        Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
+
         PayApproveSuccess payApproveSuccess = new PayApproveSuccess(PayResult.builder().
                 payResultCommon(PayResult.PayResultCommon.builder().
+                        orderName(order.getOrderName()).
                         payMethod(PayMethod.MOBILE).
                         approvedAt(OffsetDateTime.now()).
+                        payMethod(PayMethod.MOBILE).
+                        amount(order.getTotalAmount()).
                         build()).
+                paymentDetail(Map.of("phoneNumber", "010-1234-5678",
+                        "settlementStatus", "DONE",
+                        "receiptUrl", "https://naver.com")).
                 build());
-        when(commonPaymentExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
+        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
+        when(mockExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
 
         // when && then
         mockMvc.perform(
                 post("/api/payment")
                         .header("X-MOCK-USER-LOGINID", "testUser")
-                                .header("Idempotency-Key", "test-key-123")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.orderPrice").value(15000))
-                .andExpect(jsonPath("$.payAmount").value(15000))
-                .andExpect(jsonPath("$.orderName").value("기본 주문"));
+                .andExpect(jsonPath("$.payAmount").value(order.getTotalAmount()))
+                .andExpect(jsonPath("$.orderName").value(order.getOrderName()));
     }
 
     @Test
@@ -94,17 +105,18 @@ public class PaymentApprovalControllerTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         InvalidCard invalidCard = new InvalidCard();
-        when(commonPaymentExecutor.executePayApprove(any())).thenReturn(invalidCard);
+
+        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
+        when(mockExecutor.executePayApprove(any())).thenReturn(invalidCard);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
-                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isBadRequest())
@@ -121,17 +133,18 @@ public class PaymentApprovalControllerTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         ReadTimeout readTimeout = new ReadTimeout();
-        when(commonPaymentExecutor.executePayApprove(any())).thenReturn(readTimeout);
+
+        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
+        when(mockExecutor.executePayApprove(any())).thenReturn(readTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
-                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isGatewayTimeout())
@@ -148,17 +161,18 @@ public class PaymentApprovalControllerTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         ConnectionRequestTimeout connectionRequestTimeout = new ConnectionRequestTimeout();
-        when(commonPaymentExecutor.executePayApprove(any())).thenReturn(connectionRequestTimeout);
+
+        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
+        when(mockExecutor.executePayApprove(any())).thenReturn(connectionRequestTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
-                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isServiceUnavailable())
@@ -175,17 +189,18 @@ public class PaymentApprovalControllerTest {
                 orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", finishOrderData.getOrder().getTotalAmount());
+                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
         ConnectionTimeout connectionTimeout = new ConnectionTimeout();
-        when(commonPaymentExecutor.executePayApprove(any())).thenReturn(connectionTimeout);
+
+        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
+        when(mockExecutor.executePayApprove(any())).thenReturn(connectionTimeout);
 
         // when && then
         mockMvc.perform(
                         post("/api/payment")
                                 .header("X-MOCK-USER-LOGINID", "testUser")
-                                .header("Idempotency-Key", "test-key-123")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isGatewayTimeout())

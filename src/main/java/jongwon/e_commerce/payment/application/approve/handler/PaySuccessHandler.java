@@ -33,7 +33,7 @@ public class PaySuccessHandler implements PayOutcomeHandler {
         log.info("SuccessHandler 작업 시작");
 
         // 1. 결제 결과 반영
-        Pay updatedPay = paymentService.updatePayResult(pay.getId(), payResult);
+        paymentService.updatePayResult(pay.getId(), payResult);
 
         // 2. 재고 감소
         orderStockProcessor.deductStockOf(pay.getOrder().getId());

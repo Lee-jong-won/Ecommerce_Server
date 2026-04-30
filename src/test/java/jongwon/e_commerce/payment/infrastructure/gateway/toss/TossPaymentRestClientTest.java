@@ -2,6 +2,7 @@ package jongwon.e_commerce.payment.infrastructure.gateway.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.infrastructure.gateway.toss.TossPayClient;
@@ -51,7 +52,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         // wireMock가 정상 응답 반환하도록 설정
         wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
@@ -74,11 +75,11 @@ class TossPaymentRestClientTest {
                 ));
 
         //when
-        PayResult payResult = tossPaymentHttpClient.callPayApprovalApi(request);
+        PayApproveOutcome payApproveOutcome = tossPaymentHttpClient.callPayApprovalApi(request);
 
         //then
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm")));
-        assertNotNull(payResult);
+        assertNotNull(payApproveOutcome);
     }
 
     @Test
@@ -86,7 +87,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         // wireMock 클라이언트 에러 응답 반환하도록 설정
         wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
@@ -112,7 +113,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         // wireMock가 서버 처리 에러 응답을 반환하도록 설정
         wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
@@ -138,7 +139,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         // wireMock가 서버 처리 에러 응답을 반환하도록 설정
         wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
@@ -187,7 +188,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         // wireMock가 시간안에 응답을 반환하지 않도록 설정
         wireMockServer.stubFor(
@@ -207,7 +208,7 @@ class TossPaymentRestClientTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS", 10000);
 
         wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
                 .inScenario("timeout-retry")

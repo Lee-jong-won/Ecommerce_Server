@@ -50,7 +50,7 @@ public class PaymentServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "ORDER-DEFAULT",
-                finishOrderData.getOrder().getTotalAmount());
+                "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // when
         Pay pay = paymentService.preProcess(finishOrderData.getMember(), request);
@@ -70,7 +70,7 @@ public class PaymentServiceTest {
         Order order = finishOrderData.getOrder();
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 order.getOrderId(),
-                50000);
+                "TOSS",50000);
 
         // when && then
         assertThrows(InvalidAmountException.class, () -> paymentService.preProcess(finishOrderData.getMember(), request));

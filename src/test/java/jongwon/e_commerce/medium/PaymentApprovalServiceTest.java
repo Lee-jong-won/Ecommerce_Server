@@ -1,41 +1,45 @@
 package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.mock.fake.FakePaymentExecutor;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
 import jongwon.e_commerce.payment.application.PaymentService;
+import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.InsufficientBalance;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
-import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.product.repository.ProductStockRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
 @Transactional
 public class PaymentApprovalServiceTest {
     @Autowired
@@ -47,12 +51,15 @@ public class PaymentApprovalServiceTest {
     @Autowired
     ProductRepository productRepository;
     @Autowired
+    ProductStockRepository productStockRepository;
+    @Autowired
     OrderRepository orderRepository;
     @Autowired
     OrderItemRepository orderItemRepository;
     @Autowired
     PaymentRepository paymentRepository;
     PaymentApprovalService paymentApprovalService;
+
     @Test
     void 결제가_정상적으로_성공된다(){
         // given
@@ -61,11 +68,23 @@ public class PaymentApprovalServiceTest {
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
+        List<OrderItem> orderItems = finishOrderData.getOrderItems();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", 15000);
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
-        when(pgCaller.processPayApprove(any(), any())).
-                thenReturn(new PayApproveSuccess(PayResult.builder().build()));
+        PayResult payResult = PayResult.builder()
+                .payResultCommon(PayResult.PayResultCommon.builder()
+                        .payMethod(PayMethod.MOBILE)
+                        .amount(15000)
+                        .approvedAt(OffsetDateTime.now())
+                        .orderName("test-order")
+                        .build())
+                .paymentDetail(Map.of("phoneNumber", "010-1234-5678",
+                        "settlementStatus", "DONE",
+                        "receiptUrl", "https://naver.com"))
+                .build();
+        createPaymentService(new FakePaymentExecutor(new PayApproveSuccess(payResult)));
 
         // when
         paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
@@ -73,9 +92,15 @@ public class PaymentApprovalServiceTest {
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
 
-        // then
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        assertThat(pay.getPaymentDetail()).isNotNull();
         assertThat(pay.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
+
+        orderItems.forEach(item -> {
+            Product product = productStockRepository.getById(item.getProduct().getProductId());
+            assertThat(product.getStockQuantity())
+                    .isEqualTo(item.getProduct().getStockQuantity() - item.getOrderQuantity());
+        });
     }
 
     @Test
@@ -88,6 +113,7 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
+        createPaymentService(new FakePaymentExecutor(new InsufficientBalance()));
 
         // when
         paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
@@ -107,6 +133,7 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
+        createPaymentService(new FakePaymentExecutor(new ReadTimeout()));
 
         // when
         paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
@@ -126,9 +153,10 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
+        createPaymentService(new FakePaymentExecutor(new ConnectionTimeout()));
 
         // when
-       paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
+        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
         Pay pay = paymentRepository.getByPaymentKey("paymentKey");
@@ -145,6 +173,7 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
+        createPaymentService(new FakePaymentExecutor(new ConnectionRequestTimeout()));
 
         // when
         paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
@@ -155,8 +184,10 @@ public class PaymentApprovalServiceTest {
     }
 
     void createPaymentService(PaymentExecutor paymentExecutor){
-        paymentApprovalService = PaymentApprovalService.builder().
-                paymentService(paymentService).
-                outcomeHandlers(outcomeHandlers).paymentExecutors(List.of(paymentExecutor)).build();
+        paymentApprovalService = PaymentApprovalService.builder()
+                .paymentService(paymentService)
+                .outcomeHandlers(outcomeHandlers)
+                .paymentExecutors(List.of(paymentExecutor))
+                .build();
     }
 }

@@ -22,7 +22,7 @@ public class MockServerCommunicationTest {
         // given
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
-                10000);
+                "TOSS",10000);
 
         // when
         mockMvc.perform(post("/test/payment/confirm").
