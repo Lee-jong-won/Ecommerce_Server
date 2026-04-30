@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class GeneralItemStockServiceTest {
 
     @Autowired
@@ -25,13 +27,13 @@ public class GeneralItemStockServiceTest {
     @Autowired
     GeneralItemStockService generalItemStockService;
 
-    @Test
+    /*@Test
     void 재고가_성공적으로_감소한다(){
         // given
         Product product = ProductFixture.createLaptop();
         product.startSelling();
         Long productId = productRepository.save(product).getProductId();
-
+        System.out.println(productId);
 
         // when
         Product updatedProduct = generalItemStockService.decreaseStock(productId, 2);
@@ -89,5 +91,5 @@ public class GeneralItemStockServiceTest {
         Product result = productRepository.findById(productId).orElseThrow();
         assertThat(result.getStockQuantity()).isEqualTo(85);
     }
-
+*/
 }

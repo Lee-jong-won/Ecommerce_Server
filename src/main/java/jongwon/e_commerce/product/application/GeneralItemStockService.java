@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+// @Service
 @Builder
 public class GeneralItemStockService implements StockService{
 
@@ -42,31 +42,4 @@ public class GeneralItemStockService implements StockService{
         });
     }
 
-/*
-    public Product decreaseStock(Long productId, int quantity) {
-        return retryOperations.execute(execution -> {
-            return decreaseStockTx(productId, quantity);
-        });
-    }
-
-    public Product increaseStock(Long productId, int quantity) {
-        return retryOperations.execute(execution -> {
-            return increaseStockTx(productId, quantity);
-        });
-    }
-*/
-
-    /*@Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Product decreaseStockTx(Long productId, int quantity) {
-        Product product = productRepository.getById(productId);
-        product.removeStock(quantity);
-        return productRepository.save(product);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Product increaseStockTx(Long productId, int quantity) {
-        Product product = productRepository.getById(productId);
-        product.addStock(quantity);
-        return productRepository.save(product);
-    }*/
 }

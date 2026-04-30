@@ -1,16 +1,6 @@
 package jongwon.e_commerce.common.commandLineRunner;
 
-import jakarta.persistence.EntityManager;
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.domain.MemberCreate;
-import jongwon.e_commerce.member.repository.MemberRepository;
-import jongwon.e_commerce.order.application.OrderExecutor;
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.domain.OrderItemCreate;
-import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.repository.ProductRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -22,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Component
 @RequiredArgsConstructor

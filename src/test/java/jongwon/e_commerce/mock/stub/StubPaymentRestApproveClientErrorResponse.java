@@ -1,17 +1,18 @@
 package jongwon.e_commerce.mock.stub;
 
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.toss.PaymentApproveClient;
-import jongwon.e_commerce.payment.toss.dto.TossPaymentApproveResponse;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.infrastructure.gateway.PaymentClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.nio.charset.StandardCharsets;
 
-public class StubPaymentRestApproveClientErrorResponse implements PaymentApproveClient {
+public class StubPaymentRestApproveClientErrorResponse implements PaymentClient {
 
     @Override
-    public TossPaymentApproveResponse callPayApprovalApi(PayApproveAttempt request, String idempotencyKey) {
+    public PayApproveOutcome callPayApprovalApi(PayApproveAttempt request) {
         String body = """
         {
             "code" : "INVALID_REJECT_CARD",

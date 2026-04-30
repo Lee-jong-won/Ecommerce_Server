@@ -7,12 +7,11 @@ import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.controller.response.PayApproveSuccessResponse;
-import jongwon.e_commerce.payment.toss.dto.PayApproveAttempt;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -61,7 +60,7 @@ public class PaymentApprovalControllerTest {
 
 
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                order.getOrderId(), order.getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // when
         ResponseEntity<PayApproveSuccessResponse> response = restClient.post()

@@ -1,8 +1,6 @@
 package jongwon.e_commerce.payment.repository;
 
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
-import jongwon.e_commerce.payment.repository.jpa.entity.PayEntity;
 
 import java.util.Optional;
 

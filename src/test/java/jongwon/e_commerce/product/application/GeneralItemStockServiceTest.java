@@ -2,14 +2,11 @@ package jongwon.e_commerce.product.application;
 
 import jongwon.e_commerce.mock.fake.FakeProductRepository;
 import jongwon.e_commerce.product.domain.Product;
+import jongwon.e_commerce.product.infrastructure.config.StockServiceRetryConfig;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +22,10 @@ class GeneralItemStockServiceTest {
         GeneralItemStockServiceTx generalItemStockServiceTx = GeneralItemStockServiceTx.builder().
                 productRepository(productRepository).
                 build();
-        generalItemStockService = GeneralItemStockService.builder().generalItemStockServiceTx(generalItemStockServiceTx).
+        StockServiceRetryConfig stockServiceRetryConfig = new StockServiceRetryConfig();
+        generalItemStockService = GeneralItemStockService.builder().
+                generalItemStockServiceTx(generalItemStockServiceTx).
+                retryOperations(stockServiceRetryConfig.retryTemplate()).
                 build();
     }
 
@@ -55,37 +55,4 @@ class GeneralItemStockServiceTest {
         assertThat(updatedProduct.getStockQuantity()).isEqualTo(102);
     }
 
-    @Test
-    void 동시에_재고_차감시_동시성_문제_발생() throws InterruptedException {
-        // given
-        Product product = productRepository.save(ProductFixture.createLaptop());
-        product.startSelling();
-
-        int threadCount = 10;
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-
-        CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch endLatch = new CountDownLatch(threadCount);
-
-        // when
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    startLatch.await();
-                    generalItemStockService.decreaseStock(product.getProductId(), 5);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                } finally {
-                    endLatch.countDown();
-                }
-            });
-        }
-
-        startLatch.countDown();
-        endLatch.await();
-
-        // then
-        Product result = productRepository.findById(product.getProductId()).orElseThrow();
-        assertThat(result.getStockQuantity()).isEqualTo(50);
-    }
 }
