@@ -47,7 +47,7 @@ public class PayEntity {
     private OffsetDateTime approvedAt;
 
     @Type(JsonType.class)
-    @Column(name = "paymentDetail", columnDefinition = "json")
+    @Column(name = "payment_detail", columnDefinition = "json")
     private Map<String, Object> paymentDetail;
 
     @Column(name = "created_at", nullable = false, updatable = false,
