@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -80,6 +81,35 @@ class TossPaymentRestClientTest {
         //then
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm")));
         assertNotNull(payApproveOutcome);
+    }
+
+    @Test
+    void 금액이_누락된_경우_예외가_발생한다(){
+        // given
+        PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
+                "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
+                "TOSS", 10000);
+
+        // wireMock가 정상 응답 반환하도록 설정
+        wireMockServer.stubFor(post(urlEqualTo("/payments/confirm"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""
+                        {
+                          "approvedAt": "2024-02-13T12:18:14+09:00",
+                          "method": "휴대폰",
+                            "mobilePhone": {
+                                "customerMobilePhone": "01012345678",
+                                "settlementStatus": "SETTLED",
+                                "receiptUrl": "http://receipt.url"
+                            }
+                        }
+                        """)
+                ));
+
+        //when
+        assertThrows(RestClientException.class, () -> tossPaymentHttpClient.callPayApprovalApi(request));
     }
 
     @Test
