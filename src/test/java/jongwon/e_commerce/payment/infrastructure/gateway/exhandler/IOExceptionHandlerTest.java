@@ -1,8 +1,8 @@
 package jongwon.e_commerce.payment.infrastructure.gateway.exhandler;
 
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import org.apache.hc.core5.http.ConnectionRequestTimeoutException;
 import org.junit.jupiter.api.Test;

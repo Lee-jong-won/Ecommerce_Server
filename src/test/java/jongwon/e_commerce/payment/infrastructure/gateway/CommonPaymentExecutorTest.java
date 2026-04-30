@@ -2,13 +2,11 @@ package jongwon.e_commerce.payment.infrastructure.gateway;
 
 import jongwon.e_commerce.mock.stub.*;
 import jongwon.e_commerce.payment.domain.PGType;
-import jongwon.e_commerce.payment.infrastructure.gateway.CommonPaymentExecutor;
-import jongwon.e_commerce.payment.infrastructure.gateway.exhandler.IOExceptionHandler;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
 import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionTimeout;
 import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
 import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler.TossErrorResponseHandler;
