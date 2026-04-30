@@ -15,7 +15,6 @@ public class OrderItem {
     private int orderPrice;
     private int orderQuantity;
 
-
     //==생성 메소드==//
     public static OrderItem createOrderItem(Product product, int orderQuantity){
         return OrderItem.builder().

@@ -9,7 +9,7 @@ import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
@@ -18,6 +18,7 @@ import jongwon.e_commerce.support.fixture.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 public class TestDataFactory {
 
@@ -86,7 +87,7 @@ public class TestDataFactory {
                 order(order).
                 product(product2).
                 build().create());
-        return new FinishOrderData(member, order);
+        return new FinishOrderData(member, order, List.of(orderItem1, orderItem2));
     }
 
     public static Pay finishPayPreProcess(MemberRepository memberRepository,
@@ -109,29 +110,4 @@ public class TestDataFactory {
 
         return pay;
     }
-
-    public static Pay reflectPayCommonResultAfterCallingApi(MemberRepository memberRepository,
-                                                            ProductRepository productRepository,
-                                                            OrderItemRepository orderItemRepository,
-                                                            OrderRepository orderRepository,
-                                                            PaymentRepository paymentRepository){
-        Pay pay = finishPayPreProcess(
-                memberRepository,
-                productRepository,
-                orderItemRepository,
-                orderRepository,
-                paymentRepository);
-
-        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
-                payMethod(PayMethod.CARD).
-                approvedAt(OffsetDateTime.now()).
-                build();
-
-        pay.reflectPaySuccess(payResultCommon);
-
-        Pay updatedPay = paymentRepository.save(pay);
-
-        return updatedPay;
-    }
-
 }

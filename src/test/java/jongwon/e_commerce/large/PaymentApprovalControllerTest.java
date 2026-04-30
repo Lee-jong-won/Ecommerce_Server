@@ -6,8 +6,8 @@ import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.PayApproveAttempt;
+import jongwon.e_commerce.payment.controller.response.PayApproveSuccessResponse;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -19,6 +19,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestClient;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,7 +48,7 @@ public class PaymentApprovalControllerTest {
     }
 
     // @Test
-   /* void testPaymentApprovalApi(){
+    void testPaymentApprovalApi(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository,
                 productRepository,
@@ -58,20 +60,20 @@ public class PaymentApprovalControllerTest {
 
 
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                order.getOrderId(), order.getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // when
-        ResponseEntity<PaySuccessResponse> response = restClient.post()
+        ResponseEntity<PayApproveSuccessResponse> response = restClient.post()
                 .uri(baseUrl + "/api/payment")
                 .header("X-MOCK-USER-LOGINID", member.getLoginId())
+                .header("Idempotency-Key", UUID.randomUUID().toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(attempt) // 👈 중요
                 .retrieve()
-                .toEntity(PaySuccessResponse.class);
-        PaySuccessResponse paySuccessResponse = response.getBody();
+                .toEntity(PayApproveSuccessResponse.class);
+        PayApproveSuccessResponse paySuccessResponse = response.getBody();
 
         // then
         assertEquals(order.getTotalAmount(), paySuccessResponse.getPayAmount());
-        assertEquals(PayMethod.MOBILE, paySuccessResponse.getPayMethod());
-    }*/
+    }
 }

@@ -3,8 +3,6 @@ package jongwon.e_commerce.mock.fake;
 import jongwon.e_commerce.common.exception.ResourceNotFoundException;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.MemberRepository;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;

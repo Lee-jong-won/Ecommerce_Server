@@ -1,15 +1,13 @@
 package jongwon.e_commerce.payment.controller.response;
 
-import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.approve.result.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.result.fail.PayApproveFail;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.result.ignore.UnknownRestClientError;
-import jongwon.e_commerce.payment.domain.approve.result.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.result.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
+import jongwon.e_commerce.payment.domain.approve.outcome.fail.PayApproveFail;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionRequestTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.ConnectionTimeout;
+import jongwon.e_commerce.payment.domain.approve.outcome.ignore.UnknownRestClientError;
+import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
+import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -17,13 +15,15 @@ public class PayOutcomeHttpMapper {
     public static ResponseEntity<?> toResponse(PayApproveOutcome payApproveOutcome){
         if(payApproveOutcome instanceof PayApproveSuccess s) {
             PayResult result = s.getPayResult();
-            Pay pay = result.getPaymentDetail().getPay();
-            Order order = pay.getOrder();
+            PayResult.PayResultCommon payResultCommon = result.getPayResultCommon();
+
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     PayApproveSuccessResponse.builder().
-                    payAmount(pay.getPayAmount()).
-                    orderPrice(order.getTotalAmount()).
-                    orderName(order.getOrderName()).build());
+                    payAmount(
+                            payResultCommon.getAmount()).
+                            orderName(payResultCommon.getOrderName()).
+                            approvedAt(payResultCommon.getApprovedAt().toString()).build()
+            );
         }
 
         if(payApproveOutcome instanceof PayApproveFail f){

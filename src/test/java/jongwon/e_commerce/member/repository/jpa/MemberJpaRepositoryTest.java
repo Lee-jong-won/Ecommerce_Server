@@ -1,8 +1,9 @@
 package jongwon.e_commerce.member.repository.jpa;
 
+import jongwon.e_commerce.member.infrastructure.jpa.MemberJpaRepository;
 import jongwon.e_commerce.support.fixture.MemberFixture;
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.repository.jpa.entity.MemberEntity;
+import jongwon.e_commerce.member.infrastructure.jpa.entity.MemberEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

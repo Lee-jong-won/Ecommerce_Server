@@ -1,14 +1,14 @@
 package jongwon.e_commerce.payment.domain;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -23,6 +23,7 @@ public class Pay {
     private OffsetDateTime approvedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Map<String, Object> paymentDetail;
 
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
@@ -76,7 +77,8 @@ public class Pay {
                 build();
     }
 
-    public Pay reflectPaySuccess(PayResult.PayResultCommon payResultCommon){
+    public Pay reflectPaySuccess(PayResult.PayResultCommon payResultCommon,
+                                 Map<String, Object> paymentDetail){
         comeplete();
         return Pay.builder()
                 .id(id)
@@ -88,6 +90,7 @@ public class Pay {
                 .updatedAt(updatedAt)
                 .payMethod(payResultCommon.getPayMethod())
                 .approvedAt(payResultCommon.getApprovedAt())
+                .paymentDetail(paymentDetail)
                 .build();
     }
 }

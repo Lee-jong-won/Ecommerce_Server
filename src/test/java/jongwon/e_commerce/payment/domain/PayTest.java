@@ -1,22 +1,13 @@
 package jongwon.e_commerce.payment.domain;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.payment.domain.approve.PayResult;
-import jongwon.e_commerce.payment.domain.detail.MPPay;
-import jongwon.e_commerce.payment.domain.detail.PaymentDetail;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.support.fixture.OrderFixture;
-import jongwon.e_commerce.support.fixture.OrderItemFixture;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -143,19 +134,21 @@ class PayTest {
                 payMethod(method).
                 approvedAt(approvedAt).
                 build();
+        Map<String, Object> detailMap = Map.of("mobilePhone", "010-1234-5678",
+                "settlementStatus", "DONE",
+                "receiptUrl", "http://naver.com");
 
         // when
-        Pay resultPay = originalPay.reflectPaySuccess(payResultCommon);
+        Pay resultPay = originalPay.reflectPaySuccess(payResultCommon, detailMap);
 
         // then
         // 기존 값 유지
         assertThat(resultPay.getPaymentKey()).isEqualTo(originalPay.getPaymentKey());
         assertThat(resultPay.getPayAmount()).isEqualTo(originalPay.getPayAmount());
         assertThat(resultPay.getPayStatus()).isEqualTo(originalPay.getPayStatus());
-
-        // PayResult 값 반영
-        assertThat(resultPay.getPayMethod()).isEqualTo(method);
-        assertThat(resultPay.getApprovedAt()).isEqualTo(approvedAt);
+        assertThat(resultPay.getPaymentDetail().get("mobilePhone")).isEqualTo("010-1234-5678");
+        assertThat(resultPay.getPaymentDetail().get("settlementStatus")).isEqualTo("DONE");
+        assertThat(resultPay.getPaymentDetail().get("receiptUrl")).isEqualTo("http://naver.com");
     }
 
     private Pay createPay(){
