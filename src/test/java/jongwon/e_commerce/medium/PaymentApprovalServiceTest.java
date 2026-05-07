@@ -1,24 +1,22 @@
 package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
-import jongwon.e_commerce.mock.fake.FakePaymentExecutor;
+import jongwon.e_commerce.mock.stub.StubPaymentExecutor;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.payment.application.approve.PaySuccessProcessor;
+import jongwon.e_commerce.payment.domain.PayRequest;
+import jongwon.e_commerce.payment.exception.*;
+import jongwon.e_commerce.payment.repository.PayRequestRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.application.approve.PaymentApprovalService;
-import jongwon.e_commerce.payment.application.PaymentService;
+import jongwon.e_commerce.payment.application.approve.PayPreprocessor;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.InsufficientBalance;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
-import jongwon.e_commerce.payment.application.approve.handler.PayOutcomeHandler;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayStatus;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
@@ -37,15 +35,18 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
 public class PaymentApprovalServiceTest {
     @Autowired
-    PaymentService paymentService;
+    PayPreprocessor payPreprocessor;
     @Autowired
-    List<PayOutcomeHandler> outcomeHandlers;
+    PayProcessStateManager payProcessStateManager;
+    @Autowired
+    PaySuccessProcessor paySuccessProcessor;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -58,43 +59,52 @@ public class PaymentApprovalServiceTest {
     OrderItemRepository orderItemRepository;
     @Autowired
     PaymentRepository paymentRepository;
+    @Autowired
+    PayRequestRepository payRequestRepository;
     PaymentApprovalService paymentApprovalService;
 
     @Test
-    void 결제가_정상적으로_성공된다(){
+    void 결제성공(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+
         Order order = finishOrderData.getOrder();
         List<OrderItem> orderItems = finishOrderData.getOrderItems();
+
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 order.getOrderId(), "TOSS", order.getTotalAmount());
 
-        PayResult payResult = PayResult.builder()
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+        createPaymentService(StubPaymentExecutor.success(PayResult.builder()
                 .payResultCommon(PayResult.PayResultCommon.builder()
                         .payMethod(PayMethod.MOBILE)
-                        .amount(15000)
-                        .approvedAt(OffsetDateTime.now())
-                        .orderName("test-order")
+                        .amount(order.getTotalAmount())
+                        .approvedAt(approvedAt)
+                        .orderName(order.getOrderName())
                         .build())
                 .paymentDetail(Map.of("phoneNumber", "010-1234-5678",
                         "settlementStatus", "DONE",
                         "receiptUrl", "https://naver.com"))
-                .build();
-        createPaymentService(new FakePaymentExecutor(new PayApproveSuccess(payResult)));
+                .build()));
 
         // when
         paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
 
         // then
-        Pay pay = paymentRepository.getByPaymentKey("paymentKey");
+        PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
 
+        Pay pay = paymentRepository.getByPayRequestId(payRequest.getId());
+        assertThat(pay.getPayAmount()).isEqualTo(order.getTotalAmount());
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
+        assertThat(pay.getApprovedAt()).isEqualTo(approvedAt);
         assertThat(pay.getPaymentDetail()).isNotNull();
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
+        assertThat(pay.getCreatedAt()).isNotNull();
+        assertThat(pay.getPayRequest().getId()).isEqualTo(payRequest.getId());
 
         orderItems.forEach(item -> {
             Product product = productStockRepository.getById(item.getProduct().getProductId());
@@ -104,7 +114,7 @@ public class PaymentApprovalServiceTest {
     }
 
     @Test
-    void 결제_실패가_성공적으로_처리된다(){
+    void 결제_실패(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
@@ -113,18 +123,17 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
-        createPaymentService(new FakePaymentExecutor(new InsufficientBalance()));
+        createPaymentService(StubPaymentExecutor.failure(new PayClientException(PayErrorCode.INVALID_CARD)));
 
-        // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
-
-        // then
-        Pay pay = paymentRepository.getByPaymentKey("paymentKey");
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        // when && then
+        assertThrows(PayClientException.class,
+                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+        PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
     }
 
     @Test
-    void Read_타임아웃이_성공적으로_처리된다(){
+    void Read_타임아웃(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
@@ -133,38 +142,38 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
-        createPaymentService(new FakePaymentExecutor(new ReadTimeout()));
+        createPaymentService(StubPaymentExecutor.failure(new PayTimeoutException()));
 
-        // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
-
-        // then
-        Pay pay = paymentRepository.getByPaymentKey("paymentKey");
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
+        // when && then
+        assertThrows(PayUnknownOutcomeException.class,
+                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+        PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.UNKNOWN);
     }
 
     @Test
-    void Connection_타임아웃은_아무처리도_하지_않는다(){
+    void Connection_타임아웃(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
+
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", 15000);
-        createPaymentService(new FakePaymentExecutor(new ConnectionTimeout()));
+                order.getOrderId(), "TOSS", order.getTotalAmount());
+        createPaymentService(StubPaymentExecutor.failure(new PayServerException("연결 타임아웃이 발생했습니다")));
 
-        // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
-
-        // then
-        Pay pay = paymentRepository.getByPaymentKey("paymentKey");
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
+        // when && then
+        assertThrows(PayServerException.class,
+                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+        PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
     }
 
     @Test
-    void ConnectionRequestTimeout은_아무처리도_하지_않는다(){
+    void ConnectionRequestTimeout(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
@@ -173,21 +182,17 @@ public class PaymentApprovalServiceTest {
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
-        createPaymentService(new FakePaymentExecutor(new ConnectionRequestTimeout()));
+        createPaymentService(StubPaymentExecutor.failure(new PayServerException("커넥션 풀이 고갈되었습니다")));
 
-        // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
-
-        // then
-        Pay pay = paymentRepository.getByPaymentKey("paymentKey");
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.PENDING);
+        // when && then
+        assertThrows(PayServerException.class,
+                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+        PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
     }
 
     void createPaymentService(PaymentExecutor paymentExecutor){
-        paymentApprovalService = PaymentApprovalService.builder()
-                .paymentService(paymentService)
-                .outcomeHandlers(outcomeHandlers)
-                .paymentExecutors(List.of(paymentExecutor))
-                .build();
+        paymentApprovalService = new PaymentApprovalService(payPreprocessor,
+                payRequestStateManager, List.of(paymentExecutor), paySuccessProcessor);
     }
 }

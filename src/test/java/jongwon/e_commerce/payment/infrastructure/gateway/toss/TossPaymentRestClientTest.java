@@ -2,10 +2,8 @@ package jongwon.e_commerce.payment.infrastructure.gateway.toss;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import jongwon.e_commerce.config.TossPaymentHttpClientConfigForTest;
-import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.infrastructure.gateway.toss.TossPayClient;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.infrastructure.gateway.toss.config.TossPaymentRetryConfig;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.junit.jupiter.api.AfterEach;
@@ -76,11 +74,11 @@ class TossPaymentRestClientTest {
                 ));
 
         //when
-        PayApproveOutcome payApproveOutcome = tossPaymentHttpClient.callPayApprovalApi(request);
+        PayResult payResult = tossPaymentHttpClient.callPayApprovalApi(request);
 
         //then
         wireMockServer.verify(1, postRequestedFor(urlPathEqualTo("/payments/confirm")));
-        assertNotNull(payApproveOutcome);
+        assertNotNull(payResult);
     }
 
     @Test

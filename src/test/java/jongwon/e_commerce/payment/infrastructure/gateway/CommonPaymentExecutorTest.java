@@ -2,13 +2,11 @@ package jongwon.e_commerce.payment.infrastructure.gateway;
 
 import jongwon.e_commerce.mock.stub.*;
 import jongwon.e_commerce.payment.domain.PGType;
+import jongwon.e_commerce.payment.exception.PayClientException;
+import jongwon.e_commerce.payment.exception.PayServerException;
+import jongwon.e_commerce.payment.exception.PayTimeoutException;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
-import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
+import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler.TossErrorResponseHandler;
 import jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler.TossExceptionTranslator;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,7 @@ class CommonPaymentExecutorTest {
     CommonPaymentExecutor commonPaymentExecutor;
 
     @Test
-    void 정상_응답이_돌아올_경우_PayApproveSuccess를_반환한다(){
+    void 정상_응답이_돌아올_경우_PayResult를_반환한다(){
         // given
         commonPaymentExecutor = new CommonPaymentExecutor(new StubPaymentRestApproveClientNormal(),
                 tossExceptionTranslator, PGType.TOSS);
@@ -32,16 +30,14 @@ class CommonPaymentExecutorTest {
                 "TOSS",10000);
 
         // when
-        PayApproveOutcome payApproveOutcome = commonPaymentExecutor.executePayApprove(request);
-        PayApproveSuccess payApproveSuccess = (PayApproveSuccess) payApproveOutcome;
+        PayResult payResult = commonPaymentExecutor.executePayApprove(request);
 
         // then
-        assertInstanceOf(PayApproveSuccess.class, payApproveOutcome);
-        assertNotNull(payApproveSuccess.getPayResult());
+        assertNotNull(payResult);
     }
 
     @Test
-    void 카드_정보가_잘못됐을_경우_INVALID_CARD를_반환한다(){
+    void 카드_정보가_잘못됐을_경우_PayClientException을_throw한다(){
         // given
         commonPaymentExecutor = new CommonPaymentExecutor(new StubPaymentRestApproveClientErrorResponse(),
                 tossExceptionTranslator, PGType.TOSS);
@@ -49,15 +45,12 @@ class CommonPaymentExecutorTest {
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 "TOSS",10000);
 
-        // when
-        PayApproveOutcome payApproveOutcome = commonPaymentExecutor.executePayApprove(request);
-
-        // then
-        assertInstanceOf(InvalidCard.class, payApproveOutcome);
+        // when && then
+        assertThrows(PayClientException.class, () -> commonPaymentExecutor.executePayApprove(request));
     }
 
     @Test
-    void ReadTimeout이_발생하는_경우_ReadTimeout을_반환한다(){
+    void ReadTimeout이_발생하는_경우_PayTimeoutException을_throw한다(){
         // given
         commonPaymentExecutor = new CommonPaymentExecutor(new StubPaymentRestApproveClientReadTimeout(),
                 tossExceptionTranslator, PGType.TOSS);
@@ -65,15 +58,12 @@ class CommonPaymentExecutorTest {
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 "TOSS", 10000);
 
-        // when
-        PayApproveOutcome payApproveOutcome = commonPaymentExecutor.executePayApprove(request);
-
-        // then
-        assertInstanceOf(ReadTimeout.class, payApproveOutcome);
+        // when && then
+        assertThrows(PayTimeoutException.class, () -> commonPaymentExecutor.executePayApprove(request));
     }
 
     @Test
-    void ConnTimeout이_발생하는_경우_ConnTimeout을_반환한다(){
+    void ConnTimeout이_발생하는_경우_PayServerException을_throw한다(){
         // given
         commonPaymentExecutor = new CommonPaymentExecutor(new StubPaymentRestApproveClientConnTimeout(),
                 tossExceptionTranslator, PGType.TOSS);
@@ -81,12 +71,8 @@ class CommonPaymentExecutorTest {
                 "5EnNZRJGvaBX7zk2yd8ydw26XvwXkLrx9POLqKQjmAw4b0e1",
                 "TOSS",10000);
 
-        // when
-        PayApproveOutcome payApproveOutcome = commonPaymentExecutor.executePayApprove(request);
-
-        // then
-        assertInstanceOf(ConnectionTimeout.class, payApproveOutcome);
-
+        // when && then
+        assertThrows(PayServerException.class, () -> commonPaymentExecutor.executePayApprove(request));
     }
 
     @Test
@@ -99,11 +85,8 @@ class CommonPaymentExecutorTest {
                 "TOSS", 10000);
 
 
-        // when
-        PayApproveOutcome payApproveOutcome = commonPaymentExecutor.executePayApprove(request);
-
-        // then
-        assertInstanceOf(ConnectionRequestTimeout.class, payApproveOutcome);
+        // when && then
+        assertThrows(PayServerException.class, () -> commonPaymentExecutor.executePayApprove(request));
     }
 
 }

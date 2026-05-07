@@ -1,6 +1,5 @@
 package jongwon.e_commerce.mock.stub;
 
-import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.infrastructure.gateway.PaymentClient;
@@ -10,7 +9,7 @@ import org.springframework.web.client.ResourceAccessException;
 public class StubPaymentRestApproveClientConnRequestTimeout implements PaymentClient {
 
     @Override
-    public PayApproveOutcome callPayApprovalApi(PayApproveAttempt request) {
+    public PayResult callPayApprovalApi(PayApproveAttempt request) {
         ConnectionRequestTimeoutException connectionRequestTimeoutException = new ConnectionRequestTimeoutException();
         ResourceAccessException resourceAccessException = new ResourceAccessException("I/O Error", connectionRequestTimeoutException);
         throw resourceAccessException;

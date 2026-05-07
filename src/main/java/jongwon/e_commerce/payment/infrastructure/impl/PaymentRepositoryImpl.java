@@ -37,14 +37,14 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Optional<Pay> findByPaymentKey(String paymentKey) {
-        return paymentJpaRepository.findByPaymentKey(paymentKey).map(PayEntity::toModel);
+    public Optional<Pay> findByPayRequestId(long payRequestId) {
+        return paymentJpaRepository.findByPayRequestId(payRequestId).map(PayEntity::toModel);
     }
 
     @Override
-    public Pay getByPaymentKey(String paymentKey) {
-        return findByPaymentKey(paymentKey).orElseThrow(
-                () -> new ResourceNotFoundException("Pay", paymentKey)
+    public Pay getByPayRequestId(long payRequestId) {
+        return findByPayRequestId(payRequestId).orElseThrow(
+                () -> new ResourceNotFoundException("Pay", payRequestId)
         );
     }
 

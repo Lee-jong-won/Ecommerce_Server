@@ -39,6 +39,7 @@ dependencies {
 
 	implementation 'io.hypersistence:hypersistence-utils-hibernate-71:3.15.2'
 	implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
+	implementation 'com.github.ben-manes.caffeine:caffeine'
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'

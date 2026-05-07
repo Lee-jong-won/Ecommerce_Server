@@ -10,6 +10,7 @@ import java.util.Map;
 @Getter
 @Builder
 public class PayResult {
+
     private PayResultCommon payResultCommon;
     private Map<String, Object> paymentDetail;
 

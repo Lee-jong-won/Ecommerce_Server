@@ -8,17 +8,15 @@ import jongwon.e_commerce.order.domain.OrderItemCreate;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
-import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
+import jongwon.e_commerce.payment.domain.PayRequest;
+import jongwon.e_commerce.payment.repository.PayRequestRepository;
 import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.fixture.*;
 
-import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 
 public class TestDataFactory {
 
@@ -90,24 +88,24 @@ public class TestDataFactory {
         return new FinishOrderData(member, order, List.of(orderItem1, orderItem2));
     }
 
-    public static Pay finishPayPreProcess(MemberRepository memberRepository,
-                                ProductRepository productRepository,
-                                OrderItemRepository orderItemRepository,
-                                OrderRepository orderRepository,
-                                PaymentRepository paymentRepository){
+    public static PayRequest finishPayPreProcess(MemberRepository memberRepository,
+                                                 ProductRepository productRepository,
+                                                 OrderItemRepository orderItemRepository,
+                                                 OrderRepository orderRepository,
+                                                 PayRequestRepository payRequestRepository){
         FinishOrderData finishOrderData = finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
 
-        Pay pay = paymentRepository.save(PayFixture.
+        PayRequest payRequest = payRequestRepository.save(PayRequestFixture.
                 builder().
                 order(finishOrderData.getOrder()).
                 payAmount(finishOrderData.getOrder().getTotalAmount()).
                 build().
                 create());
 
-        return pay;
+        return payRequest;
     }
 }

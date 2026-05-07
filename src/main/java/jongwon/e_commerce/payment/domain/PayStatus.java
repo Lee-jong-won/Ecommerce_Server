@@ -1,11 +1,10 @@
 package jongwon.e_commerce.payment.domain;
 
 public enum PayStatus {
-    PENDING,             // 결제 진행 중
-    COMPLETE,           // 승인 완료
-    FAILED,
-    // ( 인증 실패 -> 프론트에서 FAIL URL을 호출 후, 백앤드에서 실패 처리 )
-    // ( 승인 실패 -> 백앤드에서 결제승인 호출 후, 오류 응답을 받으면, 실패 처리)
-    REFUND,           // 결제 취소
-    TIME_OUT,           // 타임 아웃
+    PENDING,    // 결제 진행 중
+    COMPLETE,   // 승인 완료
+    BUSINESS_FAILED,     // 잔액 부족, 카드 오류 - 다른 paymentKey로 재시도
+    SERVER_FAILED, // 게이트 웨이 / 네트워크 오류 - 같은 paymentKey로 재시도
+    REFUND,     // 결제 취소
+    UNKNOWN,    // 처리 여부 불명확 (PG 응답 확인 불가)
 }

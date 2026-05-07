@@ -1,9 +1,9 @@
 package jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler;
 
-import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
-import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
-import jongwon.e_commerce.payment.infrastructure.gateway.exhandler.IOExceptionHandler;
+import jongwon.e_commerce.payment.exception.PayApproveException;
+import jongwon.e_commerce.payment.exception.PayClientException;
+import jongwon.e_commerce.payment.exception.PayErrorCode;
+import jongwon.e_commerce.payment.exception.PayTimeoutException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -21,20 +21,20 @@ class TossExceptionTranslatorTest {
             new TossErrorResponseHandler(new ObjectMapper()));
 
     @Test
-    void read_timeout이면_PayApproveTimeout을_반환한다() {
+    void read_timeout이면_PayNetworkException을_반환한다() {
         // given
         SocketTimeoutException cause = new SocketTimeoutException("Read timed out");
         ResourceAccessException ex = new ResourceAccessException("I/O error", cause);
 
         // when
-        PayApproveOutcome result = tossExceptionTranslator.translate(ex);
+        PayApproveException payApproveException = tossExceptionTranslator.translate(ex);
 
         // then
-        assertThat(result).isInstanceOf(ReadTimeout.class);
+        assertThat(payApproveException).isInstanceOf(PayTimeoutException.class);
     }
 
     @Test
-    void http_error_응답이면_body에서_code와_message를_파싱한다() {
+    void http_error_응답이면_PayClientException을_반환한다() {
         // given
         String body = """
                 {
@@ -52,10 +52,12 @@ class TossExceptionTranslatorTest {
                 );
 
         // when
-        PayApproveOutcome result = tossExceptionTranslator.translate(ex);
+        PayApproveException payApproveException = tossExceptionTranslator.translate(ex);
 
         // then
-        assertThat(result).isInstanceOf(InvalidCard.class);
+        assertThat(payApproveException).isInstanceOf(PayClientException.class);
+        PayClientException payClientException = (PayClientException) payApproveException;
+        assertThat(payClientException.getErrorCode()).isEqualTo(PayErrorCode.INVALID_CARD);
     }
 
 }

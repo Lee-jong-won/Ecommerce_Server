@@ -24,8 +24,7 @@ public class OrderController {
             @LoginMember Member loginMember // 일반적으로 스프링 시큐리티를 사용한다면 UserPrincipal 에서 가져옵니다.
             ){
         Order order = orderExecutor.order(loginMember,
-                orderCreate.getOrderName(), orderCreate.getOrderId(), orderCreate.getOrderItemCreates());
-
+                orderCreate.getOrderName(), Order.createOrderId(), orderCreate.getOrderItemCreates());
         return ResponseEntity.
                 ok().body(OrderResponse.from(order));
     }

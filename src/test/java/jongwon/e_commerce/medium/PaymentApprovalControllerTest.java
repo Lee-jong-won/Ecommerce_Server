@@ -6,14 +6,13 @@ import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.PayMethod;
+import jongwon.e_commerce.payment.exception.PayClientException;
+import jongwon.e_commerce.payment.exception.PayErrorCode;
+import jongwon.e_commerce.payment.exception.PayServerException;
+import jongwon.e_commerce.payment.exception.PayTimeoutException;
 import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionRequestTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.none.ConnectionTimeout;
-import jongwon.e_commerce.payment.domain.approve.outcome.success.PayApproveSuccess;
-import jongwon.e_commerce.payment.domain.approve.outcome.unknown.ReadTimeout;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -68,22 +67,23 @@ public class PaymentApprovalControllerTest {
 
         Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
-        PayApproveSuccess payApproveSuccess = new PayApproveSuccess(PayResult.builder().
+        OffsetDateTime approvedAt = OffsetDateTime.now();
+        PayResult payResult = PayResult.builder().
                 payResultCommon(PayResult.PayResultCommon.builder().
                         orderName(order.getOrderName()).
                         payMethod(PayMethod.MOBILE).
-                        approvedAt(OffsetDateTime.now()).
+                        approvedAt(approvedAt).
                         payMethod(PayMethod.MOBILE).
                         amount(order.getTotalAmount()).
                         build()).
                 paymentDetail(Map.of("phoneNumber", "010-1234-5678",
                         "settlementStatus", "DONE",
                         "receiptUrl", "https://naver.com")).
-                build());
+                build();
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenReturn(payApproveSuccess);
+        when(mockExecutor.executePayApprove(any())).thenReturn(payResult);
 
         // when && then
         mockMvc.perform(
@@ -93,7 +93,8 @@ public class PaymentApprovalControllerTest {
                         .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.payAmount").value(order.getTotalAmount()))
-                .andExpect(jsonPath("$.orderName").value(order.getOrderName()));
+                .andExpect(jsonPath("$.orderName").value(order.getOrderName()))
+                .andExpect(jsonPath("$.approvedAt").value(approvedAt.toString()));
     }
 
     @Test
@@ -108,10 +109,9 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        InvalidCard invalidCard = new InvalidCard();
-
+        PayClientException payClientException = new PayClientException(PayErrorCode.INVALID_CARD);
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenReturn(invalidCard);
+        when(mockExecutor.executePayApprove(any())).thenThrow(payClientException);
 
         // when && then
         mockMvc.perform(
@@ -136,10 +136,9 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        ReadTimeout readTimeout = new ReadTimeout();
-
+        PayTimeoutException payTimeoutException = new PayTimeoutException();
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenReturn(readTimeout);
+        when(mockExecutor.executePayApprove(any())).thenThrow(payTimeoutException);
 
         // when && then
         mockMvc.perform(
@@ -149,7 +148,7 @@ public class PaymentApprovalControllerTest {
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isGatewayTimeout())
                 .andExpect(jsonPath("$.code").value("NETWORK_ERROR"))
-                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류입니다"));
+                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."));
     }
 
     @Test
@@ -164,10 +163,10 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        ConnectionRequestTimeout connectionRequestTimeout = new ConnectionRequestTimeout();
+        PayServerException payServerException = new PayServerException("커넥션 풀이 고갈되었습니다.");
 
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenReturn(connectionRequestTimeout);
+        when(mockExecutor.executePayApprove(any())).thenThrow(payServerException);
 
         // when && then
         mockMvc.perform(
@@ -176,8 +175,8 @@ public class PaymentApprovalControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
                 .andExpect(status().isServiceUnavailable())
-                .andExpect(jsonPath("$.code").value("NO_CONNECTION_TO_USE"))
-                .andExpect(jsonPath("$.message").value("서버 리소스 자원이 부족합니다."));
+                .andExpect(jsonPath("$.code").value("SERVER_ERROR"))
+                .andExpect(jsonPath("$.message").value("서버 리소스가 부족합니다. 잠시 후 다시 시도해 주세요."));
     }
 
     @Test
@@ -192,10 +191,9 @@ public class PaymentApprovalControllerTest {
                 "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
 
         // 외부 API 호출 결과
-        ConnectionTimeout connectionTimeout = new ConnectionTimeout();
-
+        PayServerException payServerException = new PayServerException("연결 타임아웃 발생");
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenReturn(connectionTimeout);
+        when(mockExecutor.executePayApprove(any())).thenThrow(payServerException);
 
         // when && then
         mockMvc.perform(

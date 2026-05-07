@@ -25,23 +25,12 @@ public class PayEntity {
     @Column(name = "pay_id")
     private Long payId;
 
-    @OneToOne
-    @JoinColumn(name = "fk_order_id")
-    private OrderEntity orderEntity;
-
-    @Column(name = "payment_id", nullable = false)
-    private String paymentKey;
-
     @Column(name = "pay_method", length = 50)
     @Enumerated(EnumType.STRING)
     private PayMethod payMethod;
 
     @Column(name = "pay_amount", nullable = false)
     private long payAmount;
-
-    @Column(name = "pay_status", nullable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private PayStatus payStatus;
 
     @Column(name = "approved_at")
     private OffsetDateTime approvedAt;
@@ -50,27 +39,25 @@ public class PayEntity {
     @Column(name = "payment_detail", columnDefinition = "json")
     private Map<String, Object> paymentDetail;
 
+    @OneToOne
+    @JoinColumn(name = "fk_pay_request_id")
+    private PayRequestEntity payRequestEntity;
+
     @Column(name = "created_at", nullable = false, updatable = false,
             insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false, updatable = false,
-            insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime updatedAt;
 
     public static PayEntity from(Pay pay){
         PayEntity jpaEntity = new PayEntity();
 
         jpaEntity.payId = pay.getId();
-        jpaEntity.orderEntity = OrderEntity.from(pay.getOrder());
-        jpaEntity.paymentKey = pay.getPaymentKey();
         jpaEntity.payMethod = pay.getPayMethod();
         jpaEntity.payAmount = pay.getPayAmount();
-        jpaEntity.payStatus = pay.getPayStatus();
         jpaEntity.approvedAt = pay.getApprovedAt();
         jpaEntity.createdAt = pay.getCreatedAt();
-        jpaEntity.updatedAt = pay.getUpdatedAt();
         jpaEntity.paymentDetail = pay.getPaymentDetail();
+        jpaEntity.payRequestEntity = PayRequestEntity.from(pay.getPayRequest());
 
         return jpaEntity;
     }
@@ -78,15 +65,12 @@ public class PayEntity {
     public Pay toModel(){
         return Pay.builder()
                 .id(payId)
-                .order(orderEntity.toModel())
-                .paymentKey(paymentKey)
                 .payMethod(payMethod)
                 .payAmount(payAmount)
-                .payStatus(payStatus)
                 .approvedAt(approvedAt)
                 .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .paymentDetail(paymentDetail)
+                .payRequest(payRequestEntity.toModel())
                 .build();
     }
 }
