@@ -37,7 +37,6 @@ public class PaymentApprovalController {
                 .body(PayApproveFailResponse.builder()
                         .code(ex.getErrorCode().name())
                         .message(MessageResolver.resolve(ex.getErrorCode()))
-                        .retryStrategy(PayApproveFailResponse.RetryStrategy.NEW_PAYMENT_KEY)
                         .build());
     }
 
@@ -47,7 +46,6 @@ public class PaymentApprovalController {
                 .body(PayApproveFailResponse.builder()
                         .code("GATEWAY_ERROR")
                         .message("PG사 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.")
-                        .retryStrategy(PayApproveFailResponse.RetryStrategy.SAME_PAYMENT_KEY)
                         .build());
     }
 
@@ -57,7 +55,6 @@ public class PaymentApprovalController {
                 .body(PayApproveFailResponse.builder()
                         .code("NETWORK_ERROR")
                         .message("일시적인 네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.")
-                        .retryStrategy(PayApproveFailResponse.RetryStrategy.SAME_PAYMENT_KEY)
                         .build());
     }
 
@@ -66,8 +63,7 @@ public class PaymentApprovalController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(PayApproveFailResponse.builder()
                         .code("SERVER_ERROR")
-                        .message("서버 리소스가 부족합니다. 잠시 후 다시 시도해 주세요.")
-                        .retryStrategy(PayApproveFailResponse.RetryStrategy.SAME_PAYMENT_KEY)
+                        .message("일시적인 서버 오류입니다. 잠시 후 다시 시도해 주세요.")
                         .build());
     }
 }

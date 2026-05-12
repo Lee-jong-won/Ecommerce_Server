@@ -47,7 +47,6 @@ public class PayEntity {
             insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-
     public static PayEntity from(Pay pay){
         PayEntity jpaEntity = new PayEntity();
 
@@ -55,7 +54,6 @@ public class PayEntity {
         jpaEntity.payMethod = pay.getPayMethod();
         jpaEntity.payAmount = pay.getPayAmount();
         jpaEntity.approvedAt = pay.getApprovedAt();
-        jpaEntity.createdAt = pay.getCreatedAt();
         jpaEntity.paymentDetail = pay.getPaymentDetail();
         jpaEntity.payRequestEntity = PayRequestEntity.from(pay.getPayRequest());
 

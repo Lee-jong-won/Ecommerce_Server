@@ -11,7 +11,7 @@ import lombok.Setter;
 public class PayApproveAttempt {
 
     // [공통 필드]
-    private String orderName;
+    private String orderId;
     private String paymentKey;
     private String pgType;
     private long amount;
@@ -20,11 +20,11 @@ public class PayApproveAttempt {
 
     @Builder
     public PayApproveAttempt(@JsonProperty("paymentKey") String paymentKey,
-                             @JsonProperty("orderName")String orderName,
+                             @JsonProperty("orderId")String orderId,
                              @JsonProperty("pgType")String pgType,
                              @JsonProperty("amount")long amount){
         this.paymentKey = paymentKey;
-        this.orderName = orderName;
+        this.orderId = orderId;
         this.pgType = pgType;
         this.amount = amount;
     }

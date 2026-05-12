@@ -3,6 +3,7 @@ package jongwon.e_commerce.payment.application.approve;
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderRepository;
+import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.domain.PayStatus;
@@ -28,17 +29,16 @@ public class PayPreprocessor {
         log.info("event = PAYMENT_PREPROCESS_START paymentKey = {} amount = {}",
                 attempt.getPaymentKey(), attempt.getAmount());
 
-        Order order = orderRepository.getByOrderId(attempt.getOrderName());
+        Order order = orderRepository.getByOrderId(attempt.getOrderId());
         order.validateOwner(member);
         order.validatePayAmount(attempt.getAmount());
-
         order.paymentPending();
+
         PayRequest payRequest = PayRequest.from(
                 order,
-                PayRequest.createOrderId(),
                 attempt.getPaymentKey(),
                 attempt.getAmount(),
-                attempt.getPgType());
+                PGType.from(attempt.getPgType()));
 
         log.info("event = PAYMENT_PREPROCESS_FINISHED paymentKey = {} amount = {}",
                 attempt.getPaymentKey(), attempt.getAmount());

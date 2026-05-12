@@ -26,10 +26,10 @@ public class TossErrorResponseHandler implements PaymentErrorResponseHandler {
             return switch (code) {
                 case "REJECT_CARD_PAYMENT" -> new PayClientException(PayErrorCode.INSUFFICIENT_BALANCE);
                 case "INVALID_REJECT_CARD" -> new PayClientException(PayErrorCode.INVALID_CARD);
-                default -> new PayGatewayException("등록되지 않은 에러 코드: " + code);
+                default -> new PayErrorResponseParsingException("등록되지 않은 에러 코드: " + code);
             };
         } catch (JacksonException jacksonException) {
-            return new PayErrorResponseParsingException();
+            return new PayErrorResponseParsingException("json이 아닌 형식 : " + body);
         }
     }
 }

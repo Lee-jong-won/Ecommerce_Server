@@ -2,6 +2,7 @@ package jongwon.e_commerce.payment.application.approve;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.mock.fake.*;
+import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.Pay;
@@ -47,9 +48,11 @@ class PayPreprocessorTest {
     void 주문_검증이_정상적으로_완료된후_결제가_정상적으로_저장된다(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        Order order = finishOrderData.getOrder();
+
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
-                "ORDER-DEFAULT",
-                "TOSS", finishOrderData.getOrder().getTotalAmount());
+                order.getOrderId(),
+                "TOSS", order.getTotalAmount());
 
         // when
         PayRequest pay = payPreprocessor.preProcess(finishOrderData.getMember(), request);
@@ -63,14 +66,21 @@ class PayPreprocessorTest {
     }
 
     @Test
-    void 주문_검증이_성공하지_못하면_예외가_발생한다(){
+    void 주문_금액이_일치하지_못하면_예외가_발생한다(){
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        Order order = finishOrderData.getOrder();
+
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
-                "ORDER-DEFAULT",
-                "TOSS", 50000);
+                order.getOrderId(),
+                "TOSS", order.getTotalAmount() - 5000);
 
         // when && then
         assertThrows(InvalidAmountException.class, () -> payPreprocessor.preProcess(finishOrderData.getMember(), request));
+    }
+
+    @Test
+    void 소유자가_일치하지_않으면_예외가_발생한다(){
+
     }
 }

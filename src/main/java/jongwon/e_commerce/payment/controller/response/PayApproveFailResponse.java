@@ -9,10 +9,4 @@ import org.springframework.http.HttpStatus;
 public class PayApproveFailResponse {
     private final String code;
     private final String message;
-    private final RetryStrategy retryStrategy;
-
-    public enum RetryStrategy{
-        NEW_PAYMENT_KEY,
-        SAME_PAYMENT_KEY;
-    }
 }

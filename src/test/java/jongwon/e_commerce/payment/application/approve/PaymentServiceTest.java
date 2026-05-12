@@ -22,7 +22,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class PaymentCreatorTest {
+class PaymentServiceTest {
 
     ProductRepository productRepository = new FakeProductRepository();
     MemberRepository memberRepository = new FakeMemberRepository();
@@ -30,7 +30,7 @@ class PaymentCreatorTest {
     OrderItemRepository orderItemRepository = new FakeOrderItemRepository();
     PaymentRepository paymentRepository = new FakePaymentRepository();
     PayRequestRepository payRequestRepository = new FakePayRequestRepository();
-    PaymentCreator paymentCreator = new PaymentCreator(paymentRepository, payRequestRepository);
+    PaymentService paymentService = new PaymentService(paymentRepository);
 
     @Test
     void 정상적으로_결제_상태가_변경되고_결제_결과가_영속화된다(){
@@ -60,13 +60,12 @@ class PaymentCreatorTest {
                 paymentDetail(detailMap).build();
 
         // when
-        Pay pay = paymentCreator.reflectPaySuccessResult(payRequest, payResult);
+        Pay pay = paymentService.reflectPaySuccessResult(payRequest, payResult);
 
         // then
         PayRequest updatedPayRequest = payRequestRepository.getById(payRequest.getId());
         Map<String, Object> resultDetailMap = pay.getPaymentDetail();
 
-        assertThat(updatedPayRequest.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
         assertThat(pay.getPayAmount()).isEqualTo(payResultCommon.getAmount());
         assertThat(pay.getApprovedAt()).isEqualTo(approvedAt);

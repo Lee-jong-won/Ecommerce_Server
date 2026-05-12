@@ -1,10 +1,6 @@
 package jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler;
 
-import jongwon.e_commerce.payment.domain.approve.outcome.PayApproveOutcome;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.InvalidCard;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.JsonParsingError;
-import jongwon.e_commerce.payment.domain.approve.outcome.fail.UnknownErrorCode;
-import jongwon.e_commerce.payment.infrastructure.gateway.toss.exhandler.TossErrorResponseHandler;
+import jongwon.e_commerce.payment.exception.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,7 +16,7 @@ class TossErrorResponseHandlerTest {
     TossErrorResponseHandler tossErrorResponseHandler = new TossErrorResponseHandler(new ObjectMapper());
 
     @Test
-    void http_error_응답이면_body에서_code와_message를_파싱한다() {
+    void CODE와_MESSAGE를_해석해서_적절한_예외로_변환한다() {
         // given
         String body = """
                 {
@@ -38,14 +34,16 @@ class TossErrorResponseHandlerTest {
                 );
 
         // when
-        PayApproveOutcome result = tossErrorResponseHandler.handle(ex);
+        PayApproveException payApproveException = tossErrorResponseHandler.handle(ex);
 
         // then
-        assertThat(result).isInstanceOf(InvalidCard.class);
+        assertThat(payApproveException).isInstanceOf(PayClientException.class);
+        PayClientException payClientException = (PayClientException) payApproveException;
+        assertThat(payClientException.getErrorCode()).isEqualTo(PayErrorCode.INVALID_CARD);
     }
 
     @Test
-    void 등록되지_않은_에러코드가_수신되면_UnknownErrorCode가_반환된다(){
+    void 등록되지_않은_에러코드가_수신되면_PG예외가_반환된다(){
         // given
         String body = """
                 {
@@ -63,10 +61,10 @@ class TossErrorResponseHandlerTest {
                 );
 
         // when
-        PayApproveOutcome result = tossErrorResponseHandler.handle(ex);
+        PayApproveException payApproveException = tossErrorResponseHandler.handle(ex);
 
         // then
-        assertThat(result).isInstanceOf(UnknownErrorCode.class);
+        assertThat(payApproveException).isInstanceOf(PayErrorResponseParsingException.class);
     }
 
     @Test
@@ -83,11 +81,9 @@ class TossErrorResponseHandlerTest {
                 );
 
         // when
-        PayApproveOutcome result = tossErrorResponseHandler.handle(ex);
+        PayApproveException payApproveException = tossErrorResponseHandler.handle(ex);
 
         // then
-        assertThat(result).isInstanceOf(JsonParsingError.class);
+        assertThat(payApproveException).isInstanceOf(PayErrorResponseParsingException.class);
     }
-
-
 }

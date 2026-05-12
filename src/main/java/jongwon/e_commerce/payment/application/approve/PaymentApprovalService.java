@@ -42,6 +42,7 @@ public class PaymentApprovalService {
         try {
             PayResult result = executor.executePayApprove(attempt);
             paySuccessProcessor.process(payRequest, result);
+            payProcessStateManager.processSuccess(payRequest);
             log.info("event = PAYMENT_FINISHED paymentKey = {} amount = {}",
                     attempt.getPaymentKey(), attempt.getAmount());
             return result;
@@ -51,8 +52,11 @@ public class PaymentApprovalService {
         } catch (PayClientException e) {
             payProcessStateManager.processBusinessFailed(payRequest);
             throw e;
-        } catch (PayGatewayException | PayServerException e){
+        } catch (PayServerException e){
             payProcessStateManager.processServerFailed(payRequest);
+            throw e;
+        } catch(PayGatewayException e) {
+            payProcessStateManager.processPGFailed(payRequest);
             throw e;
         }
     }

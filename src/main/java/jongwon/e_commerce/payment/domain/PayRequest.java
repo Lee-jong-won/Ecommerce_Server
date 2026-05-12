@@ -17,7 +17,7 @@ public class PayRequest {
     private Long id;
     private String orderId;
     private String paymentKey;
-    private String pgType;
+    private PGType pgType;
     private PayStatus payStatus;
     private long payAmount;
     private Order order;
@@ -37,6 +37,9 @@ public class PayRequest {
     }
 
     public void unknown(){
+        if(payStatus == PayStatus.UNKNOWN)
+            return;
+
         if (payStatus != PayStatus.PENDING) {
             throw new InvalidPayStatusException(
                     "UNKNOWN 처리는 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
@@ -46,59 +49,49 @@ public class PayRequest {
     }
 
     public void businessFailed(){
-        if(payStatus != PayStatus.PENDING){
+        if(payStatus != PayStatus.PENDING && payStatus != PayStatus.UNKNOWN){
             throw new InvalidPayStatusException(
-                    "실패는 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+                    "비즈니스 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
         setPayStatus(PayStatus.BUSINESS_FAILED);
     }
 
     public void serverFailed(){
-        if(payStatus != PayStatus.PENDING){
+        if(payStatus != PayStatus.PENDING && payStatus != PayStatus.UNKNOWN){
             throw new InvalidPayStatusException(
-                    "실패는 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+                    "서버 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
         setPayStatus(PayStatus.SERVER_FAILED);
     }
 
-    public void resetToPending(){
-        if(payStatus != PayStatus.SERVER_FAILED && payStatus != PayStatus.UNKNOWN){
-            throw new InvalidPayStatusException(
-                    "진행중으로 변경은 서버 실패 또는 결과 알 수 없음 상태에서만 가능합니다. 현재 상태: " + payStatus);
+    public void pgFailed(){
+        if(payStatus != PayStatus.PENDING && payStatus != PayStatus.UNKNOWN){
+            throw new InvalidPayStatusException("PG 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
+            );
         }
-        setPayStatus(PayStatus.PENDING);
+        setPayStatus(PayStatus.PG_FAILED);
     }
 
     public void complete(){
-        if(payStatus != PayStatus.PENDING){
+        if(payStatus != PayStatus.PENDING && payStatus != PayStatus.UNKNOWN){
             throw new InvalidPayStatusException(
-                    "성공은 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
+                    "성공은 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
         setPayStatus(PayStatus.COMPLETE);
     }
 
-
-    public static String createOrderId(){
-        String timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")
-                .format(LocalDateTime.now());
-        String random = UUID.randomUUID().toString().substring(0, 8);
-        return "PAY-" + timestamp + "-" + random;
-    }
-
     public static PayRequest from(Order order,
-                                  String orderId,
                                   String paymentKey,
                                   long payAmount,
-                                  String pgType){
+                                  PGType pgType){
         return PayRequest.
                 builder().
                 order(order).
                 payAmount(payAmount).
                 payStatus(PayStatus.PENDING).
-                orderId(orderId).
                 paymentKey(paymentKey).
                 pgType(pgType).
                 build();

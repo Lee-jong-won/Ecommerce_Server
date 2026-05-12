@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PaySuccessProcessor {
 
-    private final PaymentCreator paymentCreator;
+    private final PaymentService paymentService;
     private final OrderStockProcessor orderStockProcessor;
 
     @Transactional
     public void process(PayRequest payRequest, PayResult result) {
-        paymentCreator.reflectPaySuccessResult(payRequest, result);
+        paymentService.reflectPaySuccessResult(payRequest, result);
         orderStockProcessor.deductStockOf(payRequest.getOrder().getId());
     }
 }

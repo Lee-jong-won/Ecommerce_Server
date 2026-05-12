@@ -5,11 +5,8 @@ import jongwon.e_commerce.member.domain.MemberCreate;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import jongwon.e_commerce.order.exception.NotOrderOwnerException;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
-import jongwon.e_commerce.product.domain.Product;
-import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.support.fixture.OrderFixture;
 import jongwon.e_commerce.support.fixture.OrderItemFixture;
-import jongwon.e_commerce.support.fixture.ProductFixture;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -17,6 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderTest {
@@ -67,9 +65,22 @@ class OrderTest {
     }
 
     @Test
-    void ORDERED_상태에서_결제_성공_처리가_가능하다() {
+    void ORDERED_상태에서_진행중으로_처리가_가능하다(){
         // given
         Order order = OrderFixture.createDefaultOrder();
+
+        // when
+        order.paymentPending();
+
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAYMENT_PENDING);
+    }
+
+    @Test
+    void PENDING_상태에서_결제_성공_처리가_가능하다() {
+        // given
+        Order order = OrderFixture.createDefaultOrder();
+        order.paymentPending();
 
         // when
         order.paid();
@@ -79,10 +90,9 @@ class OrderTest {
     }
 
     @Test
-    void ORDERED_상태가_아니면_결제_성공_처리시_예외가_발생한다() {
+    void PENDING_상태가_아니면_결제_성공_처리시_예외가_발생한다() {
         // given
         Order order = OrderFixture.createDefaultOrder();
-        order.setOrderStatus(OrderStatus.CANCEL);
 
         // when & then
         assertThatThrownBy(order::paid)
@@ -93,6 +103,7 @@ class OrderTest {
     void PAID_상태에서_주문_취소가_가능하다() {
         // given
         Order order = OrderFixture.createDefaultOrder();
+        order.paymentPending();
         order.paid();
 
         // when
@@ -127,6 +138,16 @@ class OrderTest {
 
         // when && then
         assertThrows(NotOrderOwnerException.class , () -> order.validateOwner(member));
+    }
+
+    @Test
+    void 소유주와_일치하는_경우_예외가_발생하지_않는다(){
+        // given
+        Order order = OrderFixture.createDefaultOrder();
+        Member member = Member.builder().memberId(order.getMember().getMemberId()).build();
+
+        // when && then
+        assertDoesNotThrow(() -> order.validateOwner(member));
     }
 
     @Test

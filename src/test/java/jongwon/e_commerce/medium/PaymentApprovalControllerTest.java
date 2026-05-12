@@ -6,10 +6,7 @@ import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.PayMethod;
-import jongwon.e_commerce.payment.exception.PayClientException;
-import jongwon.e_commerce.payment.exception.PayErrorCode;
-import jongwon.e_commerce.payment.exception.PayServerException;
-import jongwon.e_commerce.payment.exception.PayTimeoutException;
+import jongwon.e_commerce.payment.exception.*;
 import jongwon.e_commerce.payment.infrastructure.gateway.PaymentExecutor;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
@@ -98,15 +95,16 @@ public class PaymentApprovalControllerTest {
     }
 
     @Test
-    void 사용자에게_결재실패가_일어날수있다() throws Exception {
+    void PayClientExeption_발생() throws Exception {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // 외부 API 호출 결과
         PayClientException payClientException = new PayClientException(PayErrorCode.INVALID_CARD);
@@ -125,20 +123,21 @@ public class PaymentApprovalControllerTest {
     }
 
     @Test
-    void PG에서_응답이_늦게와서_Read타임아웃이_일어날_수_있다() throws Exception {
+    void PayUnknownOutcomeException_발생() throws Exception {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // 외부 API 호출 결과
-        PayTimeoutException payTimeoutException = new PayTimeoutException();
+        PayUnknownOutcomeException payUnknownOutcomeException = new PayUnknownOutcomeException("타임아웃 발생");
         when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenThrow(payTimeoutException);
+        when(mockExecutor.executePayApprove(any())).thenThrow(payUnknownOutcomeException);
 
         // when && then
         mockMvc.perform(
@@ -152,43 +151,16 @@ public class PaymentApprovalControllerTest {
     }
 
     @Test
-    void 서버에_요청이_몰려서_RequestConnectionTimeout이_발생할_수_있다() throws Exception {
+    void ServerException_발생() throws Exception {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
                 orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
-
-        // 외부 API 호출 결과
-        PayServerException payServerException = new PayServerException("커넥션 풀이 고갈되었습니다.");
-
-        when(mockExecutor.supports(PGType.TOSS)).thenReturn(true);
-        when(mockExecutor.executePayApprove(any())).thenThrow(payServerException);
-
-        // when && then
-        mockMvc.perform(
-                        post("/api/payment")
-                                .header("X-MOCK-USER-LOGINID", "testUser")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isServiceUnavailable())
-                .andExpect(jsonPath("$.code").value("SERVER_ERROR"))
-                .andExpect(jsonPath("$.message").value("서버 리소스가 부족합니다. 잠시 후 다시 시도해 주세요."));
-    }
-
-    @Test
-    void PG서버와_연결이_안돼서_Conn타임아웃이_일어날_수_있다() throws Exception {
-        // given
-        FinishOrderData finishOrderData = TestDataFactory.finishOrder(
-                memberRepository,
-                productRepository,
-                orderItemRepository,
-                orderRepository);
-        PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
-                "ORDER-DEFAULT", "TOSS", finishOrderData.getOrder().getTotalAmount());
+                order.getOrderId(), "TOSS", order.getTotalAmount());
 
         // 외부 API 호출 결과
         PayServerException payServerException = new PayServerException("연결 타임아웃 발생");
@@ -201,8 +173,8 @@ public class PaymentApprovalControllerTest {
                                 .header("X-MOCK-USER-LOGINID", "testUser")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(attempt)))
-                .andExpect(status().isGatewayTimeout())
-                .andExpect(jsonPath("$.code").value("NETWORK_ERROR"))
-                .andExpect(jsonPath("$.message").value("일시적인 네트워크 오류입니다"));
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.code").value("SERVER_ERROR"))
+                .andExpect(jsonPath("$.message").value("일시적인 서버 오류입니다. 잠시 후 다시 시도해 주세요."));
     }
 }

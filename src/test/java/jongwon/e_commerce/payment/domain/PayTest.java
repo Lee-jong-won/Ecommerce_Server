@@ -1,13 +1,9 @@
 package jongwon.e_commerce.payment.domain;
 
 import jongwon.e_commerce.order.domain.Order;
-import jongwon.e_commerce.payment.infrastructure.gateway.dto.result.PayResult;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import jongwon.e_commerce.support.fixture.OrderFixture;
 import org.junit.jupiter.api.Test;
-
-import java.time.OffsetDateTime;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +16,7 @@ class PayTest {
         Order order = OrderFixture.createDefaultOrder();
 
         // when
-        Pay pay = Pay.from(order, "paymentKey-123", 250000L);
+        PayRequest pay = PayRequest.from(order, "paymentKey-123", 250000L, PGType.TOSS);
 
         // then
         assertThat(pay.getOrder()).isEqualTo(order);
@@ -32,127 +28,97 @@ class PayTest {
     @Test
     void PENDING_상태에서_결제_성공이_가능하다() {
         // given
-        Pay pay = createPay();
+        PayRequest payRequest = createPayRequest();
 
         // when
-        pay.comeplete();
+        payRequest.complete();
 
         // then
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
     }
 
     @Test
     void PENDING이_아닌_상태에서는_결제_성공시_예외가_발생한다() {
         // given
-        Pay pay = createPay();
-        pay.setPayStatus(PayStatus.COMPLETE);
+        PayRequest payRequest = createPayRequest();
+        payRequest.setPayStatus(PayStatus.COMPLETE);
 
         // when & then
-        assertThatThrownBy(pay::comeplete)
+        assertThatThrownBy(payRequest::complete)
                 .isInstanceOf(InvalidPayStatusException.class);
     }
 
     @Test
     void PENDING_상태에서_결제_실패가_가능하다() {
         // given
-        Pay pay = createPay();
+        PayRequest payRequest = createPayRequest();
 
         // when
-        pay.failed();
+        payRequest.businessFailed();;
 
         // then
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.BUSINESS_FAILED);
     }
 
     @Test
     void PENDING이_아닌_상태에서는_결제_실패시_예외가_발생한다() {
         // given
-        Pay pay = createPay();
-        pay.setPayStatus(PayStatus.COMPLETE);
+        PayRequest payRequest = createPayRequest();
+        payRequest.setPayStatus(PayStatus.COMPLETE);
 
         // when & then
-        assertThatThrownBy(pay::failed)
+        assertThatThrownBy(payRequest::businessFailed)
                 .isInstanceOf(InvalidPayStatusException.class);
     }
 
     @Test
     void PENDING_상태에서_타임아웃이_가능하다() {
         // given
-        Pay pay = createPay();
+        PayRequest payRequest = createPayRequest();
 
         // when
-        pay.timeout();
+        payRequest.unknown();
 
         // then
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.TIME_OUT);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.UNKNOWN);
     }
 
     @Test
     void PENDING이_아닌_상태에서는_타임아웃시_예외가_발생한다() {
         // given
-        Pay pay = createPay();
-        pay.setPayStatus(PayStatus.COMPLETE);
+        PayRequest payRequest = createPayRequest();
+        payRequest.setPayStatus(PayStatus.COMPLETE);
 
         // when & then
-        assertThatThrownBy(pay::timeout)
+        assertThatThrownBy(payRequest::unknown)
                 .isInstanceOf(InvalidPayStatusException.class);
     }
 
     @Test
     void COMPLETE_상태에서_환불이_가능하다() {
         // given
-        Pay pay = createPay();
-        pay.setPayStatus(PayStatus.COMPLETE);
+        PayRequest payRequest = createPayRequest();
+        payRequest.setPayStatus(PayStatus.COMPLETE);
 
         // when
-        pay.refund();
+        payRequest.refund();
 
         // then
-        assertThat(pay.getPayStatus()).isEqualTo(PayStatus.REFUND);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.REFUND);
     }
 
     @Test
     void COMPLETE가_아닌_상태에서는_환불시_예외가_발생한다() {
         // given
-        Pay pay = createPay();
+        PayRequest payRequest = createPayRequest();
 
         // when & then
-        assertThatThrownBy(pay::refund)
+        assertThatThrownBy(payRequest::refund)
                 .isInstanceOf(InvalidPayStatusException.class);
     }
 
-
-    @Test
-    void 결제_공통정보가_Pay에_정상적으로_반영된다() {
-        // given
-        Pay originalPay = createPay();
-
-        PayMethod method = PayMethod.CARD;
-        OffsetDateTime approvedAt = OffsetDateTime.now();
-
-        PayResult.PayResultCommon payResultCommon = PayResult.PayResultCommon.builder().
-                payMethod(method).
-                approvedAt(approvedAt).
-                build();
-        Map<String, Object> detailMap = Map.of("mobilePhone", "010-1234-5678",
-                "settlementStatus", "DONE",
-                "receiptUrl", "http://naver.com");
-
-        // when
-        Pay resultPay = originalPay.reflectPaySuccess(payResultCommon, detailMap);
-
-        // then
-        // 기존 값 유지
-        assertThat(resultPay.getPaymentKey()).isEqualTo(originalPay.getPaymentKey());
-        assertThat(resultPay.getPayAmount()).isEqualTo(originalPay.getPayAmount());
-        assertThat(resultPay.getPayStatus()).isEqualTo(originalPay.getPayStatus());
-        assertThat(resultPay.getPaymentDetail().get("mobilePhone")).isEqualTo("010-1234-5678");
-        assertThat(resultPay.getPaymentDetail().get("settlementStatus")).isEqualTo("DONE");
-        assertThat(resultPay.getPaymentDetail().get("receiptUrl")).isEqualTo("http://naver.com");
-    }
-
-    private Pay createPay(){
+    private PayRequest createPayRequest(){
         Order order = OrderFixture.createDefaultOrder();
-        return Pay.from(order, "paymentKey", 250000L);
+        return PayRequest.from(order, "paymentKey", 250000L, PGType.TOSS);
     }
 }

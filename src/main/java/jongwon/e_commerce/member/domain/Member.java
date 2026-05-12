@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Builder
@@ -39,5 +40,18 @@ public class Member {
                 email(email).
                 addr(addr).
                 lastLoginAt(lastLoginAt).build();
+    }
+
+    @Override
+    public int hashCode() {
+        return memberId.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if( !(obj instanceof Member) ) return false;
+        Member member = (Member) obj;
+        return member.getMemberId() != null && Objects.equals(member.getMemberId(), memberId);
     }
 }

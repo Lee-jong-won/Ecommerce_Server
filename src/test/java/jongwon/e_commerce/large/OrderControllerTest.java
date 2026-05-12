@@ -44,7 +44,7 @@ public class OrderControllerTest {
     void testOrderApi(){
         // given
         PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
-        OrderCreate orderCreate = new OrderCreate("order1", "test-order-id", prepareOrderData.getOrderItemCreates());
+        OrderCreate orderCreate = new OrderCreate("order1", prepareOrderData.getOrderItemCreates());
 
         // when
         ResponseEntity<OrderResponse> response = restClient.post()
@@ -57,7 +57,6 @@ public class OrderControllerTest {
 
         // then
         OrderResponse orderResponse = response.getBody();
-        assertThat(orderResponse.getOrderId()).isEqualTo("test-order-id");
         assertThat(orderResponse.getTotalAmount()).isEqualTo(15000);
     }
 

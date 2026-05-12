@@ -4,7 +4,9 @@ import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.mock.stub.StubPaymentExecutor;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
+import jongwon.e_commerce.order.domain.OrderStatus;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
+import jongwon.e_commerce.payment.application.PayProcessStateManager;
 import jongwon.e_commerce.payment.application.approve.PaySuccessProcessor;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.exception.*;
@@ -98,12 +100,14 @@ public class PaymentApprovalServiceTest {
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
         assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.COMPLETE);
 
+        Order updatedOrder = payRequest.getOrder();
+        assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.PAID);
+
         Pay pay = paymentRepository.getByPayRequestId(payRequest.getId());
         assertThat(pay.getPayAmount()).isEqualTo(order.getTotalAmount());
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);
         assertThat(pay.getApprovedAt()).isEqualTo(approvedAt);
         assertThat(pay.getPaymentDetail()).isNotNull();
-        assertThat(pay.getCreatedAt()).isNotNull();
         assertThat(pay.getPayRequest().getId()).isEqualTo(payRequest.getId());
 
         orderItems.forEach(item -> {
@@ -129,7 +133,7 @@ public class PaymentApprovalServiceTest {
         assertThrows(PayClientException.class,
                 () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
-        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.BUSINESS_FAILED);
     }
 
     @Test
@@ -169,7 +173,7 @@ public class PaymentApprovalServiceTest {
         assertThrows(PayServerException.class,
                 () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
-        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.SERVER_FAILED);
     }
 
     @Test
@@ -188,11 +192,11 @@ public class PaymentApprovalServiceTest {
         assertThrows(PayServerException.class,
                 () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
-        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.FAILED);
+        assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.SERVER_FAILED);
     }
 
     void createPaymentService(PaymentExecutor paymentExecutor){
         paymentApprovalService = new PaymentApprovalService(payPreprocessor,
-                payRequestStateManager, List.of(paymentExecutor), paySuccessProcessor);
+                payProcessStateManager, List.of(paymentExecutor), paySuccessProcessor);
     }
 }

@@ -16,6 +16,16 @@ public class PayProcessStateManager {
     private final OrderRepository orderRepository;
 
     @Transactional
+    public void processSuccess(PayRequest payRequest){
+        Order order = payRequest.getOrder();
+        order.paid();
+        payRequest.complete();
+
+        orderRepository.save(order);
+        payRequestRepository.save(payRequest);
+    }
+
+    @Transactional
     public void processBusinessFailed(PayRequest payRequest) {
         Order order = payRequest.getOrder();
         order.fail();
@@ -30,6 +40,16 @@ public class PayProcessStateManager {
         Order order = payRequest.getOrder();
         order.fail();
         payRequest.serverFailed();
+
+        orderRepository.save(order);
+        payRequestRepository.save(payRequest);
+    }
+
+    @Transactional
+    public void processPGFailed(PayRequest payRequest){
+        Order order = payRequest.getOrder();
+        order.fail();
+        payRequest.pgFailed();
 
         orderRepository.save(order);
         payRequestRepository.save(payRequest);

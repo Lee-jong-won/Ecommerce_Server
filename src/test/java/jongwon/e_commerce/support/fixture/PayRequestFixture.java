@@ -1,6 +1,7 @@
 package jongwon.e_commerce.support.fixture;
 
 import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.PayMethod;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.domain.PayStatus;
@@ -24,7 +25,7 @@ public class PayRequestFixture {
     private PayStatus payStatus = PayStatus.PENDING;
 
     @Builder.Default
-    private String pgType = "TOSS";
+    private PGType pgType = PGType.TOSS;
 
     public PayRequest create() {
         return PayRequest.builder()

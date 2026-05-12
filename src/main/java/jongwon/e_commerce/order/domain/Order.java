@@ -66,7 +66,7 @@ public class Order {
     }
 
     public void validateOwner(Member owner){
-        if(this.getMember().getMemberId().longValue() != owner.getMemberId().longValue())
+        if(!member.equals(owner))
             throw new NotOrderOwnerException(owner.getMemberId(), this.getMember().getMemberId());
     }
 
@@ -98,14 +98,6 @@ public class Order {
             throw new InvalidOrderStateException("결제 진행 중 상태에서만 결제 성공 처리 가능합니다.");
         }
         setOrderStatus(OrderStatus.PAID);
-    }
-
-    // 결제 상태가 Unknown이거나, Fail인 상태에서, 결제 재시도가 발생했을 시
-    public void resetToPending(){
-        if(this.orderStatus != OrderStatus.FAIL){
-            throw new InvalidOrderStateException("실패 상태에서만, 진행중으로 상태가 변경될 수 있습니다.");
-        }
-        setOrderStatus(OrderStatus.PAYMENT_PENDING);
     }
 
     //고객에 의해 주문이 취소 되었을 시

@@ -2,6 +2,7 @@ package jongwon.e_commerce.payment.infrastructure.jpa.entity;
 
 import jakarta.persistence.*;
 import jongwon.e_commerce.order.infrastructure.jpa.entity.OrderEntity;
+import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.domain.PayStatus;
@@ -30,7 +31,8 @@ public class PayRequestEntity {
     private String paymentKey;
 
     @Column(name = "pg_type", nullable = false)
-    private String pgType;
+    @Enumerated(EnumType.STRING)
+    private PGType pgType;
 
     @OneToOne
     @JoinColumn(name = "fk_order_id")
@@ -44,6 +46,7 @@ public class PayRequestEntity {
         jpaEntity.payStatus = payRequest.getPayStatus();
         jpaEntity.paymentKey = payRequest.getPaymentKey();
         jpaEntity.pgType = payRequest.getPgType();
+        jpaEntity.orderEntity = OrderEntity.from(payRequest.getOrder());
 
         return jpaEntity;
     }
