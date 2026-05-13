@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jongwon.e_commerce.product.exception.InvalidProductPriceException;
 import jongwon.e_commerce.product.exception.InvalidProductStatusException;
 import jongwon.e_commerce.product.exception.NotEnoughStockException;
+import jongwon.e_commerce.product.exception.ProductNameChangedException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,11 @@ public class Product {
                 stockQuantity(stockQuantity).
                 originalProductId(productId).
                 build();
+    }
+
+    public void validateOrder(String productName){
+        if(!this.productName.equals(productName))
+            throw new ProductNameChangedException("상품 이름이 변경됐습니다");
     }
 
     // 재고 추가

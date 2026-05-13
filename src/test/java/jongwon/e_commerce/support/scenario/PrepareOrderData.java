@@ -1,7 +1,7 @@
 package jongwon.e_commerce.support.scenario;
 
 import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.order.domain.OrderItemCreate;
+import jongwon.e_commerce.order.controller.Cart;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,6 +12,6 @@ import java.util.List;
 public class PrepareOrderData {
 
     public Member member;
-    public List<OrderItemCreate> orderItemCreates;
+    public List<Cart.CartLineItem> cartLineItems;
 
 }

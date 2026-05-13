@@ -3,7 +3,7 @@ package jongwon.e_commerce.large;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.controller.OrderResponse;
-import jongwon.e_commerce.order.domain.OrderCreate;
+import jongwon.e_commerce.order.controller.Cart;
 import jongwon.e_commerce.product.repository.ProductRepository;
 import jongwon.e_commerce.support.scenario.PrepareOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
@@ -12,12 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,14 +41,14 @@ public class OrderControllerTest {
     void testOrderApi(){
         // given
         PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
-        OrderCreate orderCreate = new OrderCreate("order1", prepareOrderData.getOrderItemCreates());
+        Cart cart = new Cart("order1", prepareOrderData.getCartLineItems());
 
         // when
         ResponseEntity<OrderResponse> response = restClient.post()
                 .uri(baseUrl + "/api/order")
                 .header("X-MOCK-USER-LOGINID", "testUser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(orderCreate) // 👈 중요
+                .body(cart) // 👈 중요
                 .retrieve()
                 .toEntity(OrderResponse.class);
 

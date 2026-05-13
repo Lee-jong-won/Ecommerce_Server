@@ -28,4 +28,7 @@ public class OrderItem {
         return orderPrice * orderQuantity;
     }
 
+    public void validate(){
+        product.validateOrder(productName);
+    }
 }

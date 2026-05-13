@@ -14,11 +14,13 @@ import java.time.LocalDateTime;
 public class OrderResponse {
 
     private String orderId;
+    private String orderName;
     private long totalAmount;
 
     public static OrderResponse from(Order order){
         return OrderResponse.builder().
                 orderId(order.getOrderId()).
+                orderName(order.getOrderName()).
                 totalAmount(order.getTotalAmount()).
                 build();
     }

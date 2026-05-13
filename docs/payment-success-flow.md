@@ -14,7 +14,7 @@
   │  사용자가 장바구니에서 주문 확정     │
   │                                    │
   ├─ POST /api/order ────────────────► │  상품 조회 (productId별 단가 확인)
-  │  { orderName, orderItemCreates }   │  주문 상품별 금액 계산
+  │  { orderName, cartLineItems }   │  주문 상품별 금액 계산
   │                                    │  orderId 생성 (서버에서 UUID 발급)
   │                                    │  Order 생성 (ORDERED)
   │◄──── 200 { orderId, totalAmount } ─┤  OrderItem 저장

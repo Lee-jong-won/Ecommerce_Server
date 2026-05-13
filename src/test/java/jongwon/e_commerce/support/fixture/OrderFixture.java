@@ -57,6 +57,7 @@ public class OrderFixture {
                 orderItems,
                 "테스트 주문"
         );
+        order.place();
         return order;
     }
 }

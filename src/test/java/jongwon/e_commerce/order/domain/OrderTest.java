@@ -58,7 +58,6 @@ class OrderTest {
         assertThat(order.getMember()).isEqualTo(member);
         assertThat(order.getOrderId()).isEqualTo("order-1");
         assertThat(order.getTotalAmount()).isEqualTo(250000);
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDERED);
         assertThat(order.getOrderItems().size()).isEqualTo(orderItems.size());
     }
 

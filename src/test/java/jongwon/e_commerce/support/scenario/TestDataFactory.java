@@ -2,15 +2,12 @@ package jongwon.e_commerce.support.scenario;
 
 import jongwon.e_commerce.member.domain.Member;
 import jongwon.e_commerce.member.repository.MemberRepository;
+import jongwon.e_commerce.order.controller.Cart;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
-import jongwon.e_commerce.order.domain.OrderItemCreate;
-import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
-import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.repository.PayRequestRepository;
-import jongwon.e_commerce.payment.repository.PaymentRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.domain.ProductStatus;
 import jongwon.e_commerce.product.repository.ProductRepository;
@@ -38,15 +35,15 @@ public class TestDataFactory {
                 productPrice(5000).
                 build().
                 create());
-        OrderItemCreate orderItemCreate1 =  OrderItemCreate.builder().
+        Cart.CartLineItem cartLineItem1 =  Cart.CartLineItem.builder().
                 productId(product1.getProductId()).
                 stockQuantity(1).
                 build();
-        OrderItemCreate orderItemCreate2 = OrderItemCreate.builder().
+        Cart.CartLineItem cartLineItem2 = Cart.CartLineItem.builder().
                 productId(product2.getProductId()).
                 stockQuantity(1).
                 build();
-        return new PrepareOrderData(member, List.of(orderItemCreate1, orderItemCreate2));
+        return new PrepareOrderData(member, List.of(cartLineItem1, cartLineItem2));
     }
 
     public static FinishOrderData finishOrder(MemberRepository memberRepository,

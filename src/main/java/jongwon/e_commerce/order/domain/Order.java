@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.order.exception.EmptyOrderItemsException;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import jongwon.e_commerce.order.exception.NotOrderOwnerException;
 import jongwon.e_commerce.payment.exception.InvalidAmountException;
@@ -53,7 +54,6 @@ public class Order {
                 orderedAt(orderedAt).
                 orderId(orderId).
                 totalAmount(totalAmount).
-                orderStatus(OrderStatus.ORDERED).
                 orderedAt(orderedAt).
                 orderName(orderName).build();
         return order;
@@ -76,6 +76,24 @@ public class Order {
             throw new InvalidAmountException();
     }
 
+    public void place(){
+        validate();
+        ordered();
+    }
+
+    private void validate(){
+        if(orderItems.isEmpty()){
+            throw new EmptyOrderItemsException("주문 항목이 비어있습니다.");
+        }
+
+        for(OrderItem orderItem : orderItems){
+            orderItem.validate();
+        }
+    }
+
+    private void ordered(){
+        this.orderStatus = OrderStatus.ORDERED;
+    }
 
     // 결제 전처리 성공 시
     public void paymentPending() {
