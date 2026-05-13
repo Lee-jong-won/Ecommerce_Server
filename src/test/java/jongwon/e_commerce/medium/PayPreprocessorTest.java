@@ -35,14 +35,12 @@ public class PayPreprocessorTest {
     @Autowired
     ProductRepository productRepository;
     @Autowired
-    OrderItemRepository orderItemRepository;
-    @Autowired
     OrderRepository orderRepository;
 
     @Test
     void 주문이_정상적으로_검증된_후_결제요청_데이터가_정상적으로_생성된다(){
         // given
-        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderRepository);
         Order order = finishOrderData.getOrder();
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 order.getOrderId(),
@@ -62,7 +60,7 @@ public class PayPreprocessorTest {
     @Test
     void 주문_검증이_성공하지_못하면_예외가_발생한다(){
         // given
-        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderRepository);
         Order order = finishOrderData.getOrder();
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
                 order.getOrderId(),

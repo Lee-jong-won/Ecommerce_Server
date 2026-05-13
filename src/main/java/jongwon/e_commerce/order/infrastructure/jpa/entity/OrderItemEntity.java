@@ -18,10 +18,6 @@ public class OrderItemEntity {
     private Long orderItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_order_id")
-    private OrderEntity orderEntity;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_product_id")
     private ProductEntity productEntity;
 
@@ -39,7 +35,6 @@ public class OrderItemEntity {
         OrderItemEntity orderItemEntity = new OrderItemEntity();
 
         orderItemEntity.orderItemId = orderItem.getOrderItemId();
-        orderItemEntity.orderEntity = OrderEntity.from(orderItem.getOrder());
         orderItemEntity.productEntity = ProductEntity.from(orderItem.getProduct());
         orderItemEntity.orderPrice = orderItem.getOrderPrice();
         orderItemEntity.productName = orderItem.getProductName();
@@ -51,7 +46,6 @@ public class OrderItemEntity {
     public OrderItem toModel(){
         return OrderItem.builder().
                 orderItemId(orderItemId).
-                order(orderEntity.toModel()).
                 product(productEntity.toModel())
                 .productName(productName)
                 .orderPrice(orderPrice)
@@ -59,13 +53,4 @@ public class OrderItemEntity {
                 .build();
     }
 
-    public OrderItem toModelWithoutOrder(){
-        return OrderItem.builder().
-                orderItemId(orderItemId).
-                product(productEntity.toModel())
-                .productName(productName)
-                .orderPrice(orderPrice)
-                .orderQuantity(orderQuantity)
-                .build();
-    }
 }

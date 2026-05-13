@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -32,6 +33,9 @@ public class OrderFixture {
     @Builder.Default
     private long totalAmount = 10000L;
 
+    @Builder.Default
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     public Order create() {
         return Order.builder()
                 .orderId(orderId)
@@ -40,6 +44,7 @@ public class OrderFixture {
                 .orderedAt(orderedAt)
                 .orderStatus(orderStatus)
                 .totalAmount(totalAmount)
+                .orderItems(orderItems)
                 .build();
     }
 

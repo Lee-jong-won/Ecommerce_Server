@@ -11,8 +11,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class FinishOrderData {
-
     Member member;
     Order order;
-    List<OrderItem> orderItems;
 }

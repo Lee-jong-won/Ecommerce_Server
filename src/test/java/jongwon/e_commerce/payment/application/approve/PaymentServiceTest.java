@@ -27,7 +27,6 @@ class PaymentServiceTest {
     ProductRepository productRepository = new FakeProductRepository();
     MemberRepository memberRepository = new FakeMemberRepository();
     OrderRepository orderRepository = new FakeOrderRepository();
-    OrderItemRepository orderItemRepository = new FakeOrderItemRepository();
     PaymentRepository paymentRepository = new FakePaymentRepository();
     PayRequestRepository payRequestRepository = new FakePayRequestRepository();
     PaymentService paymentService = new PaymentService(paymentRepository);
@@ -38,7 +37,6 @@ class PaymentServiceTest {
         PayRequest payRequest = TestDataFactory.finishPayPreProcess(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository,
                 payRequestRepository);
 
@@ -63,7 +61,6 @@ class PaymentServiceTest {
         Pay pay = paymentService.reflectPaySuccessResult(payRequest, payResult);
 
         // then
-        PayRequest updatedPayRequest = payRequestRepository.getById(payRequest.getId());
         Map<String, Object> resultDetailMap = pay.getPaymentDetail();
 
         assertThat(pay.getPayMethod()).isEqualTo(PayMethod.MOBILE);

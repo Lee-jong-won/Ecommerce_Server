@@ -39,7 +39,6 @@ class PayPreprocessorTest {
         memberRepository = new FakeMemberRepository();
         orderRepository = new FakeOrderRepository();
         productRepository = new FakeProductRepository();
-        orderItemRepository = new FakeOrderItemRepository();
         payRequestRepository = new FakePayRequestRepository();
         payPreprocessor = new PayPreprocessor(orderRepository, payRequestRepository);
     }
@@ -47,7 +46,7 @@ class PayPreprocessorTest {
     @Test
     void 주문_검증이_정상적으로_완료된후_결제가_정상적으로_저장된다(){
         // given
-        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderRepository);
         Order order = finishOrderData.getOrder();
 
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",
@@ -68,7 +67,7 @@ class PayPreprocessorTest {
     @Test
     void 주문_금액이_일치하지_못하면_예외가_발생한다(){
         // given
-        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderItemRepository, orderRepository);
+        FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository, productRepository, orderRepository);
         Order order = finishOrderData.getOrder();
 
         PayApproveAttempt request = new PayApproveAttempt("a4CWyWY5m89PNh7xJwhk1",

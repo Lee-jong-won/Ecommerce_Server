@@ -7,6 +7,8 @@ import jongwon.e_commerce.order.domain.OrderStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +28,10 @@ public class OrderEntity {
     @ManyToOne
     @JoinColumn(name = "fk_member_id", nullable = false)
     private MemberEntity memberEntity;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    private List<OrderItemEntity> orderItemEntities = new ArrayList<>();
 
     @Column(name = "order_name", nullable = false)
     private String orderName;
@@ -51,6 +57,12 @@ public class OrderEntity {
         orderEntity.orderStatus = order.getOrderStatus();
         orderEntity.totalAmount = order.getTotalAmount();
         orderEntity.orderedAt = order.getOrderedAt();
+        orderEntity.orderItemEntities.addAll(
+                order.getOrderItems()
+                        .stream()
+                        .map(OrderItemEntity::from)
+                        .toList()
+        );
 
         return orderEntity;
     }
@@ -63,6 +75,7 @@ public class OrderEntity {
                 .orderName(orderName)
                 .totalAmount(totalAmount)
                 .orderStatus(orderStatus)
+                .orderItems(orderItemEntities.stream().map(OrderItemEntity::toModel).toList())
                 .member(memberEntity.toModel())
                 .build();
     }

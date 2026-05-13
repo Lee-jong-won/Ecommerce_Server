@@ -45,8 +45,6 @@ public class PaymentApprovalControllerTest {
     ProductRepository productRepository;
     @Autowired
     OrderRepository orderRepository;
-    @Autowired
-    OrderItemRepository orderItemRepository;
     ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     MockMvc mockMvc;
@@ -59,7 +57,6 @@ public class PaymentApprovalControllerTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
 
         Order order = finishOrderData.getOrder();
@@ -100,7 +97,6 @@ public class PaymentApprovalControllerTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
@@ -128,7 +124,6 @@ public class PaymentApprovalControllerTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
@@ -156,7 +151,6 @@ public class PaymentApprovalControllerTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         Order order = finishOrderData.getOrder();
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",

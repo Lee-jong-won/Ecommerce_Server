@@ -59,9 +59,7 @@ class OrderTest {
         assertThat(order.getOrderId()).isEqualTo("order-1");
         assertThat(order.getTotalAmount()).isEqualTo(250000);
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDERED);
-
-        // 연관관계 검증
-        assertThat(orderItems.get(0).getOrder()).isEqualTo(order);
+        assertThat(order.getOrderItems().size()).isEqualTo(orderItems.size());
     }
 
     @Test

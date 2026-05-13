@@ -17,6 +17,6 @@ public class PaySuccessProcessor {
     @Transactional
     public void process(PayRequest payRequest, PayResult result) {
         paymentService.reflectPaySuccessResult(payRequest, result);
-        orderStockProcessor.deductStockOf(payRequest.getOrder().getId());
+        orderStockProcessor.deductStockOf(payRequest.getOrder());
     }
 }

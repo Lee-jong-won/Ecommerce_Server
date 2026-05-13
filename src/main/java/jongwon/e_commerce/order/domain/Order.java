@@ -9,6 +9,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class Order {
     private Member member;
     private String orderName;
     private LocalDateTime orderedAt;
+    private List<OrderItem> orderItems;
     private OrderStatus orderStatus;
     private long totalAmount;
 
@@ -46,6 +48,7 @@ public class Order {
                              String orderName){
         int totalAmount = calculateTotalAmount(orderItems);
         Order order = Order.builder().
+                orderItems(orderItems).
                 member(member).
                 orderedAt(orderedAt).
                 orderId(orderId).
@@ -53,8 +56,6 @@ public class Order {
                 orderStatus(OrderStatus.ORDERED).
                 orderedAt(orderedAt).
                 orderName(orderName).build();
-        for(OrderItem orderItem : orderItems)
-            orderItem.setOrder(order);
         return order;
     }
 

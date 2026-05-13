@@ -26,7 +26,6 @@ import java.util.UUID;
 public class OrderExecutor {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
 
     @Transactional
@@ -60,11 +59,6 @@ public class OrderExecutor {
 
         // 주문과 주문 상품 저장
         Order savedOrder = orderRepository.save(order);
-
-        for(OrderItem orderItem : orderItems) {
-            orderItem.setOrder(savedOrder);
-            orderItemRepository.save(orderItem);
-        }
 
         log.info("주문절차 완료, orderId = {}", orderId);
 

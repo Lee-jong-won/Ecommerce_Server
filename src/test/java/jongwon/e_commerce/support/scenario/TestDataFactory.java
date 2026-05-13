@@ -51,7 +51,6 @@ public class TestDataFactory {
 
     public static FinishOrderData finishOrder(MemberRepository memberRepository,
                                     ProductRepository productRepository,
-                                    OrderItemRepository orderItemRepository,
                                     OrderRepository orderRepository){
         Member member = memberRepository.save(MemberFixture.builder().build().create());
         Product product1 = productRepository.save(ProductFixture.
@@ -68,35 +67,38 @@ public class TestDataFactory {
                 productPrice(5000).
                 build().
                 create());
+
+        OrderItem orderItem1 = OrderItemFixture.
+                builder().
+                product(product1).
+                build().
+                create();
+
+        OrderItem orderItem2 = OrderItemFixture.
+                builder().
+                product(product2).
+                build().create();
+
+        List<OrderItem> orderItems = List.of(orderItem1, orderItem2);
+
         Order order = orderRepository.save(OrderFixture.
                 builder().
                 member(member).
                 totalAmount(15000).
+                orderItems(orderItems).
                 build().
                 create());
-        OrderItem orderItem1 = orderItemRepository.save(OrderItemFixture.
-                builder().
-                order(order).
-                product(product1).
-                build().
-                create());
-        OrderItem orderItem2 = orderItemRepository.save(OrderItemFixture.
-                builder().
-                order(order).
-                product(product2).
-                build().create());
-        return new FinishOrderData(member, order, List.of(orderItem1, orderItem2));
+
+        return new FinishOrderData(member, order);
     }
 
     public static PayRequest finishPayPreProcess(MemberRepository memberRepository,
                                                  ProductRepository productRepository,
-                                                 OrderItemRepository orderItemRepository,
                                                  OrderRepository orderRepository,
                                                  PayRequestRepository payRequestRepository){
         FinishOrderData finishOrderData = finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
 
         PayRequest payRequest = payRequestRepository.save(PayRequestFixture.

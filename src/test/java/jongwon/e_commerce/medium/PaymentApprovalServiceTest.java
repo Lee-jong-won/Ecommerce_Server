@@ -58,8 +58,6 @@ public class PaymentApprovalServiceTest {
     @Autowired
     OrderRepository orderRepository;
     @Autowired
-    OrderItemRepository orderItemRepository;
-    @Autowired
     PaymentRepository paymentRepository;
     @Autowired
     PayRequestRepository payRequestRepository;
@@ -71,11 +69,10 @@ public class PaymentApprovalServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
 
         Order order = finishOrderData.getOrder();
-        List<OrderItem> orderItems = finishOrderData.getOrderItems();
+        List<OrderItem> orderItems = order.getOrderItems();
 
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 order.getOrderId(), "TOSS", order.getTotalAmount());
@@ -123,7 +120,6 @@ public class PaymentApprovalServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
@@ -142,7 +138,6 @@ public class PaymentApprovalServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);
@@ -161,7 +156,6 @@ public class PaymentApprovalServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         Order order = finishOrderData.getOrder();
 
@@ -182,7 +176,6 @@ public class PaymentApprovalServiceTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         PayApproveAttempt attempt = new PayApproveAttempt("paymentKey",
                 "ORDER-DEFAULT", "TOSS", 15000);

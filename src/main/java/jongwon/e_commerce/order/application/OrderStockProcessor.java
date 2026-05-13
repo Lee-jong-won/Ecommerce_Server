@@ -20,41 +20,32 @@ import java.util.List;
 @Slf4j
 public class OrderStockProcessor {
 
-    private final OrderItemRepository orderItemRepository;
     private final List<StockService> stockServices;
 
     @Transactional
-    public List<Product> deductStockOf(Long orderId) {
-        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+    public void deductStockOf(Order order) {
+        List<OrderItem> orderItems = order.getOrderItems();
         log.info("주문 상품 조회 완료");
-        List<Product> deductedProducts = new ArrayList<>();
-
         for (OrderItem orderItem : orderItems) {
             stockServices.stream()
                     .filter(h -> h.support(orderItem.getProduct()))
                     .findAny()
                     .ifPresent(h -> {
-                        Product deductedProduct = h.decreaseStock(orderItem.getProduct().getProductId(), orderItem.getOrderQuantity());
-                        deductedProducts.add(deductedProduct);
+                        h.decreaseStock(orderItem.getProduct().getProductId(), orderItem.getOrderQuantity());
                     });
         }
-        return deductedProducts;
     }
 
     @Transactional
-    public List<Product> restoreStockOf(Long orderId){
-        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
-        List<Product> increasedProducts = new ArrayList<>();
-
+    public void restoreStockOf(Order order){
+        List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             stockServices.stream()
                     .filter(h -> h.support(orderItem.getProduct()))
                     .findAny()
                     .ifPresent(h -> {
                         Product increasedProduct = h.increaseStock(orderItem.getProduct().getProductId(), orderItem.getOrderQuantity());
-                        increasedProducts.add(increasedProduct);
                     });
         }
-        return increasedProducts;
     }
 }

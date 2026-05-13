@@ -52,7 +52,6 @@ public class PaymentApprovalControllerTest {
         // given
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
         Member member = finishOrderData.getMember();
         System.out.println(member.getLoginId());

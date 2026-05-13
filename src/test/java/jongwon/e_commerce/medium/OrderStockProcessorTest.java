@@ -2,10 +2,13 @@ package jongwon.e_commerce.medium;
 
 import jongwon.e_commerce.member.repository.MemberRepository;
 import jongwon.e_commerce.order.application.OrderStockProcessor;
+import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.repository.OrderItemRepository;
 import jongwon.e_commerce.order.repository.OrderRepository;
 import jongwon.e_commerce.product.domain.Product;
 import jongwon.e_commerce.product.repository.ProductRepository;
+import jongwon.e_commerce.product.repository.ProductStockRepository;
 import jongwon.e_commerce.support.scenario.FinishOrderData;
 import jongwon.e_commerce.support.scenario.TestDataFactory;
 import org.junit.jupiter.api.Test;
@@ -30,9 +33,9 @@ public class OrderStockProcessorTest {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private OrderItemRepository orderItemRepository;
-    @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private ProductStockRepository productStockRepository;
 
     @Test
     void 재고가_정상적으로_감소한다(){
@@ -40,19 +43,19 @@ public class OrderStockProcessorTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
+        List<OrderItem> orderItems = order.getOrderItems();
 
         // when
-        List<Product> products = orderStockProcessor.
-                deductStockOf(finishOrderData.getOrder().getId());
+        orderStockProcessor.deductStockOf(order);
 
         // then
-        Product product1 = products.get(0);
-        Product product2 = products.get(1);
-
-        assertThat(product1.getStockQuantity()).isEqualTo(99);
-        assertThat(product2.getStockQuantity()).isEqualTo(99);
+        orderItems.forEach(item -> {
+            Product product = productStockRepository.getById(item.getProduct().getProductId());
+            assertThat(product.getStockQuantity())
+                    .isEqualTo(item.getProduct().getStockQuantity() - item.getOrderQuantity());
+        });
     }
 
     @Test
@@ -61,18 +64,19 @@ public class OrderStockProcessorTest {
         FinishOrderData finishOrderData = TestDataFactory.finishOrder(
                 memberRepository,
                 productRepository,
-                orderItemRepository,
                 orderRepository);
+        Order order = finishOrderData.getOrder();
+        List<OrderItem> orderItems = order.getOrderItems();
 
         // when
-        List<Product> products = orderStockProcessor.restoreStockOf(finishOrderData.getOrder().getId());
+        orderStockProcessor.restoreStockOf(finishOrderData.getOrder());
 
         // then
-        Product product1 = products.get(0);
-        Product product2 = products.get(1);
-
-        assertThat(product1.getStockQuantity()).isEqualTo(101);
-        assertThat(product2.getStockQuantity()).isEqualTo(101);
+        orderItems.forEach(item -> {
+            Product product = productStockRepository.getById(item.getProduct().getProductId());
+            assertThat(product.getStockQuantity())
+                    .isEqualTo(item.getProduct().getStockQuantity() + item.getOrderQuantity());
+        });
     }
 
 }

@@ -34,13 +34,13 @@ public class GeneralItemStockService2Test {
         Product product = ProductFixture.createLaptop();
         product.startSelling();
         Long productId = productRepository.save(product).getProductId();
-
+        int decreaseCount = 2;
 
         // when
-        Product updatedProduct = generalItemStockService2.decreaseStock(productId, 2);
+        Product updatedProduct = generalItemStockService2.decreaseStock(productId, decreaseCount);
 
         // then
-        assertThat(updatedProduct.getStockQuantity()).isEqualTo(98);
+        assertThat(updatedProduct.getStockQuantity()).isEqualTo(product.getStockQuantity() - decreaseCount);
     }
 
     @Test
@@ -49,12 +49,13 @@ public class GeneralItemStockService2Test {
         Product product = ProductFixture.createLaptop();
         product.startSelling();
         Long productId = productRepository.save(product).getProductId();
+        int increaseCount = 2;
 
         // when
-        Product updatedProduct = generalItemStockService2.increaseStock(productId, 2);
+        Product updatedProduct = generalItemStockService2.increaseStock(productId, increaseCount);
 
         // then
-        assertThat(updatedProduct.getStockQuantity()).isEqualTo(102);
+        assertThat(updatedProduct.getStockQuantity()).isEqualTo(product.getStockQuantity() + increaseCount);
     }
 
     // @Test @Transactional 잠시 때고 테스트하기

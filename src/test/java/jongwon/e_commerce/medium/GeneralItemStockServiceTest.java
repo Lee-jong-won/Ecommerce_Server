@@ -24,7 +24,6 @@ public class GeneralItemStockServiceTest {
     @Autowired
     ProductRepository productRepository;
 
-    @Autowired
     GeneralItemStockService generalItemStockService;
 
     /*@Test

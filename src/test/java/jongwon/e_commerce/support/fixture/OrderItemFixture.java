@@ -13,9 +13,6 @@ import java.util.List;
 public class OrderItemFixture {
 
     @Builder.Default
-    private Order order = null; // 외부에서 주입
-
-    @Builder.Default
     private Product product = null; // 외부에서 주입
 
     @Builder.Default
@@ -29,7 +26,6 @@ public class OrderItemFixture {
 
     public OrderItem create() {
         return OrderItem.builder()
-                .order(order)
                 .product(product)
                 .productName(productName)
                 .orderPrice(orderPrice)

@@ -9,7 +9,6 @@ import lombok.Getter;
 public class OrderItem {
 
     private Long orderItemId;
-    private Order order;
     private Product product;
     private String productName;
     private int orderPrice;
@@ -27,9 +26,6 @@ public class OrderItem {
     //==비즈니스 로직==//
     public int calculateAmount(){
         return orderPrice * orderQuantity;
-    }
-    public void setOrder(Order order){
-        this.order = order;
     }
 
 }
