@@ -91,7 +91,7 @@ public class PaymentApprovalServiceTest {
                 .build()));
 
         // when
-        paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt);
+        paymentApprovalService.approvePayment(attempt);
 
         // then
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
@@ -127,7 +127,7 @@ public class PaymentApprovalServiceTest {
 
         // when && then
         assertThrows(PayClientException.class,
-                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+                () -> paymentApprovalService.approvePayment(attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
         assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.BUSINESS_FAILED);
     }
@@ -145,7 +145,7 @@ public class PaymentApprovalServiceTest {
 
         // when && then
         assertThrows(PayUnknownOutcomeException.class,
-                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+                () -> paymentApprovalService.approvePayment(attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
         assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.UNKNOWN);
     }
@@ -165,7 +165,7 @@ public class PaymentApprovalServiceTest {
 
         // when && then
         assertThrows(PayServerException.class,
-                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+                () -> paymentApprovalService.approvePayment(attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
         assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.SERVER_FAILED);
     }
@@ -183,7 +183,7 @@ public class PaymentApprovalServiceTest {
 
         // when && then
         assertThrows(PayServerException.class,
-                () -> paymentApprovalService.approvePayment(finishOrderData.getMember(), attempt));
+                () -> paymentApprovalService.approvePayment(attempt));
         PayRequest payRequest = payRequestRepository.getByPaymentKey("paymentKey");
         assertThat(payRequest.getPayStatus()).isEqualTo(PayStatus.SERVER_FAILED);
     }

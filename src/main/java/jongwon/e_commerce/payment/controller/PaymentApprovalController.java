@@ -27,7 +27,7 @@ public class PaymentApprovalController {
     public ResponseEntity<PayApproveSuccessResponse> payApprove(@LoginMember Member member,
                                                              @RequestBody PayApproveAttempt attempt) {
         PayApproveSuccessResponse responseBody = PayApproveSuccessResponse.from(
-                paymentApprovalService.approvePayment(member, attempt));
+                paymentApprovalService.approvePayment(attempt));
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 

@@ -8,17 +8,20 @@ import jongwon.e_commerce.payment.repository.PayRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Repository
 @Primary
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PayRequestRepositoryImpl implements PayRequestRepository {
 
     private final PayRequestJpaRepository payRequestJpaRepository;
 
     @Override
+    @Transactional
     public PayRequest save(PayRequest payRequest) {
         return payRequestJpaRepository.save(PayRequestEntity.from(payRequest)).toModel();
     }

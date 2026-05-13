@@ -41,7 +41,7 @@ public class OrderControllerTest {
     void testOrderApi(){
         // given
         PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
-        Cart cart = new Cart("order1", prepareOrderData.getCartLineItems());
+        Cart cart = new Cart("order1", "testUser", prepareOrderData.getCartLineItems());
 
         // when
         ResponseEntity<OrderResponse> response = restClient.post()

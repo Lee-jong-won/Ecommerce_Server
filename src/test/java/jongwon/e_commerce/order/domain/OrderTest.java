@@ -121,33 +121,6 @@ class OrderTest {
     }
 
     @Test
-    void 주문의_소유자가_아닌_경우_예외가_발생한다(){
-        // given
-        Order order = OrderFixture.createDefaultOrder();
-        Member member = Member.builder().
-                memberId(2L).
-                loginId("testUser2").
-                password("1234").
-                memberName("종원").
-                email("test@test.com").
-                addr("서울").
-                build();
-
-        // when && then
-        assertThrows(NotOrderOwnerException.class , () -> order.validateOwner(member));
-    }
-
-    @Test
-    void 소유주와_일치하는_경우_예외가_발생하지_않는다(){
-        // given
-        Order order = OrderFixture.createDefaultOrder();
-        Member member = Member.builder().memberId(order.getMember().getMemberId()).build();
-
-        // when && then
-        assertDoesNotThrow(() -> order.validateOwner(member));
-    }
-
-    @Test
     void 주문_금액과_결제_금액이_다르면_예외가_발생한다(){
         // given
         Order order = OrderFixture.createDefaultOrder();

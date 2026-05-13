@@ -11,12 +11,15 @@ import java.util.List;
 public class Cart {
 
     private final String orderName;
+    private final String loginId;
     private final List<CartLineItem> cartLineItems;
     @Builder
     public Cart(@JsonProperty("orderName")String orderName,
+                @JsonProperty("loginId")String loginId,
                 @JsonProperty("orderCreates")List<CartLineItem> cartLineItems
                        ){
         this.orderName = orderName;
+        this.loginId = loginId;
         this.cartLineItems = cartLineItems;
     }
 

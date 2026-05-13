@@ -34,9 +34,11 @@ public class OrderCreatorTest {
         PrepareOrderData prepareOrderData = TestDataFactory.prepareOrder(memberRepository, productRepository);
 
         // when
-        Order order = orderCreator.mapFrom(prepareOrderData.getMember(), "order-Id", Cart.builder().
-                cartLineItems(prepareOrderData.getCartLineItems()).
-                orderName("테스트 주문").build());
+        Cart cart = Cart.builder().cartLineItems(prepareOrderData.getCartLineItems()).
+                orderName("테스트 주문").
+                loginId(prepareOrderData.getMember().getLoginId()).
+                build();
+        Order order = orderCreator.mapFrom("order-Id", cart);
 
         // then
         assertThat(order.getMember()).isNotNull();

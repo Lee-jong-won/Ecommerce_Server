@@ -25,6 +25,13 @@ public class MemberRepositoryimpl implements MemberRepository {
     }
 
     @Override
+    public Member getByLoginId(String loginId){
+        return findByloginId(loginId).orElseThrow(
+                () -> new ResourceNotFoundException("member", loginId)
+        );
+    }
+
+    @Override
     public Member save(Member member) {
         return memberJpaRepository.save(MemberEntity.from(member)).toModel();
     }

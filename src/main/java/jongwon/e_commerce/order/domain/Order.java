@@ -66,11 +66,6 @@ public class Order {
         return "ORD-" + timestamp + "-" + random;
     }
 
-    public void validateOwner(Member owner){
-        if(!member.equals(owner))
-            throw new NotOrderOwnerException(owner.getMemberId(), this.getMember().getMemberId());
-    }
-
     public void validatePayAmount(long payAmount){
         if(this.totalAmount != payAmount)
             throw new InvalidAmountException();

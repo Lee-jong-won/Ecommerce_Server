@@ -21,13 +21,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public Member getByLoginId(String loginId){
-        return memberRepository.findByloginId(loginId).orElseThrow(
-                () -> new ResourceNotFoundException("member", loginId)
-        );
-    }
-
-    public boolean existsByLoginId(String loginId){
-        return memberRepository.findByloginId(loginId).isPresent();
+        return memberRepository.getByLoginId(loginId);
     }
 
     @Transactional

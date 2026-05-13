@@ -21,6 +21,13 @@ public class FakeMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Member getByLoginId(String loginId) {
+        return findByloginId(loginId).orElseThrow(
+                () -> new ResourceNotFoundException("member", loginId)
+        );
+    }
+
+    @Override
     public Member save(Member member) {
         if (member.getMemberId() == null || member.getMemberId() == 0) {
             Member newMember = Member.builder()

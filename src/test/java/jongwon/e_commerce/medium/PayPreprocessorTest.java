@@ -47,7 +47,7 @@ public class PayPreprocessorTest {
                 "TOSS", order.getTotalAmount());
 
         // when
-        PayRequest payRequest = payPreprocessor.preProcess(finishOrderData.getMember(), request);
+        PayRequest payRequest = payPreprocessor.preProcess(request);
 
         // then
         assertThat(payRequest.getPaymentKey()).isEqualTo("a4CWyWY5m89PNh7xJwhk1");
@@ -67,6 +67,6 @@ public class PayPreprocessorTest {
                 "TOSS",50000);
 
         // when && then
-        assertThrows(InvalidAmountException.class, () -> payPreprocessor.preProcess(finishOrderData.getMember(), request));
+        assertThrows(InvalidAmountException.class, () -> payPreprocessor.preProcess(request));
     }
 }

@@ -25,12 +25,11 @@ public class PayPreprocessor {
     private final PayRequestRepository payRequestRepository;
 
     @Transactional
-    public PayRequest preProcess(Member member, PayApproveAttempt attempt) {
+    public PayRequest preProcess(PayApproveAttempt attempt) {
         log.info("event = PAYMENT_PREPROCESS_START paymentKey = {} amount = {}",
                 attempt.getPaymentKey(), attempt.getAmount());
 
         Order order = orderRepository.getByOrderId(attempt.getOrderId());
-        order.validateOwner(member);
         order.validatePayAmount(attempt.getAmount());
         order.paymentPending();
 

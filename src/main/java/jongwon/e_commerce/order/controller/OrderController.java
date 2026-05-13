@@ -22,7 +22,7 @@ public class OrderController {
             @RequestBody Cart cart,
             @LoginMember Member loginMember // 일반적으로 스프링 시큐리티를 사용한다면 UserPrincipal 에서 가져옵니다.
             ){
-        Order order = orderService.placeOrder(loginMember, Order.createOrderId(), cart);
+        Order order = orderService.placeOrder(Order.createOrderId(), cart);
         return ResponseEntity.
                 ok().body(OrderResponse.from(order));
     }

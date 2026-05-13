@@ -9,17 +9,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Primary
 @Repository
+@Transactional(readOnly = true)
 public class OrderRepositoryImpl implements OrderRepository {
 
     @Autowired
     private final OrderJpaRepository orderJpaRepository;
     @Override
+    @Transactional
     public Order save(Order order) {
         return orderJpaRepository.save(OrderEntity.from(order)).toModel();
     }

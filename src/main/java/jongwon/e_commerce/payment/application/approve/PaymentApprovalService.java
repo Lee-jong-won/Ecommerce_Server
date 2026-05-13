@@ -24,11 +24,11 @@ public class PaymentApprovalService {
     private final List<PaymentExecutor> paymentExecutors;
     private final PaySuccessProcessor paySuccessProcessor;
 
-    public PayResult approvePayment(Member member, PayApproveAttempt attempt) {
+    public PayResult approvePayment(PayApproveAttempt attempt) {
         log.info("event = PAYMENT_START paymentKey = {} amount = {}",
                 attempt.getPaymentKey(), attempt.getAmount());
 
-        PayRequest payRequest = payPreprocessor.preProcess(member, attempt);
+        PayRequest payRequest = payPreprocessor.preProcess(attempt);
 
         PGType pgType = PGType.from(attempt.getPgType());
         PaymentExecutor executor = paymentExecutors.stream()
