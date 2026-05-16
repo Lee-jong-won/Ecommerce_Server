@@ -15,7 +15,7 @@ public class Pay {
     private Long id;
     private PayMethod payMethod;
     private long payAmount;
-    private PayRequest payRequest;
+    private Long payRequestId;
     private OffsetDateTime approvedAt;
     private Map<String, Object> paymentDetail;
     private LocalDateTime createdAt;
@@ -23,10 +23,10 @@ public class Pay {
     public static Pay from(
             PayResult.PayResultCommon payResultCommon,
             Map<String, Object> paymentDetail,
-            PayRequest payRequest){
+            Long payRequestId){
 
         return Pay.builder()
-                .payRequest(payRequest)
+                .payRequestId(payRequestId)
                 .payAmount(payResultCommon.getAmount())
                 .payMethod(payResultCommon.getPayMethod())
                 .approvedAt(payResultCommon.getApprovedAt())

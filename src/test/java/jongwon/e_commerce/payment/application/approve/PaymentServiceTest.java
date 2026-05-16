@@ -29,7 +29,7 @@ class PaymentServiceTest {
     OrderRepository orderRepository = new FakeOrderRepository();
     PaymentRepository paymentRepository = new FakePaymentRepository();
     PayRequestRepository payRequestRepository = new FakePayRequestRepository();
-    PaymentService paymentService = new PaymentService(paymentRepository);
+    PaymentService paymentService = new PaymentService(paymentRepository, payRequestRepository);
 
     @Test
     void 정상적으로_결제_상태가_변경되고_결제_결과가_영속화된다(){

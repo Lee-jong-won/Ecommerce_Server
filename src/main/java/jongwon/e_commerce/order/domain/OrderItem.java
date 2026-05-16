@@ -9,17 +9,20 @@ import lombok.Getter;
 public class OrderItem {
 
     private Long orderItemId;
-    private Product product;
+    private Long productId;
     private String productName;
     private int orderPrice;
     private int orderQuantity;
 
     //==생성 메소드==//
-    public static OrderItem createOrderItem(Product product, int orderQuantity){
+    public static OrderItem createOrderItem(Long productId,
+                                            String productName,
+                                            int orderPrice,
+                                            int orderQuantity){
         return OrderItem.builder().
-                product(product).
-                productName(product.getProductName()).
-                orderPrice(product.getProductPrice()).
+                productId(productId).
+                productName(productName).
+                orderPrice(orderPrice).
                 orderQuantity(orderQuantity).build();
     }
 
@@ -28,7 +31,4 @@ public class OrderItem {
         return orderPrice * orderQuantity;
     }
 
-    public void validate(){
-        product.validateOrder(productName);
-    }
 }

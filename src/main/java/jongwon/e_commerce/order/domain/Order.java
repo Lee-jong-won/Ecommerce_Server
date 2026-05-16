@@ -20,7 +20,7 @@ public class Order {
 
     private Long id;
     private String orderId;
-    private Member member;
+    private Long memberId;
     private String orderName;
     private LocalDateTime orderedAt;
     private List<OrderItem> orderItems;
@@ -42,7 +42,7 @@ public class Order {
         return sum;
     }
 
-    public static Order createOrder(Member member,
+    public static Order createOrder(Long memberId,
                              LocalDateTime orderedAt,
                              String orderId,
                              List<OrderItem> orderItems,
@@ -50,7 +50,7 @@ public class Order {
         int totalAmount = calculateTotalAmount(orderItems);
         Order order = Order.builder().
                 orderItems(orderItems).
-                member(member).
+                memberId(memberId).
                 orderedAt(orderedAt).
                 orderId(orderId).
                 totalAmount(totalAmount).
@@ -80,10 +80,6 @@ public class Order {
         if(orderItems.isEmpty()){
             throw new EmptyOrderItemsException("주문 항목이 비어있습니다.");
         }
-
-        for(OrderItem orderItem : orderItems){
-            orderItem.validate();
-        }
     }
 
     private void ordered(){
@@ -111,7 +107,7 @@ public class Order {
         if (this.orderStatus != OrderStatus.PAYMENT_PENDING) {
             throw new InvalidOrderStateException("결제 진행 중 상태에서만 결제 성공 처리 가능합니다.");
         }
-        setOrderStatus(OrderStatus.PAID);
+        this.orderStatus = OrderStatus.PAID;
     }
 
     //고객에 의해 주문이 취소 되었을 시

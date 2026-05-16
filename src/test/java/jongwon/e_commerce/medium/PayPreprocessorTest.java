@@ -49,7 +49,7 @@ public class PayPreprocessorTest {
         // when
         PayRequest payRequest = payPreprocessor.preProcess(request);
 
-        // then
+       // then
         assertThat(payRequest.getPaymentKey()).isEqualTo("a4CWyWY5m89PNh7xJwhk1");
         assertThat(payRequest.getPayAmount()).isEqualTo(finishOrderData.getOrder().getTotalAmount());
         assertThat(payRequest.getOrder()).isNotNull();

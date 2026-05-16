@@ -1,6 +1,7 @@
 package jongwon.e_commerce.payment.domain;
 
 import jongwon.e_commerce.order.domain.Order;
+import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.payment.exception.DuplicatePayAttemptException;
 import jongwon.e_commerce.payment.exception.InvalidPayStatusException;
 import lombok.Builder;
@@ -15,12 +16,11 @@ import java.util.UUID;
 public class PayRequest {
 
     private Long id;
-    private String orderId;
     private String paymentKey;
     private PGType pgType;
     private PayStatus payStatus;
     private long payAmount;
-    private Order order;
+    private Long orderId;
 
     public void setPayStatus(PayStatus payStatus){
         this.payStatus = payStatus;
@@ -33,7 +33,7 @@ public class PayRequest {
                     "취소는 결제 성공 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.REFUND);
+        this.payStatus = PayStatus.REFUND;
     }
 
     public void unknown(){
@@ -45,7 +45,7 @@ public class PayRequest {
                     "UNKNOWN 처리는 결제 진행 중 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.UNKNOWN);
+        this.payStatus = PayStatus.UNKNOWN;
     }
 
     public void businessFailed(){
@@ -54,7 +54,7 @@ public class PayRequest {
                     "비즈니스 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.BUSINESS_FAILED);
+        this.payStatus = PayStatus.BUSINESS_FAILED;
     }
 
     public void serverFailed(){
@@ -63,7 +63,7 @@ public class PayRequest {
                     "서버 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.SERVER_FAILED);
+        this.payStatus = PayStatus.SERVER_FAILED;
     }
 
     public void pgFailed(){
@@ -71,7 +71,7 @@ public class PayRequest {
             throw new InvalidPayStatusException("PG 실패는 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.PG_FAILED);
+        this.payStatus = PayStatus.PG_FAILED;
     }
 
     public void complete(){
@@ -80,16 +80,16 @@ public class PayRequest {
                     "성공은 결제 진행 중 또는 미확정 상태에서만 가능합니다. 현재 상태: " + payStatus
             );
         }
-        setPayStatus(PayStatus.COMPLETE);
+        this.payStatus = PayStatus.COMPLETE;
     }
 
-    public static PayRequest from(Order order,
+    public static PayRequest from(Long orderId,
                                   String paymentKey,
                                   long payAmount,
                                   PGType pgType){
         return PayRequest.
                 builder().
-                order(order).
+                orderId(orderId).
                 payAmount(payAmount).
                 payStatus(PayStatus.PENDING).
                 paymentKey(paymentKey).

@@ -13,8 +13,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "orders", indexes = {
-        @Index(name = "idx_order_id", columnList = "order_id")})
 public class OrderEntity {
 
     @Id
@@ -22,12 +20,11 @@ public class OrderEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "order_id")
+    @Column(name = "order_id", unique = true)
     private String orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_member_id", nullable = false)
-    private MemberEntity memberEntity;
+    @Column(name = "fk_member_id", nullable = false)
+    private Long memberId;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
@@ -52,7 +49,7 @@ public class OrderEntity {
 
         orderEntity.id = order.getId();
         orderEntity.orderId = order.getOrderId();
-        orderEntity.memberEntity = MemberEntity.from(order.getMember());
+        orderEntity.memberId = order.getMemberId();
         orderEntity.orderName = order.getOrderName();
         orderEntity.orderStatus = order.getOrderStatus();
         orderEntity.totalAmount = order.getTotalAmount();
@@ -76,7 +73,7 @@ public class OrderEntity {
                 .totalAmount(totalAmount)
                 .orderStatus(orderStatus)
                 .orderItems(orderItemEntities.stream().map(OrderItemEntity::toModel).toList())
-                .member(memberEntity.toModel())
+                .memberId(memberId)
                 .build();
     }
 

@@ -98,6 +98,10 @@ public class TestDataFactory {
                 productRepository,
                 orderRepository);
 
+        Order order = finishOrderData.getOrder();
+        order.paymentPending();
+        orderRepository.save(order);
+
         PayRequest payRequest = payRequestRepository.save(PayRequestFixture.
                 builder().
                 order(finishOrderData.getOrder()).

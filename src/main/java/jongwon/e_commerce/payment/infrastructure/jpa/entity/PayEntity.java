@@ -39,9 +39,8 @@ public class PayEntity {
     @Column(name = "payment_detail", columnDefinition = "json")
     private Map<String, Object> paymentDetail;
 
-    @OneToOne
-    @JoinColumn(name = "fk_pay_request_id")
-    private PayRequestEntity payRequestEntity;
+    @Column(name = "pay_request_id")
+    private Long payRequestId;
 
     @Column(name = "created_at", nullable = false, updatable = false,
             insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -55,7 +54,7 @@ public class PayEntity {
         jpaEntity.payAmount = pay.getPayAmount();
         jpaEntity.approvedAt = pay.getApprovedAt();
         jpaEntity.paymentDetail = pay.getPaymentDetail();
-        jpaEntity.payRequestEntity = PayRequestEntity.from(pay.getPayRequest());
+        jpaEntity.payRequestId = pay.getPayRequestId();
 
         return jpaEntity;
     }
@@ -68,7 +67,7 @@ public class PayEntity {
                 .approvedAt(approvedAt)
                 .createdAt(createdAt)
                 .paymentDetail(paymentDetail)
-                .payRequest(payRequestEntity.toModel())
+                .payRequestId(payRequestId)
                 .build();
     }
 }

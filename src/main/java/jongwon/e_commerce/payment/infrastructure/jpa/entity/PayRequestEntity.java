@@ -34,21 +34,20 @@ public class PayRequestEntity {
     @Enumerated(EnumType.STRING)
     private PGType pgType;
 
-    @OneToOne
-    @JoinColumn(name = "fk_order_id")
-    private OrderEntity orderEntity;
+    @Column(name = "order_id")
+    private Long orderId;
 
     public static PayRequestEntity from(PayRequest payRequest){
-        PayRequestEntity jpaEntity = new PayRequestEntity();
+            PayRequestEntity jpaEntity = new PayRequestEntity();
 
-        jpaEntity.payRequestId = payRequest.getId();
-        jpaEntity.payAmount = payRequest.getPayAmount();
-        jpaEntity.payStatus = payRequest.getPayStatus();
-        jpaEntity.paymentKey = payRequest.getPaymentKey();
-        jpaEntity.pgType = payRequest.getPgType();
-        jpaEntity.orderEntity = OrderEntity.from(payRequest.getOrder());
+            jpaEntity.payRequestId = payRequest.getId();
+            jpaEntity.payAmount = payRequest.getPayAmount();
+            jpaEntity.payStatus = payRequest.getPayStatus();
+            jpaEntity.paymentKey = payRequest.getPaymentKey();
+            jpaEntity.pgType = payRequest.getPgType();
+            jpaEntity.orderId = payRequest.getOrderId();
 
-        return jpaEntity;
+            return jpaEntity;
     }
 
     public PayRequest toModel(){
@@ -59,7 +58,7 @@ public class PayRequestEntity {
                 paymentKey(paymentKey).
                 payStatus(payStatus).
                 pgType(pgType).
-                order(orderEntity.toModel()).
+                orderId(orderId).
                 build();
     }
 }
