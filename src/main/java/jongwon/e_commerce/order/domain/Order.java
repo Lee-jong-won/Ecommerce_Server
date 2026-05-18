@@ -1,6 +1,7 @@
 package jongwon.e_commerce.order.domain;
 
 import jongwon.e_commerce.member.domain.Member;
+import jongwon.e_commerce.order.application.OrderValidator;
 import jongwon.e_commerce.order.exception.EmptyOrderItemsException;
 import jongwon.e_commerce.order.exception.InvalidOrderStateException;
 import jongwon.e_commerce.order.exception.NotOrderOwnerException;
@@ -13,6 +14,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Builder
@@ -27,9 +30,6 @@ public class Order {
     private OrderStatus orderStatus;
     private long totalAmount;
 
-    public void setTotalAmount(int totalAmount){
-        this.totalAmount = totalAmount;
-    }
     public void setOrderStatus(OrderStatus orderStatus){
         this.orderStatus = orderStatus;
     }
@@ -66,20 +66,14 @@ public class Order {
         return "ORD-" + timestamp + "-" + random;
     }
 
-    public void validatePayAmount(long payAmount){
-        if(this.totalAmount != payAmount)
-            throw new InvalidAmountException();
+    public List<Long> getProductIds(){
+        return orderItems.stream().map(OrderItem::getProductId).collect(toList());
     }
 
-    public void place(){
-        validate();
+
+    public void place(OrderValidator orderValidator){
+        orderValidator.validate(this);
         ordered();
-    }
-
-    private void validate(){
-        if(orderItems.isEmpty()){
-            throw new EmptyOrderItemsException("주문 항목이 비어있습니다.");
-        }
     }
 
     private void ordered(){

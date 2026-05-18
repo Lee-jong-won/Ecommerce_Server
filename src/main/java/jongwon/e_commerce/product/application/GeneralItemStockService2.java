@@ -25,8 +25,9 @@ public class GeneralItemStockService2 implements StockService{
     }
 
     @Override
-    public boolean support(Product product) {
-        return product.getOriginalProductId() == null;
+    public boolean support(Long productId) {
+        Product product = productStockRepository.getById(productId);
+        return product.getOriginalProductId() != null;
     }
 
     @Transactional

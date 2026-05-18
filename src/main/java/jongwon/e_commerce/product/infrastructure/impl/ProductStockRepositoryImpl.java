@@ -21,7 +21,7 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
     @Override
     public Optional<Product> findById(Long productId) {
         String sql = """
-        SELECT product_id, stock_quantity, product_status, version
+        SELECT product_id, original_product_id, stock_quantity, product_status, version
         FROM product
         WHERE product_id = ?
     """;
@@ -29,6 +29,7 @@ public class ProductStockRepositoryImpl implements ProductStockRepository {
         return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (rs, rowNum) ->
                 Product.builder().
                         productId(rs.getLong("product_id")).
+                        originalProductId(rs.getLong("original_product_id")).
                         stockQuantity(rs.getInt("stock_quantity")).
                         productStatus(ProductStatus.valueOf(rs.getString("product_status"))).
                         version(rs.getInt("version")).build(), productId));

@@ -7,6 +7,7 @@ import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.Pay;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.domain.PayStatus;
+import jongwon.e_commerce.payment.exception.InvalidAmountException;
 import jongwon.e_commerce.payment.infrastructure.gateway.dto.PayApproveAttempt;
 import jongwon.e_commerce.payment.repository.PayRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +26,24 @@ public class PayPreprocessor {
     private final PayRequestRepository payRequestRepository;
 
     @Transactional
-    public PayRequest preProcess(PayApproveAttempt attempt) {
-        log.info("event = PAYMENT_PREPROCESS_START paymentKey = {} amount = {}",
-                attempt.getPaymentKey(), attempt.getAmount());
-
+    public PayRequest preProcess(int expectedAmount, PayApproveAttempt attempt) {
         Order order = orderRepository.getByOrderId(attempt.getOrderId());
-        order.validatePayAmount(attempt.getAmount());
+        PayRequest payRequest = mapFrom(order.getId(), attempt);
+
+        if(order.getTotalAmount() == payRequest.getPayAmount()
+                && payRequest.getPayAmount() == expectedAmount)
+            throw new InvalidAmountException();
+
         order.paymentPending();
-
-        PayRequest payRequest = PayRequest.from(
-                order,
-                attempt.getPaymentKey(),
-                attempt.getAmount(),
-                PGType.from(attempt.getPgType()));
-
-        log.info("event = PAYMENT_PREPROCESS_FINISHED paymentKey = {} amount = {}",
-                attempt.getPaymentKey(), attempt.getAmount());
+        orderRepository.save(order);
 
         return payRequestRepository.save(payRequest);
+    }
+
+    private PayRequest mapFrom(Long orderId, PayApproveAttempt payApproveAttempt){
+        return PayRequest.from(orderId,
+                payApproveAttempt.getPaymentKey(),
+                payApproveAttempt.getAmount(),
+                PGType.from(payApproveAttempt.getPgType()));
     }
 }

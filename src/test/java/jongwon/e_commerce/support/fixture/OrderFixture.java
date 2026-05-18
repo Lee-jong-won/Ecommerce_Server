@@ -19,7 +19,7 @@ public class OrderFixture {
     private String orderId = "ORDER-DEFAULT";
 
     @Builder.Default
-    private Member member = null; // 반드시 외부에서 주입 권장
+    private Long memberId = 1L;
 
     @Builder.Default
     private String orderName = "기본 주문";
@@ -39,7 +39,7 @@ public class OrderFixture {
     public Order create() {
         return Order.builder()
                 .orderId(orderId)
-                .member(member)
+                .memberId(memberId)
                 .orderName(orderName)
                 .orderedAt(orderedAt)
                 .orderStatus(orderStatus)
@@ -49,9 +49,9 @@ public class OrderFixture {
     }
 
     public static Order createDefaultOrder(){
-        Member member = MemberFixture.builder().memberId(1L).build().create();
+        Member member = MemberFixture.builder().build().create();
         List<OrderItem> orderItems = OrderItemFixture.createDefaultOrderItems();
-        Order order = Order.createOrder(member,
+        Order order = Order.createOrder(member.getMemberId(),
                 LocalDateTime.now(),
                 "order-1",
                 orderItems,

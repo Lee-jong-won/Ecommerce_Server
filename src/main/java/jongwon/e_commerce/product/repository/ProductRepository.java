@@ -2,10 +2,12 @@ package jongwon.e_commerce.product.repository;
 
 import jongwon.e_commerce.product.domain.Product;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository {
     Product save(Product product);
     Optional<Product> findById(Long id);
     Product getById(Long id);
+    List<Product> findAllById(Iterable<Long> iterable);
 }

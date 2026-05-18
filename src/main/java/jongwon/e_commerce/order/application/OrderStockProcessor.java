@@ -25,13 +25,12 @@ public class OrderStockProcessor {
     @Transactional
     public void deductStockOf(Order order) {
         List<OrderItem> orderItems = order.getOrderItems();
-        log.info("주문 상품 조회 완료");
         for (OrderItem orderItem : orderItems) {
             stockServices.stream()
-                    .filter(h -> h.support(orderItem.getProduct()))
+                    .filter(h -> h.support(orderItem.getProductId()))
                     .findAny()
                     .ifPresent(h -> {
-                        h.decreaseStock(orderItem.getProduct().getProductId(), orderItem.getOrderQuantity());
+                        h.decreaseStock(orderItem.getProductId(), orderItem.getOrderQuantity());
                     });
         }
     }
@@ -41,10 +40,10 @@ public class OrderStockProcessor {
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             stockServices.stream()
-                    .filter(h -> h.support(orderItem.getProduct()))
+                    .filter(h -> h.support(orderItem.getProductId()))
                     .findAny()
                     .ifPresent(h -> {
-                        Product increasedProduct = h.increaseStock(orderItem.getProduct().getProductId(), orderItem.getOrderQuantity());
+                        Product increasedProduct = h.increaseStock(orderItem.getProductId(), orderItem.getOrderQuantity());
                     });
         }
     }

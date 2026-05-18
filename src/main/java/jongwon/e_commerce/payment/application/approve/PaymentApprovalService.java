@@ -1,7 +1,6 @@
 package jongwon.e_commerce.payment.application.approve;
 
-import jongwon.e_commerce.member.domain.Member;
-import jongwon.e_commerce.payment.application.PayProcessStateManager;
+import jongwon.e_commerce.payment.application.PayFailureHandler;
 import jongwon.e_commerce.payment.domain.PGType;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.exception.*;
@@ -20,43 +19,34 @@ import java.util.List;
 public class PaymentApprovalService {
 
     private final PayPreprocessor payPreprocessor;
-    private final PayProcessStateManager payProcessStateManager;
+    private final PayFailureHandler payFailureHandler;
     private final List<PaymentExecutor> paymentExecutors;
-    private final PaySuccessProcessor paySuccessProcessor;
+    private final PaySuccessHandler paySuccessHandler;
 
-    public PayResult approvePayment(PayApproveAttempt attempt) {
-        log.info("event = PAYMENT_START paymentKey = {} amount = {}",
-                attempt.getPaymentKey(), attempt.getAmount());
+    public PayResult approvePayment(int expectedAmount, PayApproveAttempt attempt) {
 
-        PayRequest payRequest = payPreprocessor.preProcess(attempt);
+        PayRequest payRequest = payPreprocessor.preProcess(expectedAmount, attempt);
 
-        PGType pgType = PGType.from(attempt.getPgType());
         PaymentExecutor executor = paymentExecutors.stream()
-                .filter(e -> e.supports(pgType))
+                .filter(e -> e.supports(PGType.from(attempt.getPgType())))
                 .findFirst()
-                .orElseThrow(() -> {
-                    log.error("등록되지 않은 PG사로 결제 승인 요청 불가: {}", pgType);
-                    return new UnsupportedOperationException("지원하지 않는 결제 수단입니다.");
-                });
+                .orElseThrow(() -> new UnsupportedOperationException("지원하지 않는 결제 수단입니다."));
 
         try {
             PayResult result = executor.executePayApprove(attempt);
-            paySuccessProcessor.process(payRequest, result);
-            payProcessStateManager.processSuccess(payRequest);
-            log.info("event = PAYMENT_FINISHED paymentKey = {} amount = {}",
-                    attempt.getPaymentKey(), attempt.getAmount());
+            paySuccessHandler.process(payRequest.getId(), result);
             return result;
         } catch (PayUnknownOutcomeException e) {
-            payProcessStateManager.processUnknownOutcome(payRequest);
+            payFailureHandler.processUnknownOutcome(payRequest.getId());
             throw e;
         } catch (PayClientException e) {
-            payProcessStateManager.processBusinessFailed(payRequest);
+            payFailureHandler.processBusinessFailed(payRequest.getId());
             throw e;
         } catch (PayServerException e){
-            payProcessStateManager.processServerFailed(payRequest);
+            payFailureHandler.processServerFailed(payRequest.getId());
             throw e;
         } catch(PayGatewayException e) {
-            payProcessStateManager.processPGFailed(payRequest);
+            payFailureHandler.processPGFailed(payRequest.getId());
             throw e;
         }
     }

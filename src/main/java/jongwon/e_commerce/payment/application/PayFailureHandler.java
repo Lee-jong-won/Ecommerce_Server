@@ -10,24 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class PayProcessStateManager {
+@Transactional(readOnly = true)
+public class PayFailureHandler {
 
     private final PayRequestRepository payRequestRepository;
     private final OrderRepository orderRepository;
 
     @Transactional
-    public void processSuccess(PayRequest payRequest){
-        Order order = payRequest.getOrder();
-        order.paid();
-        payRequest.complete();
+    public void processBusinessFailed(Long payRequestId) {
+        PayRequest payRequest = getPayRequestById(payRequestId);
+        Order order = getOrderById(payRequest.getOrderId());
 
-        orderRepository.save(order);
-        payRequestRepository.save(payRequest);
-    }
-
-    @Transactional
-    public void processBusinessFailed(PayRequest payRequest) {
-        Order order = payRequest.getOrder();
         order.fail();
         payRequest.businessFailed();
 
@@ -36,8 +29,10 @@ public class PayProcessStateManager {
     }
 
     @Transactional
-    public void processServerFailed(PayRequest payRequest){
-        Order order = payRequest.getOrder();
+    public void processServerFailed(Long payRequestId){
+        PayRequest payRequest = getPayRequestById(payRequestId);
+        Order order = getOrderById(payRequest.getOrderId());
+
         order.fail();
         payRequest.serverFailed();
 
@@ -46,8 +41,10 @@ public class PayProcessStateManager {
     }
 
     @Transactional
-    public void processPGFailed(PayRequest payRequest){
-        Order order = payRequest.getOrder();
+    public void processPGFailed(Long payRequestId){
+        PayRequest payRequest = getPayRequestById(payRequestId);
+        Order order = getOrderById(payRequest.getOrderId());
+
         order.fail();
         payRequest.pgFailed();
 
@@ -56,19 +53,19 @@ public class PayProcessStateManager {
     }
 
     @Transactional
-    public void processUnknownOutcome(PayRequest payRequest) {
+    public void processUnknownOutcome(Long payRequestId) {
+        PayRequest payRequest = getPayRequestById(payRequestId);
+
         payRequest.unknown();
         payRequestRepository.save(payRequest);
     }
 
-    @Transactional
-    public void processRefund(PayRequest payRequest){
-        Order order = payRequest.getOrder();
-        order.markCancel();
-        payRequest.refund();
+    private PayRequest getPayRequestById(Long id){
+        return payRequestRepository.getById(id);
+    }
 
-        orderRepository.save(order);
-        payRequestRepository.save(payRequest);
+    private Order getOrderById(Long id){
+        return orderRepository.getById(id);
     }
 
 }

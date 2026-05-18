@@ -5,9 +5,8 @@ import jongwon.e_commerce.mock.stub.StubPaymentExecutor;
 import jongwon.e_commerce.order.domain.Order;
 import jongwon.e_commerce.order.domain.OrderItem;
 import jongwon.e_commerce.order.domain.OrderStatus;
-import jongwon.e_commerce.order.repository.OrderItemRepository;
-import jongwon.e_commerce.payment.application.PayProcessStateManager;
-import jongwon.e_commerce.payment.application.approve.PaySuccessProcessor;
+import jongwon.e_commerce.payment.application.PayFailureHandler;
+import jongwon.e_commerce.payment.application.approve.PaySuccessHandler;
 import jongwon.e_commerce.payment.domain.PayRequest;
 import jongwon.e_commerce.payment.exception.*;
 import jongwon.e_commerce.payment.repository.PayRequestRepository;
@@ -46,9 +45,9 @@ public class PaymentApprovalServiceTest {
     @Autowired
     PayPreprocessor payPreprocessor;
     @Autowired
-    PayProcessStateManager payProcessStateManager;
+    PayFailureHandler payFailureHandler;
     @Autowired
-    PaySuccessProcessor paySuccessProcessor;
+    PaySuccessHandler paySuccessHandler;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
@@ -190,6 +189,6 @@ public class PaymentApprovalServiceTest {
 
     void createPaymentService(PaymentExecutor paymentExecutor){
         paymentApprovalService = new PaymentApprovalService(payPreprocessor,
-                payProcessStateManager, List.of(paymentExecutor), paySuccessProcessor);
+                payFailureHandler, List.of(paymentExecutor), paySuccessHandler);
     }
 }

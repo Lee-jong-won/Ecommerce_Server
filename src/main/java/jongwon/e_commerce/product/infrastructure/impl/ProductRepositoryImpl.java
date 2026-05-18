@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,6 +33,11 @@ public class ProductRepositoryImpl implements ProductRepository {
         return findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Product", id)
         );
+    }
+
+    @Override
+    public List<Product> findAllById(Iterable<Long> iterable) {
+        return productJpaRepository.findAllById(iterable).stream().map(ProductEntity::toModel).toList();
     }
 
 }

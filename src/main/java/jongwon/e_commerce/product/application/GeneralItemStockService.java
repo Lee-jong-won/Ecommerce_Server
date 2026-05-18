@@ -14,19 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class GeneralItemStockService implements StockService{
 
     private final GeneralItemStockServiceTx generalItemStockServiceTx;
+    private final ProductRepository productRepository;
     @Qualifier("stockRetryTemplate") private final RetryOperations retryOperations;
 
     public GeneralItemStockService(GeneralItemStockServiceTx generalItemStockServiceTx,
+                                   ProductRepository productRepository,
                                    @Qualifier("stockRetryTemplate")RetryOperations retryOperations){
         this.retryOperations = retryOperations;
+        this.productRepository = productRepository;
         this.generalItemStockServiceTx = generalItemStockServiceTx;
     }
 
     @Override
-    public boolean support(Product product) {
+    public boolean support(Long productId) {
+        Product product = productRepository.getById(productId);
         return product.getOriginalProductId() == null;
     }
-
 
     @Transactional
     public Product decreaseStock(Long productId, int quantity) {

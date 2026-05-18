@@ -26,16 +26,19 @@ public class Cart {
     @Getter
     public static class CartLineItem {
         private Long productId;
-        private String name;
+        private String productName;
+        private int orderPrice;
         private int stockQuantity;
 
         @Builder
         public CartLineItem(
                 @JsonProperty("productId") Long productId,
-                @JsonProperty("name") String name,
+                @JsonProperty("productName") String productName,
+                @JsonProperty("orderPrice") int orderPrice,
                 @JsonProperty("stockQuantity") int stockQuantity){
             this.productId = productId;
-            this.name = name;
+            this.productName = productName;
+            this.orderPrice = orderPrice;
             this.stockQuantity = stockQuantity;
         }
     }

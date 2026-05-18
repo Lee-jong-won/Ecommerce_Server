@@ -40,11 +40,6 @@ public class Product {
                 build();
     }
 
-    public void validateOrder(String productName){
-        if(!this.productName.equals(productName))
-            throw new ProductNameChangedException("상품 이름이 변경됐습니다");
-    }
-
     // 재고 추가
     public void addStock(int quantity){
         if (this.productStatus != ProductStatus.SELLING) {
